@@ -29,13 +29,35 @@ Most software projects struggle with documentation:
 ### Install via Script
 
 ```bash
-# Install templates in your project
+# Interactive installation (prompts for template selection)
 curl -fsSL https://raw.githubusercontent.com/tnez/docket/main/scripts/install.sh | bash
 
-# Or review first
+# Install specific templates
+curl -fsSL https://raw.githubusercontent.com/tnez/docket/main/scripts/install.sh | bash -s -- --templates=adr,rfc
+
+# Or download and review first (recommended)
 curl -fsSL https://raw.githubusercontent.com/tnez/docket/main/scripts/install.sh -o install.sh
 chmod +x install.sh
-./install.sh
+./install.sh --help
+```
+
+### Installation Options
+
+```bash
+# Install all templates
+./install.sh --templates=all --non-interactive
+
+# Install to custom directory
+./install.sh --target-dir=documentation
+
+# Dry-run to preview changes
+./install.sh --dry-run
+
+# Overwrite existing files
+./install.sh --templates=adr --force
+
+# Backup existing files before installing
+./install.sh --templates=all --backup
 ```
 
 ### Use as GitHub Template
@@ -47,9 +69,23 @@ chmod +x install.sh
 ### Manual Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/tnez/docket.git
 cd docket
-./scripts/install.sh /path/to/your/project
+
+# Run installer from your project directory
+cd /path/to/your/project
+/path/to/docket/scripts/install.sh --templates=adr,rfc
+```
+
+### Uninstall
+
+```bash
+# Remove installed templates
+./scripts/uninstall.sh
+
+# Dry-run to preview what would be removed
+./scripts/uninstall.sh --dry-run
 ```
 
 ## Features
@@ -101,14 +137,14 @@ cd docket
 ## Roadmap
 
 - [x] Research and design
-- [x] Phase 0: Foundation (Week 1) - **IN PROGRESS**
-- [ ] Phase 1: Core Templates (Weeks 2-3)
-- [ ] Phase 2: Bootstrap System (Weeks 4-5)
+- [x] Phase 0: Foundation (Week 1) - **COMPLETE**
+- [x] Phase 1: Core Templates (Weeks 2-3) - **COMPLETE**
+- [x] Phase 2: Bootstrap System (Weeks 4-5) - **COMPLETE**
 - [ ] Phase 3: Testing & Validation (Weeks 6-7)
 - [ ] Phase 4: Launch (Week 8)
 
-**Current Status:** 🚧 In Development - Phase 0
-**Current Version:** v0.1.0-alpha
+**Current Status:** 🎉 Phase 2 Complete - Ready for Testing
+**Current Version:** v0.2.0-alpha
 
 ## Contributing
 
@@ -143,8 +179,19 @@ Built on the shoulders of giants:
 - **GitHub:** [@tnez](https://github.com/tnez)
 - **Author:** [tnezdev](https://github.com/tnez)
 
+## Available Templates
+
+| Template | Purpose | Use When |
+|----------|---------|----------|
+| **adr-template.md** | Architecture Decision Records | Making significant architectural decisions |
+| **rfc-template.md** | Request for Comments | Proposing new features or major changes |
+| **runbook-template.md** | Operational Procedures | Documenting recurring operational tasks |
+| **troubleshooting-template.md** | Problem Diagnosis | Creating guides for common issues |
+| **api-documentation-template.md** | API Reference | Documenting REST/GraphQL APIs |
+| **architecture-overview-template.md** | System Design | Describing high-level system architecture |
+
 ---
 
-**Status:** Pre-Alpha (Phase 0) | **Next Milestone:** Phase 1 - Core Templates
+**Status:** Alpha (Phase 2 Complete) | **Next Milestone:** Phase 3 - Testing & Validation
 
 *Star this repo ⭐ to follow development progress*
