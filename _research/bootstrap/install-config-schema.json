@@ -1,0 +1,320 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/user/project-docs-template/main/install-config-schema.json",
+  "title": "Project Documentation Template Configuration",
+  "description": "Configuration schema for non-interactive installation of project documentation templates",
+  "type": "object",
+  "required": ["project"],
+  "properties": {
+    "project": {
+      "type": "object",
+      "description": "Project metadata",
+      "required": ["name", "type"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Project name (used in documentation titles and references)",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[a-zA-Z0-9_. -]+$",
+          "examples": [
+            "my-project",
+            "awesome-library",
+            "Super App"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of project (determines which template variant to use)",
+          "enum": ["application", "library", "framework", "cli", "other"],
+          "default": "application",
+          "examples": ["application", "library"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the project (1-2 sentences)",
+          "maxLength": 500,
+          "examples": [
+            "A high-performance web framework for building modern applications",
+            "Command-line tool for managing project documentation"
+          ]
+        }
+      }
+    },
+    "language": {
+      "type": "object",
+      "description": "Programming language configuration",
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "description": "Primary programming language",
+          "examples": [
+            "JavaScript",
+            "TypeScript",
+            "Python",
+            "Rust",
+            "Go",
+            "Java",
+            "C++",
+            "Ruby",
+            "PHP"
+          ]
+        },
+        "framework": {
+          "type": "string",
+          "description": "Framework or library used (optional)",
+          "examples": [
+            "React",
+            "Vue",
+            "Next.js",
+            "Express",
+            "Django",
+            "Rails",
+            "Spring Boot"
+          ]
+        },
+        "testingFramework": {
+          "type": "string",
+          "description": "Testing framework used (optional)",
+          "examples": [
+            "Jest",
+            "pytest",
+            "cargo test",
+            "go test",
+            "JUnit"
+          ]
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "description": "Optional components to install",
+      "properties": {
+        "examples": {
+          "type": "boolean",
+          "description": "Install examples directory with working code samples",
+          "default": true
+        },
+        "ci": {
+          "type": "boolean",
+          "description": "Install CI/CD workflow templates (GitHub Actions)",
+          "default": true
+        },
+        "claude": {
+          "type": "boolean",
+          "description": "Install Claude Code integration (slash commands and agents)",
+          "default": true
+        },
+        "vale": {
+          "type": "boolean",
+          "description": "Install Vale prose linter configuration",
+          "default": false
+        },
+        "apiReference": {
+          "type": "boolean",
+          "description": "Setup API reference documentation generation",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "customization": {
+      "type": "object",
+      "description": "Customization options for templates",
+      "properties": {
+        "teamName": {
+          "type": "string",
+          "description": "Team or organization name",
+          "default": "Team",
+          "examples": ["Engineering Team", "Platform Team", "Core Contributors"]
+        },
+        "author": {
+          "type": "string",
+          "description": "Author name (used in documentation metadata)",
+          "examples": ["John Doe", "Engineering Team"]
+        },
+        "repositoryUrl": {
+          "type": "string",
+          "description": "Git repository URL",
+          "format": "uri",
+          "pattern": "^https?://",
+          "examples": [
+            "https://github.com/user/project",
+            "https://gitlab.com/user/project"
+          ]
+        },
+        "documentationUrl": {
+          "type": "string",
+          "description": "Documentation hosting URL (if deployed separately)",
+          "format": "uri",
+          "examples": [
+            "https://docs.example.com",
+            "https://project.readthedocs.io"
+          ]
+        },
+        "license": {
+          "type": "string",
+          "description": "Software license",
+          "examples": ["MIT", "Apache-2.0", "GPL-3.0", "BSD-3-Clause"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "installation": {
+      "type": "object",
+      "description": "Installation behavior configuration",
+      "properties": {
+        "docsDirectory": {
+          "type": "string",
+          "description": "Directory where documentation will be installed",
+          "default": "docs",
+          "pattern": "^[a-zA-Z0-9_/-]+$",
+          "examples": ["docs", "documentation", "packages/core/docs"]
+        },
+        "existingDocsAction": {
+          "type": "string",
+          "description": "Action to take if documentation already exists",
+          "enum": ["abort", "backup", "merge", "overwrite"],
+          "default": "abort"
+        },
+        "gitIntegration": {
+          "type": "boolean",
+          "description": "Enable git integration (auto-commit, etc.)",
+          "default": true
+        },
+        "createInitialCommit": {
+          "type": "boolean",
+          "description": "Create initial git commit after installation",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "templates": {
+      "type": "object",
+      "description": "Template source configuration",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Custom template source URL",
+          "format": "uri",
+          "pattern": "^https://",
+          "examples": [
+            "https://raw.githubusercontent.com/user/custom-templates/main"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "description": "Template version to install (branch, tag, or 'latest')",
+          "default": "main",
+          "examples": ["main", "v1.0.0", "stable"]
+        },
+        "exclude": {
+          "type": "array",
+          "description": "Template files to exclude from installation",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["onboarding.md", "doc-health.md"]
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "$comment": "Minimal configuration",
+      "project": {
+        "name": "my-awesome-library",
+        "type": "library"
+      },
+      "language": {
+        "primary": "Rust"
+      }
+    },
+    {
+      "$comment": "Full configuration",
+      "project": {
+        "name": "my-web-app",
+        "type": "application",
+        "description": "A modern web application built with React and TypeScript"
+      },
+      "language": {
+        "primary": "TypeScript",
+        "framework": "React",
+        "testingFramework": "Jest"
+      },
+      "components": {
+        "examples": true,
+        "ci": true,
+        "claude": true,
+        "vale": true,
+        "apiReference": true
+      },
+      "customization": {
+        "teamName": "Frontend Team",
+        "author": "Engineering",
+        "repositoryUrl": "https://github.com/company/my-web-app",
+        "documentationUrl": "https://docs.mywebapp.com",
+        "license": "MIT"
+      },
+      "installation": {
+        "docsDirectory": "docs",
+        "existingDocsAction": "backup",
+        "gitIntegration": true,
+        "createInitialCommit": true
+      }
+    },
+    {
+      "$comment": "Monorepo package configuration",
+      "project": {
+        "name": "@company/core-library",
+        "type": "library",
+        "description": "Core utilities library for internal projects"
+      },
+      "language": {
+        "primary": "TypeScript",
+        "testingFramework": "Jest"
+      },
+      "components": {
+        "examples": true,
+        "ci": false,
+        "claude": true,
+        "vale": false,
+        "apiReference": true
+      },
+      "installation": {
+        "docsDirectory": "packages/core/docs",
+        "existingDocsAction": "merge",
+        "gitIntegration": true,
+        "createInitialCommit": false
+      }
+    },
+    {
+      "$comment": "CLI tool configuration",
+      "project": {
+        "name": "awesome-cli",
+        "type": "cli",
+        "description": "Command-line tool for managing projects"
+      },
+      "language": {
+        "primary": "Go"
+      },
+      "components": {
+        "examples": true,
+        "ci": true,
+        "claude": true,
+        "vale": false,
+        "apiReference": false
+      },
+      "customization": {
+        "repositoryUrl": "https://github.com/user/awesome-cli",
+        "license": "MIT"
+      }
+    }
+  ],
+  "additionalProperties": false
+}
