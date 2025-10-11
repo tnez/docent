@@ -141,6 +141,7 @@ Built on the shoulders of giants:
 
 - **Issues:** [GitHub Issues](https://github.com/tnez/docket/issues) - Report bugs or request features
 - **GitHub:** [@tnez](https://github.com/tnez)
+- **Author:** [tnezdev](https://github.com/tnez)
 
 ---
 
