@@ -159,6 +159,11 @@ test_install_all_templates() {
     "troubleshooting-template.md"
     "api-documentation-template.md"
     "architecture-overview-template.md"
+    "onboarding-template.md"
+    "patterns-template.md"
+    "standards-template.md"
+    "testing-template.md"
+    "writing-software-template.md"
   )
 
   local all_exist=true
@@ -395,26 +400,31 @@ test_install_no_write_permission() {
   # Skip this test if running as root
   if [ "$EUID" -eq 0 ]; then
     echo "${YELLOW}  Skipped (running as root)${RESET}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
     return 0
   fi
 
   setup_test_env
 
-  # Create read-only current directory
-  chmod 444 .
+  # Save current dir and cd to parent
+  local readonly_dir="$TEST_DIR"
+  cd "$(dirname "$readonly_dir")"
+
+  # Make test dir read-only
+  chmod 444 "$readonly_dir"
 
   # Try to install (should fail gracefully)
-  if "$INSTALL_SCRIPT" --templates=adr --non-interactive > /dev/null 2>&1; then
-    chmod 755 .
+  if (cd "$readonly_dir" && "$INSTALL_SCRIPT" --templates=adr --non-interactive > /dev/null 2>&1); then
+    chmod 755 "$readonly_dir"
     test_fail "Should detect write permission issues"
-    teardown_test_env
+    rm -rf "$readonly_dir"
     return 1
   fi
 
-  # Restore permissions before cleanup
-  chmod 755 .
+  # Restore permissions and cleanup
+  chmod 755 "$readonly_dir"
+  rm -rf "$readonly_dir"
   test_pass
-  teardown_test_env
 }
 
 #===============================================================================

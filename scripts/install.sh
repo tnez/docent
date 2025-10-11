@@ -338,8 +338,8 @@ handle_existing_files() {
   fi
 
   if [ "$INTERACTIVE" = false ]; then
-    error "Conflicts detected in non-interactive mode. Use --force or --backup"
-    return 1
+    info "Non-interactive mode: ${#conflicts[@]} existing file(s) will be skipped"
+    return 0  # Skip conflicts in non-interactive mode
   fi
 
   warning "Found ${#conflicts[@]} existing file(s):"
