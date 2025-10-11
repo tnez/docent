@@ -1,0 +1,37 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run test suite
+        run: ./test/test-install.sh
+
+      - name: Test installation in clean directory
+        run: |
+          cd /tmp
+          mkdir -p test-install
+          cd test-install
+          $GITHUB_WORKSPACE/scripts/install.sh --templates=all --non-interactive
+          ls -la docs/
+
+      - name: Test uninstallation
+        run: |
+          cd /tmp/test-install
+          $GITHUB_WORKSPACE/scripts/uninstall.sh --force --non-interactive

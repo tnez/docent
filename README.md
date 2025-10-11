@@ -140,11 +140,37 @@ cd /path/to/your/project
 - [x] Phase 0: Foundation (Week 1) - **COMPLETE**
 - [x] Phase 1: Core Templates (Weeks 2-3) - **COMPLETE**
 - [x] Phase 2: Bootstrap System (Weeks 4-5) - **COMPLETE**
-- [ ] Phase 3: Testing & Validation (Weeks 6-7)
+- [x] Phase 3: Testing & Validation (Weeks 6-7) - **COMPLETE**
 - [ ] Phase 4: Launch (Week 8)
 
-**Current Status:** 🎉 Phase 2 Complete - Ready for Testing
-**Current Version:** v0.2.0-alpha
+**Current Status:** 🚀 Phase 3 Complete - Ready for Launch
+**Current Version:** v0.3.0-alpha
+
+## Testing
+
+docket includes a comprehensive test suite to ensure reliability across platforms.
+
+### Running Tests
+
+```bash
+# Run full test suite
+./test/test-install.sh
+
+# Tests run automatically on CI for:
+# - Push to main branch
+# - Pull requests
+```
+
+### Test Coverage
+
+- ✅ Installation scenarios (clean, conflict, custom directory)
+- ✅ Uninstallation
+- ✅ Dry-run mode
+- ✅ Conflict handling
+- ✅ Backup creation
+- ✅ Cross-platform compatibility (macOS, Linux)
+
+See [test/README.md](test/README.md) for detailed testing guide and [test/TESTING-CHECKLIST.md](test/TESTING-CHECKLIST.md) for the pre-release checklist.
 
 ## Contributing
 
@@ -192,6 +218,6 @@ Built on the shoulders of giants:
 
 ---
 
-**Status:** Alpha (Phase 2 Complete) | **Next Milestone:** Phase 3 - Testing & Validation
+**Status:** Alpha (Phase 3 Complete) | **Next Milestone:** Phase 4 - Launch
 
 *Star this repo ⭐ to follow development progress*
