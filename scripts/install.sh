@@ -34,6 +34,11 @@ AVAILABLE_TEMPLATES=(
   "troubleshooting-template.md"
   "api-documentation-template.md"
   "architecture-overview-template.md"
+  "onboarding-template.md"
+  "patterns-template.md"
+  "standards-template.md"
+  "testing-template.md"
+  "writing-software-template.md"
 )
 
 # Installation options
@@ -496,6 +501,11 @@ AVAILABLE TEMPLATES:
   • troubleshooting-template.md - Problem diagnosis guides
   • api-documentation-template.md - API reference docs
   • architecture-overview-template.md - System design docs
+  • onboarding-template.md - Developer onboarding guides
+  • patterns-template.md - High-level architectural patterns
+  • standards-template.md - Code standards and conventions
+  • testing-template.md - Testing philosophy and practices
+  • writing-software-template.md - Development philosophy
 
 DOCUMENTATION:
   https://github.com/tnez/docket

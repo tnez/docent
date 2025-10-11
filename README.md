@@ -15,7 +15,7 @@ Most software projects struggle with documentation:
 
 ## The Solution
 
-**docket** provides production-ready documentation templates that work with any project:
+**docket** provides 11 production-ready documentation templates that work with any project:
 
 - **Architecture Decision Records (ADRs)** - Document significant architectural choices
 - **Request for Comments (RFCs)** - Propose and discuss features before implementation
@@ -23,6 +23,11 @@ Most software projects struggle with documentation:
 - **Troubleshooting Guides** - Diagnose and resolve common issues
 - **API Documentation** - Comprehensive API reference with examples
 - **Architecture Overviews** - High-level system design documentation
+- **Developer Onboarding** - Get new team members productive quickly
+- **Architectural Patterns** - Establish consistent code patterns across the project
+- **Code Standards** - Define coding conventions and style guidelines
+- **Testing Philosophy** - Document testing approach and practices
+- **Development Philosophy** - Define how your team builds software
 
 ## Quick Start
 
@@ -91,7 +96,7 @@ cd /path/to/your/project
 ## Features
 
 ### Production-Ready Templates
-- 6+ documentation templates covering common needs
+- 11 comprehensive documentation templates covering common needs
 - Real-world examples demonstrating best practices
 - Clear guidance on when to use each template
 - Consistent formatting across all documentation
@@ -215,6 +220,11 @@ Built on the shoulders of giants:
 | **troubleshooting-template.md** | Problem Diagnosis | Creating guides for common issues |
 | **api-documentation-template.md** | API Reference | Documenting REST/GraphQL APIs |
 | **architecture-overview-template.md** | System Design | Describing high-level system architecture |
+| **onboarding-template.md** | Developer Onboarding | Setting up new team members for success |
+| **patterns-template.md** | Architectural Patterns | Establishing consistent code patterns |
+| **standards-template.md** | Code Standards | Defining coding conventions and style |
+| **testing-template.md** | Testing Philosophy | Documenting testing approach and practices |
+| **writing-software-template.md** | Development Philosophy | Defining how your team builds software |
 
 ---
 
