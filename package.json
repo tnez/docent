@@ -1,0 +1,93 @@
+{
+  "name": "@tnezdev/docket",
+  "version": "0.3.0",
+  "description": "Documentation platform with templates, CLI, and agentic protocol",
+  "author": "Travis Nez @tnez",
+  "license": "MIT",
+  "homepage": "https://github.com/tnez/docket",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tnez/docket.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tnez/docket/issues"
+  },
+  "keywords": [
+    "documentation",
+    "templates",
+    "adr",
+    "architecture",
+    "agentic",
+    "cli"
+  ],
+  "main": "lib/index.js",
+  "bin": {
+    "docket": "./bin/run.js"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/templates",
+    "/scripts",
+    "/.docket-protocol",
+    "/oclif.manifest.json"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "lint": "eslint . --ext .ts",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "test:install": "./test/test-install.sh",
+    "postpack": "rm -f oclif.manifest.json",
+    "prepack": "npm run build && oclif manifest"
+  },
+  "dependencies": {
+    "@oclif/core": "^4",
+    "@oclif/plugin-help": "^6",
+    "@oclif/plugin-plugins": "^5",
+    "chalk": "^4.1.2",
+    "glob": "^10.3.10",
+    "inquirer": "^8.2.6"
+  },
+  "devDependencies": {
+    "@oclif/prettier-config": "^0.2.1",
+    "@oclif/test": "^4",
+    "@types/chai": "^4",
+    "@types/inquirer": "^8.2.10",
+    "@types/mocha": "^10",
+    "@types/node": "^20",
+    "chai": "^4",
+    "eslint": "^8.57.0",
+    "eslint-config-oclif": "^5",
+    "eslint-config-oclif-typescript": "^3",
+    "mocha": "^10",
+    "oclif": "^4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "oclif": {
+    "bin": "docket",
+    "dirname": "docket",
+    "commands": "./lib/commands",
+    "plugins": [
+      "@oclif/plugin-help"
+    ],
+    "topicSeparator": " ",
+    "topics": {
+      "init": {
+        "description": "Initialize docket documentation in your project"
+      },
+      "analyze": {
+        "description": "Analyze project structure and technologies"
+      },
+      "audit": {
+        "description": "Audit documentation completeness and find gaps"
+      },
+      "review": {
+        "description": "Review documentation for drift and staleness"
+      }
+    }
+  }
+}
