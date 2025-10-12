@@ -248,6 +248,13 @@ docket workflow rfc "Should we add behavioral specs?"
    - Auto-mode for decisions with defaults
    - Batch checkpoints to reduce interruptions
 
+5. **Session Recovery (Cold-Start Solution)**
+   - `docket session start` - Instant context recovery
+   - Analyze recent commits, todos, RFC/PRD status
+   - Display: What was completed, what's pending, suggested next steps
+   - Project health summary (audit/review scores)
+   - 30-second context load vs 15-30 minutes manual
+
 ### Nice to Have (P2)
 
 **Future enhancements:**
@@ -359,6 +366,57 @@ docket workflow rfc "Should we add behavioral specs?"
 
 **Success outcome:** Developer gets structured workflow with rich UX in their familiar agent environment. CLI benefits + MCP UX enhancement.
 
+#### Journey 4: Cold-Start Session Recovery
+
+**Scenario:** Developer worked on docket for 3 hours yesterday, now returning after a break. They need to quickly remember what was accomplished and what's next, without manually digging through git logs and documentation.
+
+**Steps:**
+1. Developer runs: `docket session start`
+2. System analyzes recent activity:
+   - Reads last 5 commits from git log
+   - Parses pending todos from last session
+   - Checks RFC/PRD/ADR status (draft vs completed)
+   - Runs quick audit/review for project health
+3. System displays comprehensive summary:
+   ```
+   ┌─────────────────────────────────────────────────────
+   │ Session Summary - Last: 2025-10-12 (3 hours ago)
+   ├─────────────────────────────────────────────────────
+   │
+   │ ✅ Completed Last Session:
+   │  • Research on behavioral specifications
+   │  • RFC-0002: Behavioral Specification Support
+   │  • PRD-0001: Agent-Orchestrated Workflows
+   │  • 3 commits (ebf130e, c6a70fe, 5a6620a)
+   │
+   │ 📋 Pending Tasks:
+   │  • Get architectural review of RFC-0002
+   │  • Create ADR on PRD usage
+   │  • Fix audit bug (empty docs detection)
+   │
+   │ 🎯 Suggested Next Steps:
+   │  1. Review RFC-0002 or get architecture review
+   │  2. Create RFC-0003 for workflow orchestration
+   │  3. Implement Phase 1 of RFC-0002
+   │
+   │ 📊 Project Status:
+   │  • Audit: 85% complete
+   │  • Health: 100%
+   │  • 2 RFCs draft, 1 PRD, 3 ADRs documented
+   │
+   │ 💡 Context:
+   │  Working on: Agent orchestration workflows
+   │  for solo developer productivity
+   │
+   └─────────────────────────────────────────────────────
+   ```
+4. Developer immediately understands full context
+5. Picks up work with zero mental overhead
+
+**Success outcome:** Full project context in 30 seconds instead of 15-30 minutes of manual investigation. Developer starts productive work immediately instead of spending time reconstructing mental state.
+
+**Why this matters:** Solo developers are constantly interrupted (meetings, context switches, breaks). The cold-start problem is a major productivity killer. This feature turns docket's structured documentation into a time machine - instantly recover where you were and what you were thinking.
+
 ### User Stories
 
 **As a solo developer:**
@@ -366,6 +424,7 @@ docket workflow rfc "Should we add behavioral specs?"
 - I want multiple AI agents to collaborate automatically, so that I get diverse perspectives without manual orchestration
 - I want to resume interrupted workflows, so that I can spread complex work across multiple sessions
 - I want workflows in my agent of choice (Claude Code), so that I don't context switch to terminal
+- I want to instantly recover context when returning to a project, so that I don't waste 15-30 minutes reconstructing where I left off
 
 **As a small team lead:**
 - I want standardized workflows, so that team members follow consistent processes
