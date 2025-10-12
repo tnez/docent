@@ -78,7 +78,3 @@ lerna-debug.log*
 lib/
 dist/
 *.tsbuildinfo
-
-# Documentation created by docket init (for testing)
-# Keep templates/ but ignore docs/ created during development
-docs/

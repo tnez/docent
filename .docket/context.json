@@ -1,0 +1,69 @@
+{
+  "projectName": ".",
+  "teamSize": "solo",
+  "documentationGoals": [
+    "architecture",
+    "standards",
+    "onboarding",
+    "testing",
+    "patterns",
+    "decisions",
+    "postmortems"
+  ],
+  "analysis": {
+    "languages": [
+      {
+        "name": "TypeScript",
+        "fileCount": 18,
+        "primaryExtensions": [
+          ".ts"
+        ],
+        "confidence": "high"
+      },
+      {
+        "name": "JavaScript",
+        "fileCount": 10,
+        "primaryExtensions": [
+          ".js"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "Mocha",
+        "type": "testing",
+        "confidence": "high",
+        "detectedFrom": "package.json"
+      }
+    ],
+    "structure": {
+      "hasSource": false,
+      "hasTests": false,
+      "hasDocs": false,
+      "sourceDirectories": [],
+      "testDirectories": [],
+      "docsDirectories": [],
+      "rootFiles": [
+        "tsconfig.tsbuildinfo",
+        "tsconfig.json",
+        "test-output.log",
+        "package.json",
+        "package-lock.json",
+        "README.md",
+        "LICENSE",
+        "CONTRIBUTING.md",
+        "CODE_OF_CONDUCT.md"
+      ]
+    },
+    "buildTools": [
+      "TypeScript"
+    ],
+    "packageManagers": [
+      "npm"
+    ],
+    "timestamp": "2025-10-12T02:16:47.435Z"
+  },
+  "customizations": {},
+  "timestamp": "2025-10-12T02:16:47.436Z"
+}
