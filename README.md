@@ -1,6 +1,6 @@
 # docket
 
-> Standardized documentation templates for software projects
+> Documentation platform with smart CLI, templates, and agent-agnostic protocol
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
@@ -15,8 +15,16 @@ Most software projects struggle with documentation:
 
 ## The Solution
 
-**docket** provides 11 production-ready documentation templates that work with any project:
+**docket** is a complete documentation platform with three powerful components:
 
+### 1. Smart CLI
+- **`docket analyze`** - Detect languages, frameworks, and project structure
+- **`docket init`** - Smart initialization with customized templates
+- **`docket audit`** - Find documentation gaps and missing content
+- **`docket review`** - Detect stale docs and code/documentation drift
+
+### 2. Production-Ready Templates
+11 comprehensive templates that work with any project:
 - **Architecture Decision Records (ADRs)** - Document significant architectural choices
 - **Request for Comments (RFCs)** - Propose and discuss features before implementation
 - **Runbooks** - Step-by-step operational procedures
@@ -29,9 +37,54 @@ Most software projects struggle with documentation:
 - **Testing Philosophy** - Document testing approach and practices
 - **Development Philosophy** - Define how your team builds software
 
+### 3. Agent-Agnostic Protocol
+- Works with **any** AI coding agent (Claude Code, Cursor, Aider, etc.)
+- Structured JSON output for agent consumption
+- Complete protocol documentation in `.docket-protocol/`
+- No vendor lock-in
+
 ## Quick Start
 
-### Install via Script
+### CLI Installation (Recommended)
+
+```bash
+# Install globally via npm
+npm install -g @tnezdev/docket
+
+# Or use with npx (no installation needed)
+npx @tnezdev/docket analyze
+```
+
+**Basic Usage:**
+
+```bash
+# Analyze your project
+docket analyze
+
+# Initialize documentation
+docket init
+
+# Check for gaps
+docket audit
+
+# Review for staleness
+docket review
+```
+
+**For AI Agents:**
+
+All commands support `--output json` for structured data:
+
+```bash
+docket analyze --output json
+docket init --non-interactive --output json
+docket audit --output json
+docket review --output json
+```
+
+See [`.docket-protocol/agent-guide.md`](.docket-protocol/agent-guide.md) for complete agent integration guide.
+
+### Install via Script (Alternative)
 
 ```bash
 # Interactive installation (prompts for template selection)
@@ -95,23 +148,43 @@ cd /path/to/your/project
 
 ## Features
 
+### Smart Project Analysis
+- **Language Detection** - Automatically identifies all programming languages in your project
+- **Framework Discovery** - Detects web, backend, testing, and other frameworks
+- **Structure Analysis** - Finds source, test, and docs directories
+- **Build Tool Recognition** - Identifies build systems and package managers
+- **JSON Output** - Structured data perfect for agent consumption
+
+### Intelligent Documentation Initialization
+- **Context-Aware** - Customizes templates based on your project's tech stack
+- **Interactive & Non-Interactive** - Works great for humans and agents
+- **Smart Defaults** - Reasonable defaults when run non-interactively
+- **Preserves Context** - Saves project profile for future use
+
+### Gap Detection & Audit
+- **Completeness Scoring** - 0-100 score for documentation completeness
+- **Prioritized Gaps** - High/medium/low severity for each gap
+- **Coverage Tracking** - Checks for architecture, ADRs, standards, testing, API, etc.
+- **Actionable Suggestions** - Specific recommendations for each gap
+
+### Drift Detection & Review
+- **Staleness Detection** - Finds docs not updated in 1+ months
+- **Code-Docs Alignment** - Detects when code changes without doc updates
+- **Framework Drift** - Identifies mismatches between code and documentation
+- **Health Scoring** - Overall documentation health score (0-100)
+
 ### Production-Ready Templates
 - 11 comprehensive documentation templates covering common needs
 - Real-world examples demonstrating best practices
 - Clear guidance on when to use each template
 - Consistent formatting across all documentation
 
-### Smart Installation
-- Conflict detection - won't overwrite existing docs without asking
-- Rollback support - undo installation if needed
-- Dry-run mode - preview changes before applying
-- Works with any project type (JavaScript, Python, Rust, Go, etc.)
-
-### AI-Ready
-- Templates optimized for AI agent context
-- Agent-agnostic approach (works with Claude, Cursor, Aider, etc.)
-- Clear structure makes it easy for AI to understand project state
-- Instructions for integrating with popular AI coding tools
+### Agent-Agnostic Architecture
+- **No Vendor Lock-In** - Works with any AI coding agent
+- **Structured Output** - All commands support `--output json`
+- **Protocol Documentation** - Complete guide for agent developers
+- **JSON Schemas** - Typed, validated output for reliable parsing
+- **Battle-Tested** - Designed for Claude Code, works with Cursor, Aider, etc.
 
 ### Built on Best Practices
 - Research from 15+ leading open-source projects
@@ -122,22 +195,33 @@ cd /path/to/your/project
 ## Why Use docket?
 
 ### For Solo Developers
-- Quick setup - get started in minutes
-- Flexible - use only what you need
-- Professional - document your project like the pros
-- Portfolio boost - well-documented projects stand out
+- **Smart Setup** - `docket init` sets up documentation in seconds
+- **Gap Detection** - Never wonder what's missing
+- **Maintenance Help** - `docket review` finds stale docs automatically
+- **Professional** - Document your project like the pros
+- **Portfolio boost** - Well-documented projects stand out
 
 ### For Teams
-- Consistent - everyone follows the same structure
-- Onboarding - new team members understand the project quickly
-- Decision tracking - ADRs capture why decisions were made
-- Operational excellence - runbooks ensure smooth operations
+- **Consistency** - Everyone follows the same structure
+- **Automated Checks** - Run `docket audit` in CI/CD
+- **Onboarding** - New team members understand the project quickly
+- **Decision tracking** - ADRs capture why decisions were made
+- **Operational excellence** - Runbooks ensure smooth operations
+- **Health Monitoring** - Track documentation health over time
+
+### For AI-Assisted Development
+- **Agent-Agnostic** - Works with any AI coding agent
+- **Context-Rich** - AI agents understand your project instantly
+- **Structured Output** - JSON mode for programmatic access
+- **Smart Suggestions** - Agents can suggest what to document
+- **Maintenance Automation** - Agents help keep docs current
 
 ### For Open Source Projects
-- Contributor friendly - clear documentation attracts contributors
-- Professional appearance - shows project maturity
-- Community building - RFCs enable community-driven design
-- Maintenance - troubleshooting guides reduce support burden
+- **Contributor friendly** - Clear documentation attracts contributors
+- **Professional appearance** - Shows project maturity
+- **Community building** - RFCs enable community-driven design
+- **Maintenance** - Troubleshooting guides reduce support burden
+- **CI Integration** - Automated documentation checks
 
 ## Roadmap
 
