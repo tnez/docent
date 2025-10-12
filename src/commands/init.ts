@@ -114,12 +114,12 @@ export default class Init extends Command {
       hasDocs: analysis.structure.hasDocs,
     }
 
-    // Install templates
+    // Create documentation structure
     if (!outputJson) {
-      this.log(chalk.dim(`Installing templates to ${docsDir}/...`))
+      this.log(chalk.dim(`Creating documentation structure in ${docsDir}/...`))
     }
 
-    const installedFiles = await installTemplates(cwd, docsDir, customization)
+    const createdItems = await installTemplates(cwd, docsDir, customization)
 
     // Save context
     saveContext(cwd, context)
@@ -130,7 +130,7 @@ export default class Init extends Command {
           {
             success: true,
             context,
-            installedFiles,
+            createdItems,
             docsDirectory: docsDir,
           },
           null,
@@ -138,13 +138,13 @@ export default class Init extends Command {
         ),
       )
     } else {
-      this.log(chalk.green(`✓ Installed ${installedFiles.length} templates\n`))
+      this.log(chalk.green(`✓ Created documentation structure with ${createdItems.length} items\n`))
 
       this.log(chalk.bold('📚 Next Steps:'))
-      this.log(`  1. Review the templates in ${chalk.cyan(docsDir + '/')}`)
-      this.log('  2. Customize them for your project')
-      this.log(`  3. Run ${chalk.cyan('docket audit')} to find documentation gaps`)
-      this.log(`  4. Run ${chalk.cyan('docket review')} to check for staleness\n`)
+      this.log(`  1. Review the structure in ${chalk.cyan(docsDir + '/')}`)
+      this.log(`  2. Create docs as needed: ${chalk.cyan('docket new adr "Title"')}`)
+      this.log(`  3. Run ${chalk.cyan('docket audit')} to check documentation coverage`)
+      this.log(`  4. Run ${chalk.cyan('docket review')} to monitor documentation health\n`)
 
       this.log(chalk.dim('Documentation initialized successfully!'))
       this.log(chalk.dim(`Context saved to: .docket/context.json`))
