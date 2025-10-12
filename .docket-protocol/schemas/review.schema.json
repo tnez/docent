@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docket.dev/schemas/review.json",
+  "title": "Docket Documentation Review",
+  "description": "Schema for docket review command output",
+  "type": "object",
+  "required": ["staleDocuments", "driftIssues", "healthScore", "lastReviewDate", "recommendations", "timestamp"],
+  "properties": {
+    "staleDocuments": {
+      "type": "array",
+      "description": "Documentation files that haven't been updated recently",
+      "items": {
+        "type": "object",
+        "required": ["file", "lastModified", "daysSinceUpdate", "severity"],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Path to the stale document"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When file was last modified"
+          },
+          "daysSinceUpdate": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of days since last update"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Staleness severity (high: 6+ months, medium: 3-6 months, low: 1-3 months)"
+          },
+          "relatedCode": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Related code files (if detected)"
+          }
+        }
+      }
+    },
+    "driftIssues": {
+      "type": "array",
+      "description": "Misalignments between code and documentation",
+      "items": {
+        "type": "object",
+        "required": ["category", "description", "severity", "files", "suggestion"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Type of drift",
+            "examples": ["Framework", "Testing", "Drift", "Setup"]
+          },
+          "description": {
+            "type": "string",
+            "description": "What drift was detected"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Priority level of this drift"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Affected files"
+          },
+          "suggestion": {
+            "type": "string",
+            "description": "Recommended action to resolve drift"
+          }
+        }
+      }
+    },
+    "healthScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Overall documentation health score"
+    },
+    "lastReviewDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this review was performed"
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Prioritized recommendations for improving documentation health",
+      "items": {
+        "type": "string"
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when review was performed"
+    }
+  },
+  "examples": [
+    {
+      "staleDocuments": [
+        {
+          "file": "architecture-overview.md",
+          "lastModified": "2024-04-01T00:00:00.000Z",
+          "daysSinceUpdate": 193,
+          "severity": "high"
+        }
+      ],
+      "driftIssues": [
+        {
+          "category": "Framework",
+          "description": "Detected frameworks (react, express) are not mentioned in architecture docs",
+          "severity": "medium",
+          "files": ["architecture-overview.md"],
+          "suggestion": "Update architecture documentation to reflect current technology stack"
+        }
+      ],
+      "healthScore": 75,
+      "lastReviewDate": "2025-10-11T19:00:00.000Z",
+      "recommendations": [
+        "Review and update 1 documents that haven't been updated in 6+ months",
+        "Update architecture and framework documentation to match current implementation"
+      ],
+      "timestamp": "2025-10-11T19:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docket.dev/schemas/analysis.json",
+  "title": "Docket Project Analysis",
+  "description": "Schema for docket analyze command output",
+  "type": "object",
+  "required": ["languages", "frameworks", "structure", "buildTools", "packageManagers", "timestamp"],
+  "properties": {
+    "languages": {
+      "type": "array",
+      "description": "Detected programming languages in the project",
+      "items": {
+        "type": "object",
+        "required": ["name", "fileCount", "primaryExtensions", "confidence"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the programming language",
+            "examples": ["JavaScript", "TypeScript", "Python", "Rust", "Go"]
+          },
+          "fileCount": {
+            "type": "integer",
+            "description": "Number of files detected for this language",
+            "minimum": 0
+          },
+          "primaryExtensions": {
+            "type": "array",
+            "description": "File extensions associated with this language",
+            "items": {
+              "type": "string",
+              "pattern": "^\\."
+            },
+            "examples": [[".js", ".jsx"], [".py"], [".rs"]]
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Confidence level of language detection based on file prevalence"
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "type": "array",
+      "description": "Detected frameworks and libraries",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "confidence", "detectedFrom"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the framework or library",
+            "examples": ["React", "Django", "Express", "Actix Web"]
+          },
+          "type": {
+            "type": "string",
+            "enum": ["web", "backend", "testing", "mobile", "desktop", "other"],
+            "description": "Category of framework"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Confidence level of framework detection"
+          },
+          "detectedFrom": {
+            "type": "string",
+            "description": "Source file where framework was detected",
+            "examples": ["package.json", "Cargo.toml", "requirements.txt"]
+          }
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "description": "Project directory structure analysis",
+      "required": ["hasSource", "hasTests", "hasDocs", "sourceDirectories", "testDirectories", "docsDirectories", "rootFiles"],
+      "properties": {
+        "hasSource": {
+          "type": "boolean",
+          "description": "Whether project has dedicated source directories"
+        },
+        "hasTests": {
+          "type": "boolean",
+          "description": "Whether project has dedicated test directories"
+        },
+        "hasDocs": {
+          "type": "boolean",
+          "description": "Whether project has dedicated documentation directories"
+        },
+        "sourceDirectories": {
+          "type": "array",
+          "description": "Detected source code directories",
+          "items": {
+            "type": "string"
+          },
+          "examples": [["src", "lib"], ["app"], ["pkg"]]
+        },
+        "testDirectories": {
+          "type": "array",
+          "description": "Detected test directories",
+          "items": {
+            "type": "string"
+          },
+          "examples": [["test", "tests"], ["__tests__"], ["spec"]]
+        },
+        "docsDirectories": {
+          "type": "array",
+          "description": "Detected documentation directories",
+          "items": {
+            "type": "string"
+          },
+          "examples": [["docs"], ["doc", "documentation"]]
+        },
+        "rootFiles": {
+          "type": "array",
+          "description": "Files in the project root directory",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "buildTools": {
+      "type": "array",
+      "description": "Detected build tools and task runners",
+      "items": {
+        "type": "string",
+        "examples": ["Make", "Just", "Task", "Webpack", "Vite", "TypeScript"]
+      }
+    },
+    "packageManagers": {
+      "type": "array",
+      "description": "Detected package managers",
+      "items": {
+        "type": "string",
+        "examples": ["npm", "yarn", "pnpm", "cargo", "pip", "poetry"]
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when analysis was performed"
+    }
+  },
+  "examples": [
+    {
+      "languages": [
+        {
+          "name": "TypeScript",
+          "fileCount": 42,
+          "primaryExtensions": [".ts", ".tsx"],
+          "confidence": "high"
+        },
+        {
+          "name": "JavaScript",
+          "fileCount": 8,
+          "primaryExtensions": [".js"],
+          "confidence": "medium"
+        }
+      ],
+      "frameworks": [
+        {
+          "name": "React",
+          "type": "web",
+          "confidence": "high",
+          "detectedFrom": "package.json"
+        },
+        {
+          "name": "Express",
+          "type": "backend",
+          "confidence": "high",
+          "detectedFrom": "package.json"
+        },
+        {
+          "name": "Jest",
+          "type": "testing",
+          "confidence": "high",
+          "detectedFrom": "package.json"
+        }
+      ],
+      "structure": {
+        "hasSource": true,
+        "hasTests": true,
+        "hasDocs": true,
+        "sourceDirectories": ["src"],
+        "testDirectories": ["test"],
+        "docsDirectories": ["docs"],
+        "rootFiles": ["package.json", "README.md", "tsconfig.json"]
+      },
+      "buildTools": ["TypeScript", "Webpack"],
+      "packageManagers": ["npm"],
+      "timestamp": "2025-10-11T19:00:00.000Z"
+    }
+  ]
+}

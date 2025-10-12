@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docket.dev/schemas/init.json",
+  "title": "Docket Initialization Result",
+  "description": "Schema for docket init command output",
+  "type": "object",
+  "required": ["success"],
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether initialization succeeded"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if initialization failed"
+    },
+    "context": {
+      "type": "object",
+      "description": "Project context (only present on success)",
+      "required": ["projectName", "teamSize", "documentationGoals", "analysis", "customizations", "timestamp"],
+      "properties": {
+        "projectName": {
+          "type": "string",
+          "description": "Name of the project"
+        },
+        "teamSize": {
+          "type": "string",
+          "enum": ["solo", "small", "medium", "large"],
+          "description": "Team size classification"
+        },
+        "documentationGoals": {
+          "type": "array",
+          "description": "Selected documentation goals",
+          "items": {
+            "type": "string",
+            "enum": ["architecture", "standards", "onboarding", "testing", "patterns", "decisions", "postmortems"]
+          }
+        },
+        "analysis": {
+          "$ref": "https://docket.dev/schemas/analysis.json"
+        },
+        "customizations": {
+          "type": "object",
+          "description": "Template customizations applied"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When initialization was performed"
+        }
+      }
+    },
+    "installedFiles": {
+      "type": "array",
+      "description": "List of template files installed (only present on success)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "docsDirectory": {
+      "type": "string",
+      "description": "Directory where templates were installed (only present on success)"
+    }
+  },
+  "examples": [
+    {
+      "success": true,
+      "context": {
+        "projectName": "my-app",
+        "teamSize": "solo",
+        "documentationGoals": ["architecture", "standards", "testing"],
+        "analysis": {
+          "languages": [{"name": "TypeScript", "fileCount": 42, "primaryExtensions": [".ts"], "confidence": "high"}],
+          "frameworks": [],
+          "structure": {
+            "hasSource": true,
+            "hasTests": true,
+            "hasDocs": false,
+            "sourceDirectories": ["src"],
+            "testDirectories": ["test"],
+            "docsDirectories": [],
+            "rootFiles": ["package.json"]
+          },
+          "buildTools": ["TypeScript"],
+          "packageManagers": ["npm"],
+          "timestamp": "2025-10-11T19:00:00.000Z"
+        },
+        "customizations": {},
+        "timestamp": "2025-10-11T19:00:00.000Z"
+      },
+      "installedFiles": [
+        "adr-template.md",
+        "architecture-overview-template.md",
+        "standards-template.md"
+      ],
+      "docsDirectory": "docs"
+    },
+    {
+      "success": false,
+      "error": "already_initialized"
+    }
+  ]
+}
