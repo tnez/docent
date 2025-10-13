@@ -39,6 +39,8 @@ export class PromptBuilder {
         return this.buildCreateAdr(args)
       case 'plan-feature':
         return this.buildPlanFeature(args)
+      case 'research-topic':
+        return this.buildResearchTopic(args)
       default:
         throw new Error(`Prompt builder not implemented: ${name}`)
     }
@@ -347,6 +349,216 @@ What questions do you have to get started?
 
     return {
       description: 'Feature planning from research to spec',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: prompt,
+          },
+        },
+      ],
+    }
+  }
+
+  /**
+   * Build "Research Topic" prompt
+   */
+  private async buildResearchTopic(args: Record<string, string>): Promise<{description?: string; messages: PromptMessage[]}> {
+    const {topic, context = ''} = args
+
+    if (!topic) {
+      throw new Error('Missing required argument: topic')
+    }
+
+    // Get project analysis for context
+    const analysis = await analyzeProject(process.cwd())
+
+    // Generate filename from topic
+    const filename = topic
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+
+    const prompt = `# Research Topic
+
+## Your Task
+
+Conduct comprehensive research on: **${topic}**
+
+${context ? `\n## Additional Context\n\n${context}\n` : ''}
+
+## Research Process
+
+Follow this structured approach to gather and synthesize information:
+
+### Phase 1: Discovery (WebSearch + WebFetch)
+
+1. **Search for official documentation**
+   - Use WebSearch to find authoritative sources
+   - Look for: official docs, specifications, API references
+   - Prioritize: recent dates (2024-2025), official sites, established tutorials
+
+2. **Gather primary sources**
+   - Use WebFetch to read full content from top sources
+   - Extract: key concepts, API structures, best practices
+   - Note: code examples, patterns, gotchas
+
+3. **Find real-world examples**
+   - Search GitHub for production implementations
+   - Look for: popular repositories, maintained projects
+   - Analyze: how they solve similar problems
+
+### Phase 2: Synthesis
+
+1. **Identify patterns**
+   - What approaches are commonly used?
+   - What do experts recommend?
+   - What are the trade-offs?
+
+2. **Extract actionable insights**
+   - How does this apply to our project?
+   - What are the implementation steps?
+   - What should we avoid?
+
+3. **Document findings**
+   - Create structured research document
+   - Include: executive summary, detailed findings, recommendations
+   - Cite: all sources with links
+
+### Phase 3: Documentation
+
+Create a research document at: **docs/research/${filename}.md**
+
+**Required Structure:**
+
+\`\`\`markdown
+# [Topic Title]
+
+**Created:** YYYY-MM-DD
+**Purpose:** Brief purpose statement
+**Status:** Complete | In Progress
+
+## Executive Summary
+
+[2-3 paragraphs summarizing key findings]
+
+**Key Findings:**
+- [Most important discovery]
+- [Second most important]
+- [Third most important]
+
+**Relevance to ${analysis.languages[0] ? `our ${analysis.languages[0]} project` : 'this project'}:**
+- [How this applies to us]
+
+---
+
+## [Main Section 1]
+
+[Detailed content with subsections]
+
+### [Subsection]
+
+[Content with code examples, explanations]
+
+---
+
+## [Main Section 2]
+
+[Continue with logical sections]
+
+---
+
+## Best Practices
+
+1. **[Practice 1]**
+   - [Details]
+   - [Why this matters]
+
+2. **[Practice 2]**
+   - [Details]
+
+---
+
+## Real-World Examples
+
+### [Example 1: Source/Project Name]
+
+[Description of implementation]
+[Link to source]
+[Key takeaways]
+
+---
+
+## Recommendations for This Project
+
+### Immediate Actions
+
+1. [First recommendation with rationale]
+2. [Second recommendation]
+
+### Implementation Approach
+
+[Suggested approach based on findings]
+
+---
+
+## References
+
+### Official Documentation
+
+- [Title](URL) - Description
+- [Title](URL) - Description
+
+### Tutorials and Articles
+
+- [Title](URL) - Author, Date
+- [Title](URL) - Author, Date
+
+### Code Examples
+
+- [Repository](URL) - Description
+- [Repository](URL) - Description
+
+---
+
+**End of Research Document**
+\`\`\`
+
+## Project Context
+
+Use this context to make research relevant:
+
+- **Languages**: ${analysis.languages.join(', ') || 'Unknown'}
+- **Frameworks**: ${analysis.frameworks.join(', ') || 'Unknown'}
+- **Build Tools**: ${analysis.buildTools.join(', ') || 'Unknown'}
+
+## Quality Criteria
+
+Your research document should be:
+
+✓ **Comprehensive** - Cover the topic thoroughly
+✓ **Actionable** - Provide clear next steps
+✓ **Well-cited** - Link to all sources
+✓ **Structured** - Follow the template above
+✓ **Relevant** - Apply findings to our project
+✓ **Current** - Use recent sources (prefer 2024-2025)
+
+## Important Notes
+
+- Use WebSearch to find authoritative sources (official docs, spec sites, well-known tutorials)
+- Use WebFetch to read full content from those sources
+- Synthesize findings - don't just copy/paste
+- Include code examples where relevant
+- Cite all sources properly
+- Focus on practical application to our project
+- Create the document at docs/research/${filename}.md
+
+Begin research now!
+`
+
+    return {
+      description: 'Structured research with documentation output',
       messages: [
         {
           role: 'user',

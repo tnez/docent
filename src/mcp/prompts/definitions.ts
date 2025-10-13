@@ -50,4 +50,21 @@ export const PROMPTS: Record<string, Prompt> = {
       },
     ],
   },
+
+  'research-topic': {
+    name: 'research-topic',
+    description: 'Conduct structured research on a topic and create documentation',
+    arguments: [
+      {
+        name: 'topic',
+        description: 'Research topic or question (e.g., "MCP resources and prompts implementation")',
+        required: true,
+      },
+      {
+        name: 'context',
+        description: 'Additional context or specific questions to explore',
+        required: false,
+      },
+    ],
+  },
 }

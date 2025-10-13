@@ -700,3 +700,53 @@ Returns: {
 
 ---
 
+## 2025-10-13T20:17:27.672Z
+
+**Summary:** Completed end-to-end testing of MCP resources and prompts - all systems working
+
+**Key Discoveries:**
+- Resources: 14 discovered (1 journal + 13 templates), all read correctly
+- Security: Path traversal protection working perfectly (blocked .., ~)
+- Resume-work generates 63KB prompts including full journal context
+- Prompt structure validated: context gathering → synthesis instructions → focus on WHY
+- Journal entries are immediately available to resume-work (feedback loop confirmed)
+- capture-work + resume-work pattern works seamlessly
+
+**Next Steps:**
+- Consider: Should resume-work tail journal instead of including full content for large journals?
+- Update README with resources/prompts examples
+- Write "Using Docket Workflows" guide showing the patterns
+- Clean up test-e2e.js (keep or archive)
+- RFC-0005 Phase 4 nearly complete - just documentation remaining
+
+**Open Questions:**
+- Journal size management: When to summarize vs include full content?
+- Should we add journal size to resource metadata?
+
+---
+
+## 2025-10-13T20:25:28.151Z
+
+**Summary:** Implemented research-topic MCP prompt for structured research workflows
+
+**Key Discoveries:**
+- Research workflow is perfect use case for MCP prompts (user-invoked, structured guidance)
+- Prompt provides 3-phase process: Discovery (WebSearch/WebFetch) → Synthesis → Documentation
+- Auto-generates filename from topic (effective-documentation-patterns-for-ai-agents.md)
+- Includes project context (languages, frameworks) for relevance
+- Provides complete document template with required sections
+- Quality criteria built into prompt (comprehensive, actionable, well-cited)
+- This replaces need for custom research-analyst agent - uses MCP-native pattern
+
+**Next Steps:**
+- Test research-topic prompt with real research task
+- Consider: Should other prompts (review-rfc, plan-feature) also mention capture-work?
+- Commit research-topic implementation
+- Update README/docs with research workflow examples
+
+**Open Questions:**
+- Should research prompts automatically use capture-work at the end?
+- Do we need a follow-up prompt for refining research docs?
+
+---
+
