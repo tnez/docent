@@ -1,6 +1,6 @@
 # ADR-0002: Use Oclif for CLI Framework
 
-**Status:** Accepted
+**Status:** Superseded by [ADR-0004](./adr-0004-mcp-only-architecture.md)
 **Date:** 2025-10-11
 **Deciders:** @tnez
 **Technical Story:** CLI Implementation (ADR-0001)

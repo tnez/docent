@@ -1,7 +1,8 @@
 # ADR-0001: Build CLI Platform with Agent Protocol Instead of Templates-Only
 
-**Status:** Accepted
+**Status:** Superseded by [ADR-0004](./adr-0004-mcp-only-architecture.md)
 **Date:** 2025-10-11
+**Superseded:** 2025-10-13
 **Deciders:** @tnez
 **Technical Story:** Phase 3.9 Planning Discussion
 

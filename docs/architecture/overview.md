@@ -1,105 +1,113 @@
 # Architecture Overview: Docket
 
 **Version:** 0.3.0
-**Last Updated:** 2025-10-11
+**Last Updated:** 2025-10-13
 **Status:** Current
 **Audience:** Contributors, Developers, Agent Integrators
 
 ## Executive Summary
 
-Docket is a documentation platform that combines production-ready templates with intelligent CLI tools and an agent-agnostic protocol. It helps developers initialize, maintain, and improve project documentation through automated analysis, gap detection, and drift monitoring.
+Docket is documentation intelligence for AI agents. It provides agents with semantic analysis, project context, and documentation templates through the Model Context Protocol (MCP). Agents use docket automatically—users configure once and forget about it.
 
-The system consists of four main components: a command-line interface built with oclif, core analysis libraries written in TypeScript, 11 comprehensive documentation templates, and a JSON-based protocol for AI agent integration.
+The system consists of three main components: an MCP server exposing 5 tools, core analysis libraries written in TypeScript that provide both heuristic and agent-driven assessments, and 10 comprehensive documentation templates.
 
 **Key Points:**
-- **CLI-first design** - All functionality accessible via `docket` commands
-- **Agent-agnostic architecture** - Works with any AI coding assistant through JSON protocol
-- **Intelligent analysis** - Automatically detects languages, frameworks, and documentation gaps
-- **Zero coupling** - No dependencies on specific agents or platforms
+- **Agent-first design** - Built for AI agents, not human CLI usage
+- **MCP-only interface** - Native tool calling through Model Context Protocol
+- **Semantic analysis** - Agent-driven assessment outperforms heuristics 3.5x (73/100 vs 21/100)
+- **Invisible infrastructure** - Configure once, agent just knows documentation stuff
+- **Agent-agnostic** - Works with any MCP-compatible agent (Claude Code, Claude Desktop, etc.)
 
 ## System Context
 
 ### Purpose
 
-Docket solves the documentation maintenance problem. Most software projects have non-existent, outdated, or scattered documentation. Docket addresses this by:
+Docket makes AI agents smarter at understanding and improving documentation. It provides semantic analysis, project context, and templates so agents can assess documentation quality beyond simple pattern matching.
 
-1. **Initializing documentation** - Smart setup based on project analysis
-2. **Finding gaps** - Automated detection of missing or incomplete documentation
-3. **Detecting drift** - Monitoring for staleness and code/documentation misalignment
-4. **Enabling agents** - Providing structured data for AI-assisted documentation
+**How agents use docket:**
+
+1. **Analyze projects** - Understand languages, frameworks, and structure
+2. **Assess quality** - Semantic evaluation using agent reasoning (73/100) vs heuristics (21/100)
+3. **Access templates** - Get ADR, RFC, spec, guide templates on demand
+4. **Gather context** - Receive structured project + documentation data for reasoning
+
+**The key insight:** Heuristic analysis (pattern matching) fails catastrophically (87% false positive rate). Agent-driven analysis provides contextual, actionable insights.
 
 ### Users
 
-Primary user types:
+**Primary audience: Solo developers using AI agents as coding partners**
 
-- **Solo Developers** - Individual developers documenting personal or portfolio projects
-- **Development Teams** - Teams maintaining shared project documentation
-- **Open Source Maintainers** - Projects needing contributor-friendly documentation
-- **AI Coding Agents** - Automated assistants that help maintain documentation (Claude Code, Cursor, Aider, etc.)
+- Individual developers with AI agents central to their workflow
+- Using agents like Claude Code, Claude Desktop, Cursor, or other MCP-compatible tools
+- Want documentation help without learning another CLI tool
+- Prefer invisible infrastructure over explicit tooling
+
+**Not the target:**
+- Teams needing CI/CD documentation gates (not docket's lane)
+- Developers without AI agent integration
+- Traditional documentation workflows without agent assistance
 
 ### Dependencies
 
 External dependencies:
 
 - **Node.js** - Runtime (v18+)
-- **npm** - Package manager
-- **Git** (optional) - For staleness detection and revision tracking
+- **npm** - Package manager and distribution
+- **MCP-compatible agent** - Claude Code, Claude Desktop, or similar
 - **File system** - Local project files for analysis
 
 ### Dependents
 
 Systems that depend on docket:
 
-- **User projects** - Documentation initialized and managed by docket
-- **AI coding agents** - Agents consuming docket's JSON output for context
-- **CI/CD pipelines** - Automated documentation checks in build processes
+- **AI coding agents** - MCP-compatible agents using docket tools for documentation intelligence
+- **User projects** - Documentation templates and analysis provided through agents
 
 ## Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                  Users / AI Agents                      │
-└────────────────────────┬────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│                 CLI Interface (oclif)                   │
-│  ┌──────────┬──────────┬──────────┬──────────┐         │
-│  │ analyze  │   init   │  audit   │  review  │         │
-│  └──────────┴──────────┴──────────┴──────────┘         │
-└────────────────────────┬────────────────────────────────┘
-                         │
+                ┌─────────────────────────┐
+                │   AI Agents (Users)     │
+                │  Claude Code, Desktop   │
+                └────────────┬────────────┘
+                             │ MCP Protocol
+                             │ (stdio, JSON-RPC)
+                             ▼
+┌──────────────────────────────────────────────────────────┐
+│              MCP Server (bin/mcp-server.js)              │
+│                                                          │
+│  ┌────────────┬──────────────┬──────────┬────────────┐  │
+│  │  analyze   │ audit-quality│   audit  │list/get    │  │
+│  │            │  (agent-     │(heuristic│ templates  │  │
+│  │            │   driven)    │ fallback)│            │  │
+│  └────────────┴──────────────┴──────────┴────────────┘  │
+└────────────────────────┬─────────────────────────────────┘
+                         │ uses
          ┌───────────────┼───────────────┐
          ▼               ▼               ▼
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│   Detector   │  │   Auditor    │  │   Reviewer   │
+│   Detector   │  │   Auditor    │  │ Agent-Audit  │
 │              │  │              │  │              │
-│ - Languages  │  │ - Coverage   │  │ - Staleness  │
-│ - Frameworks │  │ - Gaps       │  │ - Drift      │
-│ - Structure  │  │ - Scoring    │  │ - Health     │
+│ - Languages  │  │ - Heuristics │  │ - Context    │
+│ - Frameworks │  │ - Coverage   │  │ - Prompts    │
+│ - Structure  │  │ - Gaps (21%) │  │ - Data (73%) │
 └──────────────┘  └──────────────┘  └──────────────┘
          │               │               │
          └───────────────┼───────────────┘
+                         │ accesses
                          ▼
-                 ┌───────────────┐
-                 │   Installer   │
-                 │               │
-                 │ - Templates   │
-                 │ - Context     │
-                 │ - Customize   │
-                 └───────┬───────┘
+         ┌───────────────────────────────┐
+         │      Templates & Prompts       │
+         ├───────────────┬───────────────┤
+         │  templates/   │ templates/    │
+         │               │  prompts/     │
+         │ - adr         │               │
+         │ - rfc         │ - audit-      │
+         │ - spec        │   quality.md  │
+         │ - api         │               │
+         │ - ... (10)    │               │
+         └───────────────┴───────────────┘
                          │
-         ┌───────────────┴───────────────┐
-         ▼                               ▼
-┌──────────────────┐           ┌─────────────────┐
-│    Templates/    │           │  .docket-       │
-│                  │           │   protocol/     │
-│ 11 .md files     │           │                 │
-│ (ADR, RFC, etc.) │           │ - agent-guide   │
-│                  │           │ - schemas/      │
-└──────────────────┘           └─────────────────┘
-         │                               │
-         └───────────────┬───────────────┘
                          ▼
                 ┌─────────────────┐
                 │  User's docs/   │
@@ -109,40 +117,58 @@ Systems that depend on docket:
                 └─────────────────┘
 ```
 
+**Key Flow:**
+1. Agent calls MCP tool (e.g., `audit-quality`)
+2. MCP server gathers context (detector + auditor + agent-audit)
+3. Returns assessment prompt + structured data to agent
+4. Agent analyzes semantically and provides recommendations
+5. For templates: agent calls `get-template` → receives markdown
+
 ## Components
 
-### Component 1: CLI Layer (oclif)
+### Component 1: MCP Server
 
-**Purpose:** Command-line interface providing all docket functionality
+**Purpose:** Model Context Protocol server providing docket intelligence to AI agents
 
-**Technology:** oclif v4 (Node.js CLI framework)
+**Technology:** TypeScript, @modelcontextprotocol/sdk (stdio transport)
 
 **Responsibilities:**
-- Parse command-line arguments and flags
-- Provide rich terminal output (colors, formatting, progress)
-- Generate JSON output for agent consumption (`--output json`)
-- Handle interactive prompts (when appropriate)
-- Display help and command documentation
+- Implement MCP protocol (JSON-RPC over stdio)
+- Expose 5 tools for agent consumption
+- Route tool calls to appropriate libraries
+- Return structured data and prompts to agents
+- Handle errors gracefully
 
-**Key Commands:**
-- `docket analyze` - Analyze project structure and technologies
-- `docket init` - Initialize documentation with smart customization
-- `docket audit` - Audit documentation completeness and find gaps
-- `docket review` - Review documentation for staleness and drift
+**Available Tools:**
+1. **`analyze`** - Analyze project structure, languages, frameworks
+2. **`audit-quality`** - Agent-driven semantic documentation assessment (73/100 score)
+3. **`audit`** - Heuristic documentation audit for baseline (21/100 score)
+4. **`list-templates`** - List 10 available documentation templates
+5. **`get-template`** - Fetch template content by type
 
 **Interactions:**
-- Calls: Detector, Installer, Auditor, Reviewer libraries
-- Called by: Users (terminal), AI agents (shell execution), CI/CD pipelines
+- Calls: Detector, Auditor, Agent-Audit libraries
+- Called by: MCP-compatible agents (Claude Code, Claude Desktop, etc.)
+- Protocol: JSON-RPC 2.0 over stdio
 
 **Key Interfaces:**
-- Command execution: `./bin/run <command> [flags]`
-- JSON output: `--output json` flag for structured data
-- Non-interactive mode: `--non-interactive` for automation
+```typescript
+// Tool calling interface
+{
+  method: 'tools/call',
+  params: {
+    name: 'audit-quality',
+    arguments: {path: '/project', docsDir: 'docs'}
+  }
+}
+// Returns: Assessment prompt + structured context
+```
 
 **Deployment:**
-- Distributed via npm: `npm install -g @tnezdev/docket`
-- Can be run with npx: `npx @tnezdev/docket <command>`
-- Executable scripts in `/bin` directory
+- Entry point: `bin/mcp-server.js`
+- Distributed via npm: `npx @tnezdev/docket`
+- Configured in agent's MCP settings (e.g., `~/.claude.json`)
+- Runs as persistent process (stdio transport)
 
 ---
 
@@ -160,7 +186,7 @@ Systems that depend on docket:
 - Generate confidence scores for detections
 
 **Interactions:**
-- Called by: `analyze` command, `init` command (for context)
+- Called by: MCP `analyze` tool, MCP `audit-quality` tool (for context)
 - Calls: File system APIs, glob pattern matching
 
 **Key Interfaces:**
@@ -173,31 +199,33 @@ Systems that depend on docket:
 
 ---
 
-### Component 3: Installer Library
+### Component 3: Agent-Audit Library
 
-**Purpose:** Installs and customizes documentation templates based on project context
+**Purpose:** Gathers project and documentation context for agent-driven semantic analysis
 
-**Technology:** TypeScript, Node.js `fs` module
+**Technology:** TypeScript, Node.js `fs` module, `glob` library
 
 **Responsibilities:**
-- Copy templates from `/templates` to user's `docs/` directory
-- Customize templates with project-specific information
-- Save project context to `.docket/context.json`
-- Skip existing files (idempotent installation)
-- Handle template placeholder replacement
+- Collect structured project context (languages, frameworks, structure)
+- Gather documentation metadata (files, sizes, headings, timestamps)
+- Include heuristic audit results as baseline
+- Build comprehensive assessment prompts
+- Format data for agent reasoning
 
 **Interactions:**
-- Called by: `init` command
-- Calls: File system APIs, template customization functions
+- Called by: MCP `audit-quality` tool
+- Calls: Detector, Auditor, prompt builder, file system APIs
 
 **Key Interfaces:**
-- `installTemplates(cwd, docsDir, customization): Promise<string[]>`
-- `saveContext(cwd, context): void`
-- `loadContext(cwd): ProjectContext | null`
+- `prepareAgentAuditContext(cwd, docsDir, analysis, audit): Promise<AgentContext>`
+- `buildAuditPrompt(context): string` (13K+ character assessment prompt)
+
+**Key Insight:**
+Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. This component enables that semantic intelligence.
 
 **Deployment:**
-- Compiled to `/lib/lib/installer.js` from `/src/lib/installer.ts`
-- Accesses templates via relative path from lib directory
+- Compiled to `/lib/lib/agent-audit.js` from `/src/lib/agent-audit.ts`
+- Works with `/templates/prompts/audit-quality.md` template
 
 ---
 
@@ -216,8 +244,10 @@ Systems that depend on docket:
 - Generate prioritized gap recommendations
 
 **Interactions:**
-- Called by: `audit` command
+- Called by: MCP `audit` tool, MCP `audit-quality` tool (for baseline)
 - Calls: File system APIs, pattern matching, analysis result from Detector
+
+**Note:** Heuristic audit provides 21/100 baseline. Used for comparison against agent-driven 73/100 score.
 
 **Key Interfaces:**
 - `auditDocumentation(cwd, docsDir, analysis): Promise<AuditResult>`
@@ -228,141 +258,71 @@ Systems that depend on docket:
 
 ---
 
-### Component 5: Reviewer Library
+### Component 5: Templates Collection
 
-**Purpose:** Reviews documentation for staleness and drift from codebase
+**Purpose:** Production-ready documentation templates and agent assessment prompts
 
-**Technology:** TypeScript, Node.js `fs` module, Git CLI, `glob` library
+**Technology:** Markdown files with structured content
 
-**Responsibilities:**
-- Detect stale documentation (files not updated in months)
-- Check for code/documentation drift (code changes without doc updates)
-- Verify framework alignment (docs match detected frameworks)
-- Calculate health score (0-100)
-- Generate recommendations for improvement
+**Templates (10 types):**
+1. `adr-template.md` - Architecture Decision Records
+2. `rfc-template.md` - Request for Comments
+3. `prd-template.md` - Product Requirements
+4. `architecture-template.md` - System architecture
+5. `api-template.md` - API reference
+6. `onboarding-template.md` - Developer onboarding
+7. `testing-template.md` - Testing philosophy
+8. `runbook-template.md` - Operational procedures
+9. `standards-template.md` - Coding standards
+10. `spec-template.md` - Behavioral specifications
 
-**Interactions:**
-- Called by: `review` command
-- Calls: File system APIs, Git commands, analysis result from Detector
-
-**Key Interfaces:**
-- `reviewDocumentation(cwd, docsDir, analysis): Promise<ReviewResult>`
-- Returns structured data matching `review.schema.json`
-
-**Deployment:**
-- Compiled to `/lib/lib/reviewer.js` from `/src/lib/reviewer.ts`
-
----
-
-### Component 6: Templates Collection
-
-**Purpose:** Production-ready documentation templates for common project needs
-
-**Technology:** Markdown files with placeholder syntax
+**Agent Prompts:**
+- `templates/prompts/audit-quality.md` - 13K character assessment prompt for agent-driven analysis
 
 **Responsibilities:**
 - Provide structure and guidance for documentation
 - Include examples and best practices
-- Support customization via placeholder replacement
-- Cover diverse documentation needs (ADRs, RFCs, runbooks, etc.)
+- Support agent access via `get-template` tool
+- Enable semantic analysis via comprehensive prompts
 
-**Templates:**
-1. `adr-template.md` - Architecture Decision Records
-2. `api-documentation-template.md` - API reference
-3. `architecture-overview-template.md` - System architecture
-4. `onboarding-template.md` - Developer onboarding
-5. `patterns-template.md` - Code patterns catalog
-6. `rfc-template.md` - Request for Comments
-7. `runbook-template.md` - Operational procedures
-8. `standards-template.md` - Coding standards
-9. `testing-template.md` - Testing philosophy
-10. `troubleshooting-template.md` - Problem diagnosis
-11. `writing-software-template.md` - Development philosophy
+**Interactions:**
+- Called by: MCP `get-template` tool, MCP `list-templates` tool
+- Accessed by: Agent-Audit library for prompts
 
 **Deployment:**
 - Source files in `/templates` directory
 - Included in npm package via `files` field in package.json
 
----
-
-### Component 7: Agent Protocol
-
-**Purpose:** Enable AI coding agents to use docket through standardized interface
-
-**Technology:** Markdown documentation, JSON Schema definitions
-
-**Responsibilities:**
-- Document integration patterns for agents
-- Define JSON output schemas for all commands
-- Provide workflow examples and best practices
-- Ensure cross-agent compatibility
-
-**Key Files:**
-- `.docket-protocol/agent-guide.md` - Complete integration guide
-- `.docket-protocol/schemas/analysis.schema.json` - Analyze output schema
-- `.docket-protocol/schemas/audit.schema.json` - Audit output schema
-- `.docket-protocol/schemas/review.schema.json` - Review output schema
-- `.docket-protocol/schemas/init.schema.json` - Init output schema
-
-**Interactions:**
-- Read by: AI agents, agent developers, integration maintainers
-- No runtime dependencies
-
-**Deployment:**
-- Included in npm package and Git repository
-- Served from GitHub for online access
-
 ## Data Flow
 
-### Primary Flow: Smart Initialization
+### Primary Flow: Agent-Driven Quality Assessment
 
-1. **User executes:** `docket init`
-2. **CLI parses:** Command and flags (interactive vs non-interactive)
+1. **Agent calls:** MCP `audit-quality` tool with project path
+2. **MCP Server routes:** Call to Agent-Audit library
 3. **Detector analyzes:** Project structure, languages, frameworks
-4. **CLI prompts:** (if interactive) Project name, team size, documentation goals
-5. **Installer customizes:** Templates based on analysis and user input
-6. **Installer creates:** Documentation files in `docs/` directory
-7. **Installer saves:** Context to `.docket/context.json`
-8. **CLI displays:** Success message with next steps
+4. **Auditor runs:** Heuristic baseline audit (21/100 score)
+5. **Agent-Audit gathers:** Complete context (project + docs + heuristic baseline)
+6. **Prompt Builder generates:** 13K+ character assessment prompt
+7. **MCP Server returns:** Prompt + structured context to agent
+8. **Agent analyzes:** Semantically evaluates documentation quality
+9. **Agent provides:** Contextual recommendations (73/100 score)
 
-**Sequence Diagram:**
+### Secondary Flow: Project Analysis
 
-```mermaid
-sequenceDiagram
-    User->>CLI: docket init
-    CLI->>Detector: analyzeProject(cwd)
-    Detector->>FileSystem: Scan files
-    FileSystem-->>Detector: File list
-    Detector-->>CLI: AnalysisResult
-    CLI->>User: Prompt for context (if interactive)
-    User-->>CLI: Project info
-    CLI->>Installer: installTemplates(...)
-    Installer->>Templates: Read template files
-    Templates-->>Installer: Template content
-    Installer->>FileSystem: Write customized docs
-    Installer->>FileSystem: Save .docket/context.json
-    CLI-->>User: Success message
-```
+1. **Agent calls:** MCP `analyze` tool
+2. **MCP Server routes:** Call to Detector library
+3. **Detector scans:** File system, detects languages/frameworks
+4. **MCP Server returns:** Structured analysis result
+5. **Agent uses:** Context for documentation decisions
 
-### Secondary Flow: Documentation Audit
+### Tertiary Flow: Template Access
 
-1. **User/Agent executes:** `docket audit --output json`
-2. **CLI parses:** Command and flags
-3. **Detector analyzes:** Project (for context)
-4. **Auditor scans:** Documentation directory
-5. **Auditor checks:** Coverage, empty files, ADR compliance
-6. **Auditor calculates:** Completeness score and gaps
-7. **CLI outputs:** JSON result to stdout
-
-### Tertiary Flow: Drift Detection
-
-1. **User executes:** `docket review`
-2. **Detector analyzes:** Current project state
-3. **Reviewer checks:** Git history for file modifications
-4. **Reviewer compares:** Detected frameworks vs documented frameworks
-5. **Reviewer identifies:** Stale files and drift issues
-6. **Reviewer calculates:** Health score
-7. **CLI displays:** Formatted review results
+1. **Agent calls:** MCP `list-templates` tool
+2. **MCP Server returns:** Array of 10 template types
+3. **Agent calls:** MCP `get-template` tool with type
+4. **MCP Server reads:** Template file from `/templates`
+5. **MCP Server returns:** Template markdown content
+6. **Agent uses:** Template for documentation creation
 
 ## Technology Stack
 
@@ -371,51 +331,57 @@ sequenceDiagram
 - **Runtime:** Node.js 18+
 - **Package Manager:** npm
 
-### CLI Framework
-- **Framework:** oclif v4
-- **Reason:** Rich UX, TypeScript-first, proven at scale (see ADR-0002)
+### MCP Framework
+- **Protocol:** Model Context Protocol (MCP)
+- **SDK:** @modelcontextprotocol/sdk
+- **Transport:** stdio (JSON-RPC 2.0)
+- **Reason:** Native tool calling, agent-first, industry standard
 
 ### Build & Development
 - **Compiler:** TypeScript compiler (`tsc`)
 - **Testing:** Mocha v10
-- **Linting:** ESLint v8 (via oclif config)
+- **Linting:** ESLint v8
 
 ### Core Libraries
 - **File Operations:** Node.js `fs` module
 - **Pattern Matching:** `glob` v10
-- **Terminal Colors:** `chalk` v4
-- **Interactive Prompts:** `inquirer` v8
+- **MCP SDK:** @modelcontextprotocol/sdk (stdio transport)
 
 ### Distribution
 - **Registry:** npm
 - **Package Name:** `@tnezdev/docket`
-- **Binary:** Installed to `node_modules/.bin/docket`
+- **Entry Point:** `bin/mcp-server.js`
+- **Usage:** `npx @tnezdev/docket`
 
 ### Documentation
 - **Format:** Markdown
-- **Schema Definitions:** JSON Schema (draft-07)
+- **Templates:** 10 types + agent prompts
+- **Prompt Size:** 13K+ characters for agent-driven assessment
 
 ## Scalability
 
 ### Current Scale
-- **Installation size:** ~717 npm packages (including transitive dependencies)
-- **Compiled size:** ~2 MB lib directory
-- **Template count:** 11 markdown files
+- **Installation size:** ~272 npm packages (72% reduction from 977)
+- **Compiled size:** ~1 MB lib directory
+- **Template count:** 10 markdown files + agent prompts
 - **Supported languages:** 30+ (extensible)
 - **Supported frameworks:** 50+ (extensible)
+- **MCP tools:** 5 (analyze, audit-quality, audit, list-templates, get-template)
 
 ### Performance Characteristics
+- **MCP startup:** ~500ms (persistent process, one-time cost)
 - **Analysis time:** < 2 seconds for typical projects
-- **Init time:** < 1 second (template installation)
-- **Audit time:** < 1 second for typical documentation
-- **Review time:** 1-3 seconds (depends on Git history size)
+- **Heuristic audit:** < 1 second (21/100 baseline)
+- **Agent audit context:** < 2 seconds (gathers data for 73/100 analysis)
+- **Template retrieval:** < 100ms (instant)
 
 ### Scaling Strategy
 
-**Not Applicable** - Docket is a CLI tool that runs locally. Scaling is handled by:
+**MCP Architecture** - Docket runs as persistent MCP server:
 - Individual user machines (no central service)
+- One process per agent session (stdio transport)
 - npm CDN for package distribution
-- GitHub for source code and protocol documentation
+- Lightweight footprint (~50MB memory)
 
 ## Security
 
@@ -445,42 +411,63 @@ sequenceDiagram
 ### Compatibility
 - **Cross-platform:** Works on macOS, Linux, Windows
 - **Node versions:** Requires Node.js 18+
-- **Backward compatible:** Shell scripts still work for template-only users
+- **Agent compatibility:** Works with any MCP-compatible agent
 
 ## Performance
 
 ### Benchmarks
-- **Cold start:** < 500ms (first run with ts-node)
-- **Warm start:** < 100ms (subsequent runs)
+- **MCP server startup:** ~500ms (one-time per session)
+- **Tool calls:** < 100ms overhead (persistent connection)
+- **Analysis:** < 2 seconds for typical projects
 - **Large projects:** Scales to 10,000+ files without issues
 
 ### Optimization Strategies
+- **Persistent process:** MCP server stays running (no startup cost per tool call)
 - **Glob patterns:** Ignore common paths (node_modules, .git, dist)
-- **Lazy loading:** Only load libraries when needed
-- **Compiled output:** Use compiled JS in production (not ts-node)
-- **Caching:** Reuse analysis results when appropriate
+- **Lazy loading:** Only load libraries when tool is called
+- **Compiled output:** Pre-compiled TypeScript for production
 
 ## Deployment
 
 ### Distribution Method
 **npm Package** - Published to npm registry as `@tnezdev/docket`
 
-### Installation Options
-```bash
-# Global installation
-npm install -g @tnezdev/docket
+### MCP Configuration
+```json
+// ~/.claude.json or agent's MCP config
+{
+  "mcpServers": {
+    "docket": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@tnezdev/docket"],
+      "env": {}
+    }
+  }
+}
+```
 
-# Use without installation
-npx @tnezdev/docket <command>
+**For local development:**
+```json
+{
+  "mcpServers": {
+    "docket": {
+      "type": "stdio",
+      "command": "/absolute/path/to/docket/bin/mcp-server.js",
+      "args": [],
+      "env": {}
+    }
+  }
+}
 ```
 
 ### Build Process
 ```bash
-# Development (ts-node)
-./bin/run <command>
-
 # Production build
 npm run build  # Compiles src/ to lib/
+
+# Test MCP server
+node bin/mcp-server.js
 
 # Package for npm
 npm pack       # Creates tarball
@@ -494,45 +481,51 @@ npm publish    # Publishes to registry
 
 ## Future Considerations
 
-### Near Term (Next Release)
-- **Plugin system** - Allow custom templates and analyzers
+### Near Term (RFC-0004)
+- **Work artifact capture** - Journal for capturing discovered work during sessions
+- **Smart surfacing** - Context-aware reminders of unfinished work
+- **Work promotion** - Convert captures to formal docs (RFC, ADR, etc.)
+
+### Medium Term
+- **More agent prompts** - Review-staleness, init-guidance, etc.
+- **Streaming responses** - Stream large analyses incrementally
+- **Custom templates** - User-provided template repositories
 - **More languages** - Expand language detection (Elixir, Zig, V, etc.)
-- **Cache layer** - Cache analysis results for faster subsequent runs
-- **Watch mode** - Monitor files and re-audit on changes
 
 ### Long Term (Post 1.0)
-- **Custom templates** - User-provided template repositories
-- **Integration tests** - Test against real agent frameworks
-- **VS Code extension** - Native editor integration
-- **GitHub Action** - Run audit in CI/CD pipelines
-- **Web dashboard** - Optional hosted dashboard for teams
+- **Agent collaboration** - Multiple agents sharing same docket instance
+- **Integration tests** - Test against multiple MCP agents
+- **Template customization** - Project-specific template variants
+- **Analytics** - Track documentation quality trends over time
 
 ## Decision Log
 
 Key architectural decisions documented in ADRs:
 
-- [ADR-0001: CLI Platform Over Templates-Only](./adr-0001-cli-platform-over-templates-only.md) - Core transformation decision
-- [ADR-0002: Use Oclif for CLI Framework](./adr-0002-oclif-for-cli-framework.md) - Technical framework choice
-- [ADR-0003: Agent-Agnostic Architecture](./adr-0003-agent-agnostic-architecture.md) - Integration philosophy
+- [ADR-0001: CLI Platform Over Templates-Only](./adr/adr-0001-cli-platform-over-templates-only.md) - **Superseded** by ADR-0004
+- [ADR-0002: Use Oclif for CLI Framework](./adr/adr-0002-oclif-for-cli-framework.md) - **Superseded** by ADR-0004
+- [ADR-0003: Agent-Agnostic Architecture](./adr/adr-0003-agent-agnostic-architecture.md) - Still valid (MCP is agent-agnostic)
+- [ADR-0004: MCP-Only Architecture](./adr/adr-0004-mcp-only-architecture.md) - **Current** - Remove CLI, commit to agent-first
 
 ## References
 
-- [Agent Protocol Guide](../.docket-protocol/agent-guide.md) - How agents integrate with docket
-- [JSON Schemas](../.docket-protocol/schemas/) - Output format specifications
+- [RFC-0001: MCP Server Implementation](./rfcs/rfc-0001-mcp-server-for-agent-integration.md) - MCP architecture details
+- [RFC-0004: Work Artifact Capture](./rfcs/rfc-0004-work-artifact-capture-and-surfacing.md) - Future workflow features
+- [MCP Spec](https://spec.modelcontextprotocol.io/) - Model Context Protocol specification
 - [README](../README.md) - Project overview and quick start
 - [Contributing Guide](../CONTRIBUTING.md) - How to contribute to docket
-- [oclif Documentation](https://oclif.io/) - CLI framework we use
 
 ## Glossary
 
 - **ADR:** Architecture Decision Record - Document capturing a significant decision
-- **Agent:** AI coding assistant (Claude Code, Cursor, Aider, etc.)
-- **CLI:** Command Line Interface
-- **Drift:** Misalignment between code and documentation
-- **Idempotent:** Operation that produces same result regardless of how many times executed
-- **Staleness:** Documentation that hasn't been updated recently
-- **Template:** Pre-structured markdown file with placeholders and guidance
+- **Agent:** AI coding assistant (Claude Code, Claude Desktop, Cursor, etc.)
+- **Agent-driven analysis:** Semantic documentation assessment using agent reasoning (73/100 score)
+- **Heuristic analysis:** Pattern-matching documentation audit (21/100 score, baseline)
+- **MCP:** Model Context Protocol - Standard for AI agent tool calling
+- **MCP Tool:** Function exposed to agents via MCP protocol
+- **Semantic analysis:** Context-aware evaluation beyond pattern matching
+- **Template:** Pre-structured markdown file with examples and guidance
 
 ---
 
-**This architecture overview documents docket's current implementation as of v0.3.0. It reflects the transformation from templates-only to a complete documentation platform with intelligent CLI and agent protocol.**
+**This architecture overview documents docket's current implementation as of v0.3.0. It reflects the transformation to MCP-only, agent-first architecture based on validation showing agent-driven analysis outperforms heuristics by 3.5x (ADR-0004).**
