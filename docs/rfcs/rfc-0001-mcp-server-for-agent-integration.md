@@ -1,13 +1,15 @@
 # RFC-0001: MCP Server for Agent Integration
 
-**Status:** Draft
+**Status:** Superseded by [ADR-0004](../adr/adr-0004-mcp-only-architecture.md)
 **Author:** @tnez
 **Created:** 2025-10-12
-**Updated:** 2025-10-12
+**Updated:** 2025-10-13
+
+> **Note:** This RFC proposed adding MCP *alongside* CLI (dual interfaces). [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) chose MCP-only architecture instead, based on evidence that agents are required (73/100 vs 21/100 quality improvement) and all target users are AI agents. This RFC remains valuable for understanding the MCP integration approach and rationale.
 
 ## Summary
 
-Add a Model Context Protocol (MCP) server interface to docket alongside the existing CLI. This would enable AI agents to interact with docket through native tool calling rather than shell command execution, providing richer integration while maintaining the current shell-based approach for backward compatibility.
+Add a Model Context Protocol (MCP) server interface to docket alongside the existing CLI. This enables AI agents to interact with docket through native tool calling rather than shell command execution. The MCP server is implemented in the same repository as the CLI (`/src/mcp/`) sharing core logic and prompt templates. **Validated by audit prototype showing agent-driven analysis (73/100) significantly outperforms heuristic-based analysis (21/100).**
 
 ## Motivation
 
@@ -22,6 +24,14 @@ Docket currently exposes functionality through CLI commands with JSON output (e.
 - Doesn't work well in web-based or sandboxed environments
 - Agents must manually validate JSON output
 - No built-in tool discovery mechanism
+- **Manual copy/paste workflow for agent-driven features** (validated by audit prototype)
+
+**Prototype validation:**
+We built `docket audit --agent` to test agent-driven analysis. Results:
+- **Heuristic analysis**: 21/100 score, 87% false positive rate (flagged 13/15 substantial docs as "empty")
+- **Agent analysis**: 73/100 score, contextual understanding, actionable recommendations
+- **3.5x improvement** - Agents can do what heuristics cannot
+- **Manual workflow works** but requires copy/paste (MCP would make it seamless)
 
 **Who is affected:**
 - AI coding agents wanting richer integration
@@ -54,23 +64,43 @@ Docket currently exposes functionality through CLI commands with JSON output (e.
 
 ### Overview
 
-Create a separate `@tnezdev/docket-mcp` package that implements an MCP server exposing docket's core functionality as MCP tools. This package reuses the same core libraries (`detector`, `auditor`, `reviewer`, `installer`) as the CLI, providing identical functionality through a different interface.
+Implement MCP server in `/src/mcp/` within the main docket repository (monorepo approach). The MCP server shares core libraries (`detector`, `auditor`, `reviewer`, `installer`) and prompt templates (`/templates/prompts/`) with the CLI, providing identical functionality through a different interface.
+
+**Monorepo rationale:**
+- MCP is integral to product (not optional plugin)
+- Shared code: detector, auditor, prompt templates
+- Coordinated releases: CLI and MCP changes together
+- Single repo to understand, test, contribute
+- Easier dogfooding: run docket via MCP while developing
 
 ### Architecture
 
 ```
-Core Libraries (TypeScript)
-├── detector.ts    - Project analysis
-├── auditor.ts     - Documentation gaps
-├── reviewer.ts    - Staleness/drift
-└── installer.ts   - Doc structure
+@tnezdev/docket (monorepo)
+├── src/
+│   ├── commands/           # CLI commands
+│   ├── lib/                # Core libraries (shared)
+│   │   ├── detector.ts     # Project analysis
+│   │   ├── auditor.ts      # Documentation gaps
+│   │   ├── reviewer.ts     # Staleness/drift
+│   │   ├── installer.ts    # Doc structure
+│   │   ├── agent-audit.ts  # Agent context gathering
+│   │   └── prompt-builder.ts # Prompt generation
+│   └── mcp/                # MCP server (new)
+│       ├── server.ts       # MCP implementation
+│       └── tools/          # Tool handlers
+├── templates/
+│   ├── ...                 # Doc templates
+│   └── prompts/            # Agent prompts (shared)
+│       └── audit-quality.md
+└── bin/
+    └── run.js              # CLI entry point
 
         ↓ used by ↓
 
 ┌─────────────────┐         ┌─────────────────┐
-│  CLI (oclif)    │         │  MCP Server     │
-│  @tnezdev/      │         │  @tnezdev/      │
-│  docket         │         │  docket-mcp     │
+│  CLI Interface  │         │  MCP Interface  │
+│  (commands/)    │         │  (mcp/)         │
 └────────┬────────┘         └────────┬────────┘
          │                           │
          ▼                           ▼
@@ -80,11 +110,11 @@ Core Libraries (TypeScript)
     └─────────┘               └──────────┘
 ```
 
-**Two-package approach:**
-- `@tnezdev/docket` - Existing CLI package
-- `@tnezdev/docket-mcp` - New MCP server package
-
-Both packages depend on shared core libraries (extract to internal package if needed).
+**Monorepo approach:**
+- Single `@tnezdev/docket` package with dual interfaces
+- MCP server in `/src/mcp/` alongside CLI in `/src/commands/`
+- Shared core libraries in `/src/lib/`
+- Shared prompt templates in `/templates/prompts/`
 
 ### Implementation Details
 
@@ -96,13 +126,23 @@ Both packages depend on shared core libraries (extract to internal package if ne
    Output: AnalysisResult (same as CLI JSON)
    ```
 
-2. **`audit`** - Audit documentation completeness
+2. **`audit-quality`** - Agent-driven documentation quality assessment
+   ```typescript
+   Input: { path: string, docsDir?: string }
+   Output: {
+     prompt: string,              // Generated assessment prompt
+     context: AgentAuditContext   // Structured project + doc data
+   }
+   Note: Agent receives prompt, analyzes, returns structured assessment
+   ```
+
+3. **`audit`** - Heuristic documentation audit (legacy/fast)
    ```typescript
    Input: { path: string, docsDir?: string }
    Output: AuditResult
    ```
 
-3. **`review`** - Review documentation health
+4. **`review`** - Review documentation health
    ```typescript
    Input: { path: string, docsDir?: string }
    Output: ReviewResult
@@ -130,22 +170,36 @@ Both packages depend on shared core libraries (extract to internal package if ne
    Output: { created: string, path: string }
    ```
 
-**Package Structure:**
+**Project Structure:**
 
 ```
-packages/
-├── docket/              # Existing CLI
-│   ├── src/
-│   │   ├── commands/    # CLI commands
-│   │   └── lib/         # Core logic
-│   └── package.json
-│
-└── docket-mcp/          # New MCP server
-    ├── src/
-    │   ├── server.ts    # MCP server implementation
-    │   └── tools/       # Tool handlers
-    ├── package.json
-    └── README.md
+docket/
+├── src/
+│   ├── commands/              # CLI commands (human interface)
+│   │   ├── analyze.ts
+│   │   ├── audit.ts           # Now supports --agent flag
+│   │   └── review.ts
+│   ├── lib/                   # Shared core logic
+│   │   ├── detector.ts        # Project analysis
+│   │   ├── auditor.ts         # Heuristic audit
+│   │   ├── reviewer.ts        # Staleness detection
+│   │   ├── agent-audit.ts     # Agent context gathering
+│   │   └── prompt-builder.ts  # Prompt template system
+│   └── mcp/                   # MCP server (agent interface)
+│       ├── server.ts          # MCP protocol implementation
+│       └── tools/             # Tool handlers
+│           ├── analyze.ts
+│           ├── audit-quality.ts  # Agent-driven audit
+│           └── review.ts
+├── templates/
+│   ├── adr-template.md        # Doc templates
+│   └── prompts/               # Agent prompt templates
+│       ├── audit-quality.md   # Quality assessment
+│       └── review-staleness.md # Staleness detection
+├── bin/
+│   ├── run.js                 # CLI entry point
+│   └── mcp-server.js          # MCP entry point
+└── package.json               # Exports both CLI and MCP
 ```
 
 ### Code Examples
@@ -153,11 +207,13 @@ packages/
 **MCP Server Implementation:**
 
 ```typescript
-// packages/docket-mcp/src/server.ts
+// src/mcp/server.ts
 import {Server} from '@modelcontextprotocol/sdk/server/index.js'
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js'
-import {analyzeProject} from '@tnezdev/docket/lib/detector.js'
-import {auditDocumentation} from '@tnezdev/docket/lib/auditor.js'
+import {analyzeProject} from '../lib/detector.js'
+import {auditDocumentation} from '../lib/auditor.js'
+import {prepareAgentAuditContext} from '../lib/agent-audit.js'
+import {buildAuditPrompt} from '../lib/prompt-builder.js'
 
 const server = new Server(
   {
@@ -215,7 +271,22 @@ server.setRequestHandler('tools/call', async (request) => {
         content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
       }
     }
+    case 'audit-quality': {
+      // Agent-driven quality assessment (new approach)
+      const analysis = await analyzeProject(args.path)
+      const audit = await auditDocumentation(args.path, args.docsDir || 'docs', analysis)
+      const context = await prepareAgentAuditContext(args.path, args.docsDir || 'docs', analysis, audit)
+      const prompt = buildAuditPrompt(context)
+
+      return {
+        content: [
+          {type: 'text', text: prompt},
+          {type: 'text', text: `\n\nContext data:\n${JSON.stringify(context, null, 2)}`}
+        ],
+      }
+    }
     case 'audit': {
+      // Heuristic audit (legacy/fast fallback)
       const analysis = await analyzeProject(args.path)
       const result = await auditDocumentation(args.path, args.docsDir || 'docs', analysis)
       return {
@@ -238,12 +309,18 @@ await server.connect(transport)
 const analysis = await mcp.callTool('analyze', {path: '/my/project'})
 // Returns typed AnalysisResult, no JSON parsing needed
 
-const audit = await mcp.callTool('audit', {path: '/my/project'})
-// Returns typed AuditResult
+// Agent-driven quality assessment (recommended)
+const auditPrompt = await mcp.callTool('audit-quality', {path: '/my/project'})
+// Returns: { prompt: string, context: AgentAuditContext }
+// Agent analyzes context using the prompt, returns structured assessment
+
+// Heuristic audit (fast fallback for CI)
+const auditFast = await mcp.callTool('audit', {path: '/my/project'})
+// Returns AuditResult from pattern matching
 
 // Agent can discover all tools
 const tools = await mcp.listTools()
-// Shows: analyze, audit, review, init, new
+// Shows: analyze, audit-quality, audit, review, init, new
 ```
 
 **Agent Usage (via CLI - still supported):**
@@ -263,12 +340,22 @@ Two integration options:
 
 1. **MCP (recommended if supported):**
    ```bash
-   # Add to MCP configuration
+   # Add to MCP configuration (e.g., Claude Desktop)
+   {
+     "mcpServers": {
+       "docket": {
+         "command": "node",
+         "args": ["/path/to/docket/lib/mcp/server.js"]
+       }
+     }
+   }
+
+   # Or via npx (after publishing)
    {
      "mcpServers": {
        "docket": {
          "command": "npx",
-         "args": ["@tnezdev/docket-mcp"]
+         "args": ["@tnezdev/docket", "mcp"]
        }
      }
    }
@@ -434,25 +521,40 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 
 ### Rollout Plan
 
-**Phase 1: Prototype (1-2 weeks)**
-- Build basic MCP server with `analyze` tool
-- Test with Claude Desktop
-- Validate approach
+**Phase 0: Validation (Complete ✅)**
+- Built `docket audit --agent` prototype with manual workflow
+- Validated agent-driven analysis (73/100) vs heuristics (21/100)
+- Confirmed prompt template system works
+- Demonstrated 3.5x quality improvement with agent reasoning
 
-**Phase 2: Full Implementation (2-3 weeks)**
-- Implement all tools (analyze, audit, review, init, new)
-- Write tests
-- Document MCP integration
+**Phase 1: Core Infrastructure (1-2 weeks)**
+- Implement MCP server in `/src/mcp/`
+- Create tool handlers for analyze, audit-quality, audit
+- Test with Claude Desktop MCP integration
+- Update package.json to export MCP server
 
-**Phase 3: Release (1 week)**
-- Publish `@tnezdev/docket-mcp` to npm
-- Update `.docket-protocol/agent-guide.md` with MCP section
+**Phase 2: Agent Integration (1-2 weeks)**
+- Wire CLI commands to use MCP when available
+- Implement review-staleness tool (agent-driven review)
+- Add prompt templates for review
+- Write integration tests
+
+**Phase 3: Full Feature Parity (1 week)**
+- Implement init, new tools for MCP
+- Document all tools in MCP schema
+- Add examples to `.docket-protocol/agent-guide.md`
+
+**Phase 4: Release & Dogfooding (1 week)**
+- Use docket MCP while developing docket
+- Update documentation with MCP setup
+- Publish npm package with MCP support
 - Announce to community
 
-**Phase 4: Iteration**
+**Phase 5: Iteration**
 - Gather feedback from agent developers
-- Add missing tools if needed
-- Improve based on real usage
+- Improve prompt templates based on usage
+- Add streaming support for long operations
+- Monitor agent vs heuristic performance
 
 ### Backward Compatibility
 
@@ -481,12 +583,13 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 
 ## Open Questions
 
-- **Package structure:** Monorepo or separate repos?
-- **Core library sharing:** Extract to `@tnezdev/docket-core`?
-- **Feature parity:** Should MCP support interactive prompts (like `docket init`)?
-- **Resource limits:** Should we add rate limiting or resource quotas?
-- **MCP version:** Which MCP protocol version to target?
-- **Testing with agents:** Which agents should we test with?
+- ~~**Package structure:** Monorepo or separate repos?~~ **RESOLVED: Monorepo** - MCP in `/src/mcp/` alongside CLI
+- ~~**Core library sharing:** Extract to `@tnezdev/docket-core`?~~ **RESOLVED: No** - Keep shared in `/src/lib/`
+- **Feature parity:** Should MCP support interactive prompts (like `docket init`)? **DEFER** - Start with read-only tools
+- **Resource limits:** Should we add rate limiting or resource quotas? **DEFER** - Add if needed based on usage
+- **MCP version:** Which MCP protocol version to target? **ANSWER: Latest stable** - Use `@modelcontextprotocol/sdk` latest
+- **Testing with agents:** Which agents should we test with? **ANSWER: Claude Desktop** - Primary validation platform
+- **Agent-first transition:** When to make agent tools default instead of heuristics? **ANSWER: After Phase 2** - Once MCP is stable
 
 ## Future Possibilities
 

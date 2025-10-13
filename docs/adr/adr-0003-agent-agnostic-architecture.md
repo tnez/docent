@@ -1,9 +1,12 @@
 # ADR-0003: Agent-Agnostic Architecture with JSON Protocol
 
-**Status:** Accepted
+**Status:** Accepted (implementation evolved, principles remain)
 **Date:** 2025-10-11
 **Deciders:** @tnez
 **Technical Story:** CLI Platform Design (ADR-0001)
+**Updated:** 2025-10-13 - See [ADR-0004](./adr-0004-mcp-only-architecture.md)
+
+> **Implementation Note:** This ADR's **core principle** (agent-agnostic architecture) remains valid. However, [ADR-0004](./adr-0004-mcp-only-architecture.md) changed the **implementation** from CLI commands to MCP tools. The "standardized protocol" is now MCP (Model Context Protocol) rather than shell commands with JSON output. The agent-agnostic philosophy is preserved - docket works with any MCP-compatible agent.
 
 ## Context
 

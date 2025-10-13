@@ -6,6 +6,8 @@
 **Updated:** 2025-10-13
 **Related:** PRD-0001, RFC-0002, research/rfc-review-workflow-pain-points.md
 
+> **Note:** This RFC was drafted when docket had CLI commands. [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) changed to MCP-only architecture. The workflow concepts remain valid, but CLI command examples (`docket workflow start`) would be replaced with MCP tool calls or agent conversation patterns. The RFC will be updated when workflow orchestration is implemented.
+
 ## Summary
 
 Add workflow orchestration to docket, enabling automated multi-stage processes that coordinate agent tasks with human decision points. Starting with document review workflows (RFC review, ADR review, spec validation), the system will eliminate 30+ minutes of manual orchestration per workflow by automating context gathering, agent launching, result storage, and status management. Workflows are defined in YAML, executed via CLI commands, and maintain full state for resumption and auditing.

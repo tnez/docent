@@ -8,56 +8,53 @@ Welcome to the docket documentation! This is docket documenting itself - a real-
 - [Architecture Overview](./architecture/overview.md) - Complete system design, components, and data flows
 
 ### 📋 Architecture Decision Records
-- [ADR-0001: CLI Platform Over Templates-Only](./adr/adr-0001-cli-platform-over-templates-only.md) - Core transformation decision
-- [ADR-0002: Use Oclif for CLI Framework](./adr/adr-0002-oclif-for-cli-framework.md) - Technical framework choice
+- [ADR-0001: CLI Platform Over Templates-Only](./adr/adr-0001-cli-platform-over-templates-only.md) - Core transformation decision *(superseded)*
+- [ADR-0002: Use Oclif for CLI Framework](./adr/adr-0002-oclif-for-cli-framework.md) - Technical framework choice *(superseded)*
 - [ADR-0003: Agent-Agnostic Architecture](./adr/adr-0003-agent-agnostic-architecture.md) - Integration philosophy
+- [ADR-0004: MCP-Only Architecture](./adr/adr-0004-mcp-only-architecture.md) - Current architecture decision
 
 ### 💡 RFCs
-No RFCs yet. Create one with:
-```bash
-docket new rfc "Your Feature Proposal"
-```
+- [RFC-0001: MCP Server for Agent Integration](./rfcs/rfc-0001-mcp-server-for-agent-integration.md)
+- [RFC-0002: Behavioral Specification Support](./rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md)
+- [RFC-0003: Workflow Orchestration](./rfcs/rfc-0003-workflow-orchestration-for-multi-agent-tasks.md)
+- [RFC-0004: Work Artifact Capture](./rfcs/rfc-0004-work-artifact-capture-and-surfacing.md)
 
 ### 📚 Guides
+- [MCP Setup Guide](./guides/mcp-setup.md) - How to integrate docket MCP server with AI agents
 - [Contributing](../CONTRIBUTING.md) - How to contribute to docket (see repo root)
-- [Agent Integration Guide](../.docket-protocol/agent-guide.md) - Complete guide for AI agent developers
 
 ### 🔧 Runbooks
-No runbooks yet. Docket is a CLI tool with no operational procedures needed at this time.
+No runbooks yet. Docket is developer tooling with no operational procedures needed at this time.
 
 ## About Docket
 
 **Primary Language:** TypeScript
-**Primary Framework:** oclif (CLI framework)
+**Primary Framework:** MCP SDK (Model Context Protocol)
 **Testing Framework:** Mocha
 **Package Manager:** npm
 
-Docket is a documentation platform that combines production-ready templates with intelligent CLI tools and an agent-agnostic protocol. See [Architecture Overview](./architecture/overview.md) for complete details.
+Docket is documentation intelligence for AI agents. It provides MCP tools for project analysis, documentation quality assessment, and template generation. See [Architecture Overview](./architecture/overview.md) for complete details.
 
-## Documentation Health
+## Using Docket
 
-As of last check (v0.3.0):
-- **Completeness Score:** 93/100 ✅
-- **Health Score:** 95/100 ✅
+Docket integrates with AI agents through MCP (Model Context Protocol):
 
-Run health checks anytime:
-```bash
-docket audit   # Check completeness
-docket review  # Check for staleness
+```typescript
+// Ask your AI agent to:
+"Analyze this project using docket's analyze tool"
+"Assess documentation quality using audit-quality"
+"Generate a new ADR using the adr template"
 ```
 
-## Creating New Documentation
+See [MCP Setup Guide](./guides/mcp-setup.md) for configuration instructions.
 
-```bash
-# Create a new ADR
-docket new adr "Use WebSockets for real-time features"
+## Available MCP Tools
 
-# Create a new RFC
-docket new rfc "Plugin system design"
-
-# Create a new guide
-docket new guide "Setting up development environment"
-```
+- **analyze** - Project structure and technology stack analysis
+- **audit-quality** - Agent-driven documentation quality assessment
+- **audit** - Fast heuristic documentation audit
+- **list-templates** - List available documentation templates
+- **get-template** - Retrieve a template by type
 
 ## Documentation Philosophy
 
@@ -68,7 +65,7 @@ Docket uses itself to document itself. This serves multiple purposes:
 3. **Dogfooding** - We experience our own product
 4. **Quality** - Forces us to make the product actually useful
 
-See [ADR-0001](./adr/adr-0001-cli-platform-over-templates-only.md) for the story of how we got here.
+See [ADR-0004](./adr/adr-0004-mcp-only-architecture.md) for the architectural evolution story.
 
 ---
 
