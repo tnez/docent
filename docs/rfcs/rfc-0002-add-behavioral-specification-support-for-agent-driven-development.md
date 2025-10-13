@@ -1,9 +1,10 @@
 # RFC-0002: Add Behavioral Specification Support for Agent-Driven Development
 
-**Status:** Draft
+**Status:** In Review
 **Author:** @tnez
 **Created:** 2025-10-12
-**Updated:** 2025-10-12
+**Updated:** 2025-10-13
+**Reviewed:** 2025-10-13 (architectural review completed, critical issues addressed)
 
 ## Summary
 
@@ -252,6 +253,126 @@ $ docket analyze --output json
 6. Verify JSON schema compliance
 ```
 
+### Template Definition
+
+**Location:** `/templates/spec-template.md`
+
+The spec template will be stored alongside existing docket templates (adr-template.md, rfc-template.md, etc.) and used by `docket new spec` to generate new specification files.
+
+**Template Structure:**
+
+```markdown
+# Spec: [SPEC_TITLE]
+
+## Metadata
+- **Status:** draft
+- **Created:** [CREATED_DATE]
+- **Updated:** [CREATED_DATE]
+- **Related:**
+
+## Context
+
+[Brief description of what this feature does and why it exists.]
+
+## Behaviors
+
+### Scenario: [Primary Happy Path]
+**Given:** [Initial state or preconditions]
+**When:** [Action or event that triggers behavior]
+**Then:** [Expected outcomes and postconditions]
+
+#### Example:
+\`\`\`bash
+# Add example command or code showing the scenario
+\`\`\`
+
+\`\`\`json
+{
+  "expected": "output"
+}
+\`\`\`
+
+### Scenario: [Error or Edge Case]
+**Given:** [Different initial conditions]
+**When:** [Action that might fail or behave differently]
+**Then:** [Expected error handling or alternative behavior]
+
+## Acceptance Criteria
+- [ ] [Criterion describing what must be true when feature is complete]
+- [ ] [Another criterion]
+- [ ] [Another criterion]
+
+## Technical Notes
+
+[Optional: Implementation hints, constraints, or considerations that help developers.]
+
+## Test Hints
+
+[Optional: Suggested test cases or testing approaches.]
+```
+
+**Placeholders:**
+- `[SPEC_TITLE]` - Feature name provided by user (e.g., "Analyze Command")
+- `[CREATED_DATE]` - Current date in YYYY-MM-DD format
+- Status defaults to "draft"
+- Related field starts empty for user to fill
+- Context, scenarios, and criteria sections are template guidelines
+
+**Template Processing:**
+
+When running `docket new spec "Analyze Command"`:
+1. Load template from `/templates/spec-template.md`
+2. Replace `[SPEC_TITLE]` with title
+3. Replace `[CREATED_DATE]` with current date
+4. Slugify title for filename: "Analyze Command" → `analyze-command.spec.md`
+5. Write to `/specs/analyze-command.spec.md`
+
+### Traceability and Cross-References
+
+Specifications should link to related documentation and implementation for complete context.
+
+**In Spec Metadata (Related field):**
+
+```yaml
+Related:
+  - ADR: docs/adr/adr-0003-agent-agnostic-architecture.md
+  - RFC: docs/rfcs/rfc-0001-mcp-server-integration.md
+  - Implementation: src/commands/analyze.ts
+  - Tests: test/commands/analyze.test.ts
+```
+
+**Path Format:**
+- Use project-relative paths starting from repo root
+- Example: `docs/adr/adr-0003-...` not `/Users/name/project/docs/...`
+- Makes specs portable across machines and environments
+
+**In Implementation Code (Docstring):**
+
+```typescript
+/**
+ * Analyze command - detects languages, frameworks, and project structure
+ *
+ * @spec docs/specs/analyze-command.spec.md
+ */
+export default class Analyze extends Command {
+  // implementation
+}
+```
+
+**Bidirectional Linking Benefits:**
+- Spec → Code: Find implementation from spec
+- Code → Spec: Understand behavior from implementation
+- `docket review` can validate links and detect drift
+- Agents can navigate between behavior contract and implementation
+
+**Future Enhancement:**
+
+Phase 4+ could add `docket validate-links` to check:
+- Do Related links point to existing files?
+- Do implementation files reference their specs?
+- Are there orphaned specs (no implementation)?
+- Are there unspecified features (implementation without spec)?
+
 ### Storage and Organization
 
 **Location:** `specs/` directory at project root
@@ -260,6 +381,24 @@ $ docket analyze --output json
 - Use descriptive names: `analyze-command.spec.md`, `authentication.spec.md`
 - Use kebab-case for filenames
 - Extension: `.spec.md` for easy identification
+
+**Why Descriptive Names (Not Numbered Like ADRs/RFCs)?**
+
+| Document Type | Naming | Rationale |
+|---------------|--------|-----------|
+| ADRs/RFCs | Numbered (`adr-0001-...`) | **Sequential decisions** where temporal order matters. "When did we decide X?" |
+| Specs | Descriptive (`feature-name.spec.md`) | **Feature behaviors** where topical grouping matters. "What does feature X do?" |
+
+**Advantages of descriptive spec naming:**
+- Agents can guess spec location: need auth behavior? Try `specs/authentication.spec.md`
+- Alphabetical sorting groups related features
+- Spec names match feature names (no number lookup required)
+- No merge conflicts when multiple developers create specs simultaneously
+
+**Examples:**
+- `specs/authentication.spec.md` - Clear what it covers
+- `specs/cli/analyze-command.spec.md` - Clear context
+- vs `specs/spec-0042-analyze-command.spec.md` - Number adds no value
 
 **Organization Strategy:**
 - **Start flat:** All specs in `specs/` directory initially
@@ -290,29 +429,77 @@ Each spec includes a **Status** field critical for agent understanding:
 - **implemented:** Feature built and matches spec
 - **deprecated:** Feature removed or replaced (keep spec for history)
 
+**Status Lifecycle:**
+
+```
+draft → ready → implemented → deprecated
+  ↓       ↓          ↓
+  └───────┴──────────┘
+  (can return to draft for revisions)
+```
+
+**Transition Rules:**
+
+| Transition | Criteria | Who Updates |
+|------------|----------|-------------|
+| draft → ready | Spec complete, scenarios defined, acceptance criteria clear, reviewed | Developer or reviewer |
+| ready → implemented | Code written, tests pass, acceptance criteria met | Developer after implementation |
+| implemented → draft | Major feature changes needed, spec requires rework | Developer when planning changes |
+| any → deprecated | Feature removed, replaced, or no longer relevant | Developer |
+
+**Update Method:**
+- Manual: Developer edits spec metadata `Status:` field
+- Future automation: `docket review` could suggest status updates based on code analysis
+
 **Why this matters for agents:**
 - Agents know what needs building (ready → implemented)
 - Agents avoid implementing deprecated features
 - Agents can validate implementations against current specs
 - Project status visible through `docket audit --include-specs`
+- Clear criteria prevent ambiguity about "done"
 
 ### CLI Integration
 
-#### New Command: `docket spec new`
+#### Enhanced Command: `docket new spec`
+
+Following the existing `docket new` pattern, spec creation extends the existing command rather than introducing a new namespace:
 
 ```bash
-# Create new specification
-$ docket spec new analyze-command
+# Create new specification (follows existing pattern)
+$ docket new spec "analyze-command"
 
 # Creates: specs/analyze-command.spec.md
 # Contains: Template with metadata, scenarios, acceptance criteria
+
+# Consistent with existing commands:
+# docket new adr "title"
+# docket new rfc "title"
+# docket new guide "title"
+```
+
+**Implementation details:**
+
+Add to `TEMPLATE_MAP` in `/src/commands/new.ts`:
+
+```typescript
+spec: {
+  templateFile: 'spec-template.md',
+  subdirectory: 'specs',
+  needsNumber: false,  // descriptive names only
+  prefix: '',
+}
+```
+
+Update type definition:
+```typescript
+type DocType = 'adr' | 'rfc' | 'guide' | 'runbook' | 'architecture' | 'spec'
 ```
 
 **Command behavior:**
-- Creates spec from template
-- Prompts for metadata (interactive mode)
-- Uses defaults (non-interactive mode)
+- Creates spec from template with descriptive naming (no numbers)
+- Uses slugified title for filename (e.g., "Analyze Command" → `analyze-command.spec.md`)
 - Returns spec path in JSON output
+- Consistent with existing `new` command UX
 
 #### Enhanced: `docket audit --include-specs`
 
@@ -326,7 +513,28 @@ $ docket audit --include-specs --output json
 - Suggest specs for undocumented features
 - Calculate spec coverage percentage
 
-**JSON output enhancement:**
+**JSON Schema Addition:**
+
+Adds `specifications` field to `AuditResult` type in `.docket-protocol/schemas/audit.schema.json`:
+
+```typescript
+interface AuditResult {
+  // ... existing fields (score, checks, recommendations)
+  specifications?: {
+    total: number
+    byStatus: {
+      draft: number
+      ready: number
+      implemented: number
+      deprecated: number
+    }
+    coverage: number  // 0-1, percentage of features with specs
+    missingSpecs?: string[]  // Features identified without specs
+  }
+}
+```
+
+**Example JSON output:**
 ```json
 {
   "score": 85,
@@ -338,7 +546,8 @@ $ docket audit --include-specs --output json
       "implemented": 9,
       "deprecated": 1
     },
-    "coverage": 0.85
+    "coverage": 0.85,
+    "missingSpecs": ["search command", "export feature"]
   },
   "recommendations": [
     "Create spec for 'search' command",
@@ -353,6 +562,72 @@ $ docket audit --include-specs --output json
 - Specs marked "implemented" but code changed recently (drift risk)
 - Specs marked "draft" for >30 days (stalled work?)
 - Implemented features without specs (coverage gap)
+
+**JSON Schema Addition:**
+
+Adds `specDrift` field to `ReviewResult` type in `.docket-protocol/schemas/review.schema.json`:
+
+```typescript
+interface ReviewResult {
+  // ... existing fields (health, staleDocs, recommendations)
+  specDrift?: {
+    implementedButChanged: Array<{
+      spec: string
+      lastSpecUpdate: string  // ISO date
+      lastCodeUpdate: string  // ISO date
+      affectedFiles: string[]
+    }>
+    stalledDrafts: Array<{
+      spec: string
+      status: string
+      daysSinceDraft: number
+      lastUpdate: string  // ISO date
+    }>
+    missingImplementations: Array<{
+      spec: string
+      status: string  // "ready" - approved but not built
+      daysSinceReady: number
+    }>
+  }
+}
+```
+
+**Example JSON output:**
+```json
+{
+  "health": 95,
+  "specDrift": {
+    "implementedButChanged": [
+      {
+        "spec": "specs/analyze-command.spec.md",
+        "lastSpecUpdate": "2025-10-01",
+        "lastCodeUpdate": "2025-10-12",
+        "affectedFiles": ["src/commands/analyze.ts", "src/lib/detector.ts"]
+      }
+    ],
+    "stalledDrafts": [
+      {
+        "spec": "specs/search-feature.spec.md",
+        "status": "draft",
+        "daysSinceDraft": 45,
+        "lastUpdate": "2025-08-28"
+      }
+    ],
+    "missingImplementations": [
+      {
+        "spec": "specs/export-command.spec.md",
+        "status": "ready",
+        "daysSinceReady": 14
+      }
+    ]
+  },
+  "recommendations": [
+    "Review specs/analyze-command.spec.md - implementation changed since spec",
+    "Update or close stalled draft: specs/search-feature.spec.md",
+    "Implement or reconsider specs/export-command.spec.md (ready for 14 days)"
+  ]
+}
+```
 
 ### User Experience
 
