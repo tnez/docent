@@ -381,3 +381,277 @@ This journal provides:
 *Session ended: 2025-10-13 ~16:45*
 *Resume: Read this journal, commit changes, continue with Task 6/7*
 *Context window: 47K tokens remaining (saved for next session)*
+
+---
+
+## 2025-10-13 Session (Continued): Remaining Tasks + MCP Architecture Discovery
+
+### Task - Completed ✅
+**ID:** task-20251013-3
+**Type:** Task
+**Status:** Completed
+**Files:** docs/specs/mcp-tools/ (new), docs/archive/cli-specs/ (archived)
+**Completed:** 2025-10-13 ~17:00
+
+**What:** Converted CLI command specs to MCP tool specs
+
+**Work Done:**
+- Created 3 new MCP tool specs:
+  - docs/specs/mcp-tools/analyze-tool.md
+  - docs/specs/mcp-tools/audit-quality-tool.md
+  - docs/specs/mcp-tools/review-tool.md
+- Archived 4 original CLI specs to docs/archive/cli-specs/
+- Updated specs to use MCP tool invocation patterns instead of CLI commands
+- Preserved all behavioral scenarios and acceptance criteria
+
+**Committed:** `docs: convert CLI command specs to MCP tool specs`
+
+---
+
+### Task - Completed ✅
+**ID:** task-20251013-4
+**Type:** Task
+**Status:** Completed
+**Scope:** docs/**
+**Completed:** 2025-10-13 ~17:15
+
+**What:** Updated all remaining CLI references across documentation
+
+**Work Done:**
+- docs/README.md - Updated for MCP-only product
+- docs/adr/adr-0003-agent-agnostic-architecture.md - Added evolution note
+- docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md - Added superseded notice
+- docs/rfcs/rfc-0003-workflow-orchestration-for-multi-agent-tasks.md - Added architecture note
+- docs/guides/mcp-setup.md - Updated comparison section with historical context
+
+**Committed:** `docs: update documentation for MCP-only architecture`
+
+---
+
+### Task - Completed ✅
+**ID:** task-20251013-impl
+**Type:** Task
+**Status:** Completed
+**Scope:** Implementation files from previous session
+**Completed:** 2025-10-13 ~17:30
+
+**What:** Committed MCP implementation that was left unstaged from previous session
+
+**Work Done:**
+Three logical commits created:
+1. `refactor: remove CLI commands and oclif framework` - Deleted CLI, removed 706 packages
+2. `feat: add MCP server implementation` - New MCP server + tools + templates
+3. `docs: update documentation for MCP-only product` - Root README + .gitignore
+
+**Impact:**
+- Clean working tree
+- 9 commits total documenting complete MCP-only transition
+- Ready to push to origin
+
+---
+
+### Discovery - Captured 💡
+**ID:** disc-20251013-7
+**Type:** Discovery (Architecture)
+**Status:** Captured - Needs Research/RFC
+**Created:** 2025-10-13 ~17:45
+
+**What:** MCP provides tools, resources, and prompts - we're only using tools
+
+**The Insight:**
+MCP servers expose three capabilities, each with distinct purposes:
+
+1. **Tools** (what we use now) - Functions agent invokes with parameters
+   - analyze, audit-quality, list-templates, get-template
+   - Good for: Actions requiring computation
+
+2. **Resources** (not using, should be!) - Content agent can read via URIs
+   - Should expose: runbooks, templates, standards, docs, journal, context
+   - Why: Discoverable, cacheable, feels like documentation
+   - Pattern: `runbook://preview-branch`, `template://adr`, `journal://current`
+
+3. **Prompts** (not using, THIS IS KEY!) - Pre-defined prompt templates
+   - Should expose: "Review RFC", "Resume Work", "Plan Feature", "Create ADR"
+   - Why: Prompts ARE workflows/slash-commands!
+   - Pattern: User says "review RFC" → agent invokes prompt → gets full context
+
+**Why This Matters:**
+- Solves workflow orchestration more elegantly than CLI commands (RFC-0003)
+- `/review-rfc` (CLI) = `Review RFC` prompt (MCP)
+- Resources make documentation discoverable and cacheable
+- Prompts pre-package intelligence agents can invoke
+
+**Example - The Beautiful Pattern:**
+```
+User: "Can you create a preview db branch?"
+  ↓
+Agent: [Discovery] docket.analyze() - "We use Neon DB"
+  ↓
+Agent: [Runbook] docket.resource('runbook://preview-branch')
+  ↓
+Agent: [Execute] Follows runbook steps
+  ↓
+Agent: [Report] "Done! Branch created, .env updated"
+```
+
+**User Experience:** Natural conversation
+**Agent Experience:** Structured intelligence
+**Docket's Role:** Context provider (discovery + instructions)
+
+**Validation:** User confirmed this pattern is exactly what they want ✅
+
+---
+
+### Discovery - Captured 💡
+**ID:** disc-20251013-8
+**Type:** Discovery (Use Cases)
+**Status:** Captured - Needs Validation
+**Created:** 2025-10-13 ~18:00
+
+**What:** User scenarios that define docket's value proposition
+
+**Scenarios Explored:**
+
+**✅ Docket CAN Help (Core):**
+1. Session recovery: "Haven't looked at this in a while - summary + overview?"
+2. Resume work: "Can you resume work plz?" (planned/unplanned interruption)
+3. Documentation health: "Is our documentation up-to-date?"
+4. Onboarding: "Provide an onboarding guide for new developer"
+
+**🟡 Docket ENABLES (Via Documentation):**
+5. Feature planning: "User wants X - help me plan" (templates + context)
+6. Code standards: "Find violations and fix" (standards docs define rules)
+7. Design consistency: "Check design/branding" (design system docs)
+8. Operations: "Create preview db branch" (runbooks provide instructions)
+9. Security: "Scan for PHI" (policy docs define what to check)
+
+**❌ Docket Does NOT Execute:**
+- Infrastructure operations (database branching, deployment)
+- Security scanning (agent does this using docket's policy docs)
+- Code modification (agent does this using docket's standards docs)
+
+**The Principle:**
+Docket provides **context** (discovery + instructions), not **execution**.
+Documentation becomes **configuration for AI agents**.
+
+**Pattern:**
+```
+Docket provides documentation → Agent reads documentation → Agent acts intelligently
+```
+
+**Examples:**
+- Code standards docs → Agent enforces standards
+- Design system docs → Agent checks consistency
+- Runbook docs → Agent follows procedures
+- Security policy docs → Agent implements checks
+
+---
+
+### Next Steps - Captured 📋
+**ID:** next-20251013-9
+**Type:** Next Steps
+**Status:** Pending
+**Created:** 2025-10-13 ~18:15
+
+**Immediate (This Week):**
+1. Research MCP SDK capabilities (resources and prompts in depth)
+2. Create `docs/research/mcp-prompts-and-resources.md` exploration doc
+3. Design prompt structure for common workflows
+4. Prototype one prompt (e.g., "Review RFC") and one resource (e.g., `runbook://`)
+
+**Short-term (Next Sprint):**
+1. Draft RFC-0005: Enhanced MCP Architecture (tools + resources + prompts)
+2. Implement resources for runbooks, templates, standards
+3. Implement 3-5 core prompts (Resume Work, Review RFC, Plan Feature, Create ADR, Onboard Developer)
+4. Update ADR-0004 with lessons learned
+
+**Medium-term:**
+1. Consider `docs/explorations/` as permanent doc type (space for fuzzy thinking)
+2. Create exploration template
+3. Workflow: exploration → research → RFC → implementation
+
+**Key Question:**
+How do we surface this journal when resuming work?
+- Answer documented below in "How to Resume" section
+
+---
+
+## How to Resume Work
+
+**When you come back to docket in a few hours (or days), do this:**
+
+### Step 1: Read the Journal
+```bash
+# In your terminal or ask your agent:
+cat .docket/journal.md
+
+# Or ask agent:
+"Read .docket/journal.md and summarize where we left off"
+```
+
+### Step 2: Look for These Markers
+- **Discoveries 💡** - New insights that might lead to RFCs/ADRs
+- **Next Steps 📋** - Concrete actions ready to start
+- **Open Questions ❓** - Decisions that need your input
+- **In-Progress ⏳** - Unfinished work with resume points
+
+### Step 3: Check Git Status
+```bash
+git status
+git log --oneline -5
+```
+
+### Step 4: Ask Your Agent to Surface Context
+```
+"I'm resuming work on docket. Read .docket/journal.md and tell me:
+- What did we accomplish last session?
+- What are the pending discoveries that need follow-up?
+- What should I work on next?"
+```
+
+**Agent will synthesize:**
+- Last session's work (commits created, tasks completed)
+- Discoveries that need action (MCP resources/prompts exploration)
+- Clear next steps (research MCP capabilities, draft RFC-0005)
+
+### Future: When docket has `surface-work` tool
+```
+Agent: "Use docket surface-work tool"
+Returns: {
+  lastSession: "Completed MCP-only transition, discovered resources/prompts",
+  discoveries: ["MCP prompts map to workflows", "Beautiful pattern validated"],
+  nextSteps: ["Research MCP SDK", "Draft RFC-0005", "Prototype one prompt"],
+  openQuestions: []
+}
+```
+
+**The journal IS the prototype for `surface-work` tool!**
+
+---
+
+## Session Statistics (Current)
+
+**Total Time:** ~5 hours across 2 sessions
+**Completed:** 9 tasks (all original work + implementation)
+**Git Status:** Clean working tree, 9 commits ready to push
+**Tokens remaining:** ~82K (41% of budget)
+
+**What Got Done Today (Continuation Session):**
+1. ✅ Spec conversion (4 files → 3 MCP specs + archive)
+2. ✅ Doc updates (5 files with MCP-only references)
+3. ✅ Implementation commits (3 commits for MCP server)
+4. 💡 MCP capabilities discovery (tools vs resources vs prompts)
+5. 💡 User scenario validation (session recovery, feature planning, etc.)
+6. 💡 "Beautiful Pattern" confirmed (discovery → runbook → execute → report)
+
+**Major Discoveries:**
+- MCP resources for documentation (not just tools)
+- MCP prompts for workflows (slash-commands via MCP)
+- Clear scope boundary (context not execution)
+- Documentation as configuration for AI agents
+
+---
+
+*Session ended: 2025-10-13 ~18:30*
+*Resume: Read this journal, pick from "Next Steps", or ask agent to surface context*
+*Key discovery: MCP prompts/resources architecture needs RFC-0005*
