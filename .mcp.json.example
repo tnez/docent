@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "docket": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@tnezdev/docket"],
+      "env": {}
+    }
+  }
+}
