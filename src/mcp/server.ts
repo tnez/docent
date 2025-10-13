@@ -4,6 +4,10 @@ import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js'
 
 // Import tool definitions and handlers
@@ -12,6 +16,11 @@ import {auditQualityToolDefinition, handleAuditQualityTool} from './tools/audit-
 import {auditToolDefinition, handleAuditTool} from './tools/audit.js'
 import {listTemplatesToolDefinition, handleListTemplatesTool} from './tools/list-templates.js'
 import {getTemplateToolDefinition, handleGetTemplateTool} from './tools/get-template.js'
+
+// Import resource and prompt handlers
+import {ResourceHandler} from './resources/handler.js'
+import {PromptBuilder} from './prompts/builder.js'
+import {PROMPTS} from './prompts/definitions.js'
 
 // Get version from package.json
 import * as fs from 'fs'
@@ -28,9 +37,15 @@ const server = new Server(
   {
     capabilities: {
       tools: {},
+      resources: {},
+      prompts: {},
     },
   }
 )
+
+// Initialize resource and prompt handlers
+const resourceHandler = new ResourceHandler()
+const promptBuilder = new PromptBuilder()
 
 // Register all available tools
 const tools = [
@@ -78,6 +93,57 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       ],
       isError: true,
     }
+  }
+})
+
+// ===== RESOURCES =====
+
+// Handle resources/list request
+server.setRequestHandler(ListResourcesRequestSchema, async () => {
+  try {
+    const resources = await resourceHandler.list()
+    return {resources}
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error('Error listing resources:', errorMessage)
+    return {resources: []}
+  }
+})
+
+// Handle resources/read request
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  const {uri} = request.params
+
+  try {
+    const content = await resourceHandler.read(uri)
+    return {
+      contents: [content],
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    throw new Error(`Failed to read resource ${uri}: ${errorMessage}`)
+  }
+})
+
+// ===== PROMPTS =====
+
+// Handle prompts/list request
+server.setRequestHandler(ListPromptsRequestSchema, async () => {
+  return {
+    prompts: Object.values(PROMPTS),
+  }
+})
+
+// Handle prompts/get request
+server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+  const {name, arguments: args = {}} = request.params
+
+  try {
+    const result = await promptBuilder.build(name, args)
+    return result
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    throw new Error(`Failed to build prompt ${name}: ${errorMessage}`)
   }
 })
 
