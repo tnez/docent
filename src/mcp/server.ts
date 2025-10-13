@@ -16,6 +16,7 @@ import {auditQualityToolDefinition, handleAuditQualityTool} from './tools/audit-
 import {auditToolDefinition, handleAuditTool} from './tools/audit.js'
 import {listTemplatesToolDefinition, handleListTemplatesTool} from './tools/list-templates.js'
 import {getTemplateToolDefinition, handleGetTemplateTool} from './tools/get-template.js'
+import {captureWorkToolDefinition, handleCaptureWorkTool} from './tools/capture-work.js'
 
 // Import resource and prompt handlers
 import {ResourceHandler} from './resources/handler.js'
@@ -54,6 +55,7 @@ const tools = [
   auditToolDefinition,
   listTemplatesToolDefinition,
   getTemplateToolDefinition,
+  captureWorkToolDefinition,
 ]
 
 // Handle tools/list request
@@ -79,6 +81,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await handleListTemplatesTool()
       case 'get-template':
         return await handleGetTemplateTool(args as {type: string})
+      case 'capture-work':
+        return await handleCaptureWorkTool(
+          args as {summary: string; discoveries?: string[]; next_steps?: string[]; questions?: string[]}
+        )
       default:
         throw new Error(`Unknown tool: ${name}`)
     }

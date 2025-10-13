@@ -83,7 +83,8 @@ export class ResourceHandler {
       resources.push({
         uri: 'docket://journal/current',
         name: 'Current Work Journal',
-        description: 'Active work journal with session context, discoveries, and next steps',
+        description:
+          'Active work journal capturing session context. IMPORTANT: Update this frequently as you work to capture key discoveries, rationale behind decisions, and partially explored ideas. Rich journal entries enable effective session recovery via the resume-work prompt. Use the capture-work tool to append entries easily.',
         mimeType: 'text/markdown',
       })
     } catch {

@@ -655,3 +655,48 @@ Returns: {
 *Session ended: 2025-10-13 ~18:30*
 *Resume: Read this journal, pick from "Next Steps", or ask agent to surface context*
 *Key discovery: MCP prompts/resources architecture needs RFC-0005*
+## 2025-10-13T20:06:05.225Z
+
+**Summary:** Enhanced resume-work prompt and added capture-work tool
+
+**Key Discoveries:**
+- Resource descriptions can nudge agent behavior
+- Easy capture tool + opinionated descriptions = better journaling
+
+**Next Steps:**
+- Test capture-work integration
+- Update documentation
+- Update journal with findings
+
+**Open Questions:**
+- Should we add capture-work to other MCP workflow prompts?
+
+---
+
+## 2025-10-13T20:06:46.301Z
+
+**Summary:** Phase 4 of RFC-0005: Enhanced resume-work prompt architecture and implemented capture-work tool to solve the journal-writing incentive problem.
+
+**Key Discoveries:**
+- Critical gap identified: /generate-next-prompt has full conversation history, resume-work only has written artifacts
+- Solution pattern: Opinionated resource descriptions + frictionless capture tool = better journaling
+- Resource descriptions can shape agent behavior through well-crafted guidance text
+- capture-work tool makes journaling low-friction (structured prompts, automatic formatting, timestamp)
+- Enhanced resume-work now guides agents to extract WHY (discoveries, rationale) not just WHAT (facts)
+- This completes the feedback loop: easy capture → rich journal → effective resume → incentive to capture more
+
+**Next Steps:**
+- Test resources end-to-end (verify journal resource, template discovery, URI security)
+- Consider: Should other MCP prompts also encourage capture-work usage?
+- Update README with resources/prompts examples
+- Create "Using Docket Workflows" guide
+- Push commits to origin (6 commits ready)
+- Dogfood: Use capture-work during remaining RFC-0005 work to validate UX
+
+**Open Questions:**
+- Should capture-work be mentioned in other prompt outputs to build habit?
+- Does resume-work need examples of good vs bad journal entries?
+- Should we create a start-session prompt that reminds agents about journaling?
+
+---
+

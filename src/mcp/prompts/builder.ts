@@ -87,11 +87,9 @@ export class PromptBuilder {
       todos = 'Unable to search for TODOs'
     }
 
-    const prompt = `# Resume Work Session
+    const prompt = `# Resume Work - Session Continuation
 
-## Your Task
-
-Analyze recent work and provide context to help me continue where I left off.
+You are helping me continue work after a context window reset. I need you to synthesize the work context below into an effective continuation prompt that minimizes context loss and allows seamless resumption.
 
 ## Context Gathered
 
@@ -115,15 +113,31 @@ ${gitStatus}
 ${todos}
 \`\`\`
 
-## What I Need
+## Your Task
 
-1. **Summary**: What was I working on? (2-3 sentences)
-2. **Status**: Where did I leave off?
-3. **Next Steps**: What should I do next? (prioritized list)
-4. **Context**: Anything important I should remember?
-5. **Blockers**: Any unresolved issues?
+Analyze the context above and generate a comprehensive continuation prompt. Focus on extracting insights and rationale, not just summarizing facts.
 
-Please provide a concise summary to help me resume work effectively.
+**Critical considerations:**
+
+1. **Mission & Objective**: What is the main goal of this project/feature? What progress has been made toward it?
+
+2. **Key Discoveries**: What important decisions, patterns, or constraints were discovered that must be preserved? (Don't just list what was done - explain what was learned)
+
+3. **Files Modified**: What files were changed and **WHY**? What was the rationale behind each significant change?
+
+4. **Partially Explored Ideas**: Are there any ongoing threads of thought or partially explored approaches that shouldn't be lost? What questions remain unanswered?
+
+5. **Immediate Next Steps**: What should be done next? (Prioritized, with rationale)
+
+6. **Pending Work**: Are there pending commits, reviews, validations, or other work in progress?
+
+7. **Context That Can't Be Lost**: What critical context or constraints must the next session understand to avoid backtracking?
+
+## Output Format
+
+Structure your response in whatever format will be most effective for continuation. The goal is that another Claude instance reading your output should be able to continue as if no context window reset occurred.
+
+Be specific, cite file paths with line numbers where relevant, and focus on **why** things were done, not just **what** was done.
 `
 
     return {
