@@ -854,6 +854,10 @@ Goal: Automatic agent launching via MCP
 
 Goal: Generalize to other workflow types
 
+- **Agent-driven documentation analysis** (prototype: replace audit/review heuristics with agent reasoning)
+  - Current audit/review commands use hard-coded rules (filename matching, thresholds)
+  - Agent-driven approach would assess quality through reasoning, not pattern matching
+  - Serves as template for converting tool commands to agent workflows
 - Spec validation workflow
 - Session start workflow (PRD-0001 Journey 4)
 - Research-to-RFC workflow
@@ -1009,26 +1013,34 @@ This RFC focuses on basic workflow orchestration with RFC review as first use ca
 
 ### Additional Workflow Types
 
-1. **Session Recovery** (PRD-0001 Journey 4)
+1. **Agent-Driven Quality Analysis** (Phase 3 prototype)
+   - Gather project facts (files, structure, context)
+   - Launch agent with quality assessment criteria
+   - Agent reasons about completeness and quality
+   - Generate structured recommendations
+   - **Why this matters:** Replaces brittle heuristics with adaptable reasoning
+   - **Example:** `docket audit --agent` for documentation quality assessment
+
+2. **Session Recovery** (PRD-0001 Journey 4)
    - Analyze recent work
    - Summarize todos and status
    - Generate context for new session
 
-2. **Spec-to-Implementation**
+3. **Spec-to-Implementation**
    - Read spec
    - Generate implementation
    - Run tests
    - Review code
    - Commit if passing
 
-3. **Research-to-RFC**
+4. **Research-to-RFC**
    - Conduct research
    - Synthesize findings
    - Draft RFC
    - Review and iterate
    - Finalize
 
-4. **Documentation Generation**
+5. **Documentation Generation**
    - Analyze codebase
    - Generate API docs
    - Create usage examples
