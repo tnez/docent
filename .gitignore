@@ -78,3 +78,6 @@ lerna-debug.log*
 lib/
 dist/
 *.tsbuildinfo
+
+# Claude Code MCP config (local paths)
+.mcp.json

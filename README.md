@@ -1,317 +1,168 @@
-# docket
+# Docket
 
-> Documentation platform with smart CLI, templates, and agent-agnostic protocol
+Documentation intelligence for AI agents.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+Docket makes your agent better at understanding and improving documentation. No commands to learn—just configure once and talk to your agent naturally.
 
-## The Problem
+## What Docket Does
 
-Most software projects struggle with documentation:
-- Non-existent or outdated
-- Scattered across wikis, comments, Slack, and tribal knowledge
-- No clear structure or templates
-- Hard to maintain as projects evolve
+Docket provides your agent with:
 
-## The Solution
-
-**docket** is a complete documentation platform with three powerful components:
-
-### 1. Smart CLI
-- **`docket analyze`** - Detect languages, frameworks, and project structure
-- **`docket init`** - Smart initialization with customized templates
-- **`docket audit`** - Find documentation gaps and missing content
-- **`docket review`** - Detect stale docs and code/documentation drift
-
-### 2. Production-Ready Templates
-11 comprehensive templates that work with any project:
-- **Architecture Decision Records (ADRs)** - Document significant architectural choices
-- **Request for Comments (RFCs)** - Propose and discuss features before implementation
-- **Runbooks** - Step-by-step operational procedures
-- **Troubleshooting Guides** - Diagnose and resolve common issues
-- **API Documentation** - Comprehensive API reference with examples
-- **Architecture Overviews** - High-level system design documentation
-- **Developer Onboarding** - Get new team members productive quickly
-- **Architectural Patterns** - Establish consistent code patterns across the project
-- **Code Standards** - Define coding conventions and style guidelines
-- **Testing Philosophy** - Document testing approach and practices
-- **Development Philosophy** - Define how your team builds software
-
-### 3. Agent-Agnostic Protocol
-- Works with **any** AI coding agent (Claude Code, Cursor, Aider, etc.)
-- Structured JSON output for agent consumption
-- Complete protocol documentation in `.docket-protocol/`
-- No vendor lock-in
+- **Project analysis** - Understand languages, frameworks, structure
+- **Quality assessment** - Semantic evaluation, not pattern matching
+- **Template library** - ADRs, RFCs, specs, guides
+- **Context gathering** - Structured data for agent reasoning
 
 ## Quick Start
 
-### CLI Installation (Recommended)
+### 1. Configure Your Agent
 
-```bash
-# Install globally via npm
-npm install -g @tnezdev/docket
+**Claude Code:**
 
-# Or use with npx (no installation needed)
-npx @tnezdev/docket analyze
+Add to `~/.claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "docket": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@tnezdev/docket"],
+      "env": {}
+    }
+  }
+}
 ```
 
-**Basic Usage:**
+Then restart Claude Code.
 
-```bash
-# Analyze your project
-docket analyze
+**Claude Desktop:**
 
-# Initialize documentation
-docket init
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
-# Check for gaps
-docket audit
-
-# Review for staleness
-docket review
+```json
+{
+  "mcpServers": {
+    "docket": {
+      "command": "npx",
+      "args": ["-y", "@tnezdev/docket"]
+    }
+  }
+}
 ```
 
-**For AI Agents:**
+### 2. Talk to Your Agent
 
-All commands support `--output json` for structured data:
+That's it. Just ask about documentation:
 
-```bash
-docket analyze --output json
-docket init --non-interactive --output json
-docket audit --output json
-docket review --output json
+- "How's my documentation?"
+- "Set up documentation structure"
+- "Create an ADR for switching to PostgreSQL"
+- "What should I document for this feature?"
+
+Your agent will use docket automatically.
+
+## How It Works
+
+When you ask your agent about documentation, it:
+
+1. Uses docket to analyze your project
+2. Gathers context about what exists
+3. Reasons semantically (not pattern matching)
+4. Provides contextual recommendations
+
+You never invoke docket directly—it just makes your agent smarter.
+
+## Available Tools
+
+Agents can use these docket tools via MCP:
+
+- **`analyze`** - Project structure, languages, frameworks
+- **`audit-quality`** - Semantic documentation assessment
+- **`list-templates`** - Available documentation templates
+- **`get-template`** - Fetch a specific template
+
+## Example Workflows
+
+### Assess Documentation Quality
+
+```
+You: "How's my documentation?"
+
+Agent: [uses docket audit-quality]
+Agent: "Your documentation is solid (73/100).
+       Strong architectural docs, missing testing guide.
+       Want me to draft one based on your test structure?"
 ```
 
-See [`.docket-protocol/agent-guide.md`](.docket-protocol/agent-guide.md) for complete agent integration guide.
+### Create New Documentation
 
-### Install via Script (Alternative)
+```
+You: "Document the decision to use PostgreSQL"
 
-```bash
-# Interactive installation (prompts for template selection)
-curl -fsSL https://raw.githubusercontent.com/tnez/docket/main/scripts/install.sh | bash
-
-# Install specific templates
-curl -fsSL https://raw.githubusercontent.com/tnez/docket/main/scripts/install.sh | bash -s -- --templates=adr,rfc
-
-# Or download and review first (recommended)
-curl -fsSL https://raw.githubusercontent.com/tnez/docket/main/scripts/install.sh -o install.sh
-chmod +x install.sh
-./install.sh --help
+Agent: [uses docket get-template with type 'adr']
+Agent: [creates docs/adr/adr-0004-postgresql.md]
+Agent: "I've documented the PostgreSQL decision. Review?"
 ```
 
-### Installation Options
+### Set Up Documentation Structure
 
-```bash
-# Install all templates
-./install.sh --templates=all --non-interactive
+```
+You: "Initialize documentation for this project"
 
-# Install to custom directory
-./install.sh --target-dir=documentation
-
-# Dry-run to preview changes
-./install.sh --dry-run
-
-# Overwrite existing files
-./install.sh --templates=adr --force
-
-# Backup existing files before installing
-./install.sh --templates=all --backup
+Agent: [uses docket analyze]
+Agent: "TypeScript CLI tool with Mocha testing.
+       I'll create architecture/, adr/, and specs/ directories
+       with appropriate templates. Proceed?"
 ```
 
-### Use as GitHub Template
+## Target Audience
 
-1. Click "Use this template" button
-2. Create your repository
-3. Clone and start documenting
+Solo developers using AI agents as part of their development workflow.
 
-### Manual Installation
+If you're using Claude, ChatGPT, or other AI coding assistants, docket helps them understand and improve your documentation.
+
+## Documentation
+
+- [MCP Setup Guide](docs/guides/mcp-setup.md) - Detailed configuration
+- [Architecture Overview](docs/architecture/overview.md) - System design
+- [RFCs](docs/rfcs/) - Proposed features
+
+## Development
 
 ```bash
-# Clone the repository
+# Clone and build
 git clone https://github.com/tnez/docket.git
 cd docket
+npm install
+npm run build
 
-# Run installer from your project directory
-cd /path/to/your/project
-/path/to/docket/scripts/install.sh --templates=adr,rfc
+# Add to ~/.claude.json for local development
+{
+  "mcpServers": {
+    "docket": {
+      "type": "stdio",
+      "command": "/absolute/path/to/docket/bin/mcp-server.js",
+      "args": [],
+      "env": {}
+    }
+  }
+}
+
+# Restart Claude Code to load the MCP server
 ```
-
-### Uninstall
-
-```bash
-# Remove installed templates
-./scripts/uninstall.sh
-
-# Dry-run to preview what would be removed
-./scripts/uninstall.sh --dry-run
-```
-
-## Features
-
-### Smart Project Analysis
-- **Language Detection** - Automatically identifies all programming languages in your project
-- **Framework Discovery** - Detects web, backend, testing, and other frameworks
-- **Structure Analysis** - Finds source, test, and docs directories
-- **Build Tool Recognition** - Identifies build systems and package managers
-- **JSON Output** - Structured data perfect for agent consumption
-
-### Intelligent Documentation Initialization
-- **Context-Aware** - Customizes templates based on your project's tech stack
-- **Interactive & Non-Interactive** - Works great for humans and agents
-- **Smart Defaults** - Reasonable defaults when run non-interactively
-- **Preserves Context** - Saves project profile for future use
-
-### Gap Detection & Audit
-- **Completeness Scoring** - 0-100 score for documentation completeness
-- **Prioritized Gaps** - High/medium/low severity for each gap
-- **Coverage Tracking** - Checks for architecture, ADRs, standards, testing, API, etc.
-- **Actionable Suggestions** - Specific recommendations for each gap
-
-### Drift Detection & Review
-- **Staleness Detection** - Finds docs not updated in 1+ months
-- **Code-Docs Alignment** - Detects when code changes without doc updates
-- **Framework Drift** - Identifies mismatches between code and documentation
-- **Health Scoring** - Overall documentation health score (0-100)
-
-### Production-Ready Templates
-- 11 comprehensive documentation templates covering common needs
-- Real-world examples demonstrating best practices
-- Clear guidance on when to use each template
-- Consistent formatting across all documentation
-
-### Agent-Agnostic Architecture
-- **No Vendor Lock-In** - Works with any AI coding agent
-- **Structured Output** - All commands support `--output json`
-- **Protocol Documentation** - Complete guide for agent developers
-- **JSON Schemas** - Typed, validated output for reliable parsing
-- **Battle-Tested** - Designed for Claude Code, works with Cursor, Aider, etc.
-
-### Built on Best Practices
-- Research from 15+ leading open-source projects
-- Based on Divio Documentation System principles
-- Follows ADR and RFC best practices
-- Battle-tested patterns from enterprise projects
-
-## Why Use docket?
-
-### For Solo Developers
-- **Smart Setup** - `docket init` sets up documentation in seconds
-- **Gap Detection** - Never wonder what's missing
-- **Maintenance Help** - `docket review` finds stale docs automatically
-- **Professional** - Document your project like the pros
-- **Portfolio boost** - Well-documented projects stand out
-
-### For Teams
-- **Consistency** - Everyone follows the same structure
-- **Automated Checks** - Run `docket audit` in CI/CD
-- **Onboarding** - New team members understand the project quickly
-- **Decision tracking** - ADRs capture why decisions were made
-- **Operational excellence** - Runbooks ensure smooth operations
-- **Health Monitoring** - Track documentation health over time
-
-### For AI-Assisted Development
-- **Agent-Agnostic** - Works with any AI coding agent
-- **Context-Rich** - AI agents understand your project instantly
-- **Structured Output** - JSON mode for programmatic access
-- **Smart Suggestions** - Agents can suggest what to document
-- **Maintenance Automation** - Agents help keep docs current
-
-### For Open Source Projects
-- **Contributor friendly** - Clear documentation attracts contributors
-- **Professional appearance** - Shows project maturity
-- **Community building** - RFCs enable community-driven design
-- **Maintenance** - Troubleshooting guides reduce support burden
-- **CI Integration** - Automated documentation checks
-
-## Roadmap
-
-- [x] Research and design
-- [x] Phase 0: Foundation (Week 1) - **COMPLETE**
-- [x] Phase 1: Core Templates (Weeks 2-3) - **COMPLETE**
-- [x] Phase 2: Bootstrap System (Weeks 4-5) - **COMPLETE**
-- [x] Phase 3: Testing & Validation (Weeks 6-7) - **COMPLETE**
-- [ ] Phase 4: Launch (Week 8)
-
-**Current Status:** 🚀 Phase 3 Complete - Ready for Launch
-**Current Version:** v0.3.0-alpha
-
-## Testing
-
-docket includes a comprehensive test suite to ensure reliability across platforms.
-
-### Running Tests
-
-```bash
-# Run full test suite
-./test/test-install.sh
-
-# Tests run automatically on CI for:
-# - Push to main branch
-# - Pull requests
-```
-
-### Test Coverage
-
-- ✅ Installation scenarios (clean, conflict, custom directory)
-- ✅ Uninstallation
-- ✅ Dry-run mode
-- ✅ Conflict handling
-- ✅ Backup creation
-- ✅ Cross-platform compatibility (macOS, Linux)
-
-See [test/README.md](test/README.md) for detailed testing guide and [test/TESTING-CHECKLIST.md](test/TESTING-CHECKLIST.md) for the pre-release checklist.
-
-## Contributing
-
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
-- How to report bugs
-- How to suggest features
-- How to submit pull requests
-- Development setup
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT © Travis Nez
 
-You are free to:
-- ✅ Use this template for any project (personal or commercial)
-- ✅ Modify and customize to your needs
-- ✅ Distribute and share
-- ✅ Include in proprietary software
+## Philosophy
 
-## Acknowledgments
+Docket is infrastructure for AI agents, not a direct tool for humans.
 
-Built on the shoulders of giants:
+Think of it like a database:
+- Humans don't query databases directly
+- Applications (agents) query databases
+- Makes applications smarter
 
-- [Divio Documentation System](https://documentation.divio.com/) - Documentation structure principles
-- [Architectural Decision Records](https://adr.github.io/) - ADR format and best practices
-- [IETF RFC Process](https://www.ietf.org/standards/rfcs/) - RFC inspiration
-- Leading open-source projects - Documentation patterns and examples
-
-## Contact
-
-- **Issues:** [GitHub Issues](https://github.com/tnez/docket/issues) - Report bugs or request features
-- **GitHub:** [@tnez](https://github.com/tnez)
-- **Author:** [tnezdev](https://github.com/tnez)
-
-## Available Templates
-
-| Template | Purpose | Use When |
-|----------|---------|----------|
-| **adr-template.md** | Architecture Decision Records | Making significant architectural decisions |
-| **rfc-template.md** | Request for Comments | Proposing new features or major changes |
-| **runbook-template.md** | Operational Procedures | Documenting recurring operational tasks |
-| **troubleshooting-template.md** | Problem Diagnosis | Creating guides for common issues |
-| **api-documentation-template.md** | API Reference | Documenting REST/GraphQL APIs |
-| **architecture-overview-template.md** | System Design | Describing high-level system architecture |
-| **onboarding-template.md** | Developer Onboarding | Setting up new team members for success |
-| **patterns-template.md** | Architectural Patterns | Establishing consistent code patterns |
-| **standards-template.md** | Code Standards | Defining coding conventions and style |
-| **testing-template.md** | Testing Philosophy | Documenting testing approach and practices |
-| **writing-software-template.md** | Development Philosophy | Defining how your team builds software |
-
----
-
-**Status:** Alpha (Phase 3 Complete) | **Next Milestone:** Phase 4 - Launch
-
-*Star this repo ⭐ to follow development progress*
+Docket makes agents smarter about documentation.
