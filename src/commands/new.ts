@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import {glob} from 'glob'
 
-type DocType = 'adr' | 'rfc' | 'guide' | 'runbook' | 'architecture'
+type DocType = 'adr' | 'rfc' | 'guide' | 'runbook' | 'architecture' | 'spec'
 
 interface TemplateInfo {
   templateFile: string
@@ -44,14 +44,20 @@ const TEMPLATE_MAP: Record<DocType, TemplateInfo> = {
     needsNumber: false,
     prefix: '',
   },
+  spec: {
+    templateFile: 'spec-template.md',
+    subdirectory: 'specs',
+    needsNumber: false,
+    prefix: '',
+  },
 }
 
 export default class New extends Command {
   static args = {
     type: Args.string({
-      description: 'Type of document to create (adr, rfc, guide, runbook, architecture)',
+      description: 'Type of document to create (adr, rfc, guide, runbook, architecture, spec)',
       required: true,
-      options: ['adr', 'rfc', 'guide', 'runbook', 'architecture'],
+      options: ['adr', 'rfc', 'guide', 'runbook', 'architecture', 'spec'],
     }),
     title: Args.string({
       description: 'Title for the new document',
@@ -67,6 +73,7 @@ export default class New extends Command {
     '<%= config.bin %> <%= command.id %> guide "Deployment process"',
     '<%= config.bin %> <%= command.id %> runbook "Database backup procedure"',
     '<%= config.bin %> <%= command.id %> architecture "System overview"',
+    '<%= config.bin %> <%= command.id %> spec "Analyze command behavior"',
   ]
 
   static flags = {
@@ -192,6 +199,12 @@ export default class New extends Command {
       content = content.replace(/# RFC-NNNN: \[Title\]/, `# ${title}`)
       content = content.replace(/\*\*Status:\*\* \[Draft.*?\]/, '**Status:** Draft')
       content = content.replace(/\*\*Created:\*\* YYYY-MM-DD/, `**Created:** ${today}`)
+    }
+
+    // Spec-specific customization
+    if (type === 'spec') {
+      content = content.replace(/\[SPEC_TITLE\]/g, title)
+      content = content.replace(/\[CREATED_DATE\]/g, today)
     }
 
     // General title replacement
