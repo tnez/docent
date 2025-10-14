@@ -5,8 +5,8 @@
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
 - **Related:**
-  - Implementation: `/Users/tnez/Code/tnez/docket/src/mcp/tools/analyze.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docket/src/lib/detector.ts`
+  - Implementation: `/Users/tnez/Code/tnez/docent/src/mcp/tools/analyze.ts`
+  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/detector.ts`
 
 ## Context
 
@@ -296,7 +296,7 @@ const result = await tools.analyze({
 - Test exclusion patterns (ensure node_modules ignored)
 
 **Integration Tests:**
-- Test against real-world projects (docket itself, example repos)
+- Test against real-world projects (docent itself, example repos)
 - Verify JSON output is valid and matches schema
 - Test path parameter with absolute and relative paths
 - Test error handling (non-existent paths, permission errors)

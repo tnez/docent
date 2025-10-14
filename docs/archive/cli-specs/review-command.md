@@ -5,8 +5,8 @@
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
 - **Related:**
-  - Implementation: `/Users/tnez/Code/tnez/docket/src/commands/review.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docket/src/lib/reviewer.ts`
+  - Implementation: `/Users/tnez/Code/tnez/docent/src/commands/review.ts`
+  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/reviewer.ts`
   - Depends on: analyze command for project analysis
 
 ## Context
@@ -21,7 +21,7 @@ This command helps maintain documentation quality over time by catching docs tha
 
 ### Scenario: Healthy Documentation
 **Given:** A project with recently updated documentation aligned with current code
-**When:** User runs `docket review`
+**When:** User runs `docent review`
 **Then:**
 - Command analyzes project and checks documentation freshness
 - Displays health score of 80-100 (green)
@@ -32,7 +32,7 @@ This command helps maintain documentation quality over time by catching docs tha
 
 #### Example:
 ```bash
-docket review
+docent review
 ```
 
 ```
@@ -55,7 +55,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: Stale Documentation Detected
 **Given:** A project with documentation that hasn't been updated in months
-**When:** User runs `docket review`
+**When:** User runs `docent review`
 **Then:**
 - Detects documents not updated recently (using git commit dates or filesystem mtime)
 - Groups stale docs by severity:
@@ -69,7 +69,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 #### Example:
 ```bash
-docket review
+docent review
 ```
 
 ```
@@ -103,7 +103,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: Framework Drift Detected
 **Given:** A project using React and Express, but architecture docs only mention an old framework (Angular)
-**When:** User runs `docket review`
+**When:** User runs `docent review`
 **Then:**
 - Analyzes project to detect current frameworks (React, Express)
 - Scans architecture/overview docs for mentions of these frameworks
@@ -124,7 +124,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: Recent Code Changes Without Doc Updates
 **Given:** A git repository where 15 source files changed in last 30 days, but 0 documentation files changed
-**When:** User runs `docket review`
+**When:** User runs `docent review`
 **Then:**
 - Uses git to find files changed in last 30 days
 - Filters to source code files (.ts, .js, .py, .rs, .go, .java)
@@ -145,7 +145,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: Testing Framework Not Documented
 **Given:** A project using Jest and Vitest, but testing docs don't mention them
-**When:** User runs `docket review`
+**When:** User runs `docent review`
 **Then:**
 - Detects testing frameworks from analysis
 - Checks if testing documentation mentions these frameworks
@@ -163,18 +163,18 @@ Review completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: No Documentation Directory
-**Given:** A project that has never run `docket init`
-**When:** User runs `docket review`
+**Given:** A project that has never run `docent init`
+**When:** User runs `docent review`
 **Then:**
 - Detects docs/ directory doesn't exist
 - Returns health score of 0
 - Reports high-severity drift issue: "No documentation directory found"
 - No stale documents (empty array)
-- Suggests running `docket init`
+- Suggests running `docent init`
 
 #### Example:
 ```bash
-docket review
+docent review
 ```
 
 ```
@@ -187,7 +187,7 @@ docket review
 
   🔴 HIGH Priority:
     • Setup: No documentation directory found
-      → Run 'docket init' to set up documentation
+      → Run 'docent init' to set up documentation
 
 💡 Recommendations
   • Initialize documentation
@@ -199,7 +199,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: Git Repository with Accurate Staleness Detection
 **Given:** A git repository where docs were updated 200 days ago
-**When:** User runs `docket review`
+**When:** User runs `docent review`
 **Then:**
 - Detects .git directory exists
 - For each doc file, runs `git log -1 --format=%ct "filepath"` to get last commit timestamp
@@ -209,7 +209,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: Non-Git Project with Filesystem Fallback
 **Given:** A project without git (no .git directory)
-**When:** User runs `docket review`
+**When:** User runs `docent review`
 **Then:**
 - Detects no .git directory
 - Falls back to filesystem mtime for staleness detection
@@ -219,7 +219,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: Git Command Fails (Graceful Fallback)
 **Given:** A git repository where git command fails (permissions, corrupted repo)
-**When:** User runs `docket review` and git command throws error
+**When:** User runs `docent review` and git command throws error
 **Then:**
 - Catches error from `execSync('git log ...')`
 - Falls back to filesystem mtime for that file
@@ -228,7 +228,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: JSON Output for Agent Integration
 **Given:** Any project
-**When:** User runs `docket review --output json`
+**When:** User runs `docent review --output json`
 **Then:**
 - Outputs valid JSON to stdout (no progress messages, no colors)
 - JSON structure matches `ReviewResult` interface:
@@ -242,7 +242,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 
 #### Example:
 ```bash
-docket review --output json
+docent review --output json
 ```
 
 ```json
@@ -282,31 +282,31 @@ docket review --output json
 
 ### Scenario: Custom Documentation Directory
 **Given:** A project using a non-standard docs directory (e.g., "documentation")
-**When:** User runs `docket review --docs-dir documentation`
+**When:** User runs `docent review --docs-dir documentation`
 **Then:**
 - Scans "documentation/" instead of "docs/"
 - All other behavior remains the same
 
 #### Example:
 ```bash
-docket review --docs-dir documentation --output json
+docent review --docs-dir documentation --output json
 ```
 
 ### Scenario: Analyze Non-Current Directory
 **Given:** User wants to review a different project
-**When:** User runs `docket review --path /path/to/other/project`
+**When:** User runs `docent review --path /path/to/other/project`
 **Then:**
 - Reviews specified directory instead of current directory
 - Git commands run in specified directory context
 
 #### Example:
 ```bash
-docket review --path ~/projects/my-app
+docent review --path ~/projects/my-app
 ```
 
 ### Scenario: Many Stale Documents with Truncation
 **Given:** A project with 10 high-severity stale documents
-**When:** User runs `docket review`
+**When:** User runs `docent review`
 **Then:**
 - Shows first 5 stale documents in that severity level
 - Appends "... and 5 more" to indicate truncation

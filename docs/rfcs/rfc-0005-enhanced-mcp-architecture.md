@@ -8,7 +8,7 @@
 
 ## Summary
 
-Extend docket's MCP server from tools-only to full MCP capabilities by adding **resources** (URI-based documentation content) and **prompts** (pre-defined workflow templates). This transforms docket from "action executor" to "context provider" - agents discover runbooks, templates, standards, and journal entries via resources, then execute workflows via prompts. This architecture elegantly replaces CLI-based workflow orchestration (RFC-0003) with MCP-native patterns while maintaining docket's role as documentation intelligence, not execution engine.
+Extend docent's MCP server from tools-only to full MCP capabilities by adding **resources** (URI-based documentation content) and **prompts** (pre-defined workflow templates). This transforms docent from "action executor" to "context provider" - agents discover runbooks, templates, standards, and journal entries via resources, then execute workflows via prompts. This architecture elegantly replaces CLI-based workflow orchestration (RFC-0003) with MCP-native patterns while maintaining docent's role as documentation intelligence, not execution engine.
 
 ## Motivation
 
@@ -16,7 +16,7 @@ Extend docket's MCP server from tools-only to full MCP capabilities by adding **
 
 **Current Limitation: Tools-Only MCP Server**
 
-Following ADR-0004 (MCP-only architecture), docket currently exposes only "tools" via MCP:
+Following ADR-0004 (MCP-only architecture), docent currently exposes only "tools" via MCP:
 - `analyze` - Project structure analysis
 - `audit-quality` - Agent-driven documentation assessment
 - `audit` - Heuristic documentation audit
@@ -50,9 +50,9 @@ Without prompts/resources:
 4. 15 minutes of trial and error
 
 With prompts/resources:
-1. Agent: docket.prompt("Create Preview DB Branch")
+1. Agent: docent.prompt("Create Preview DB Branch")
 2. Prompt includes: runbook reference, context gathering steps
-3. Agent: docket.resource("runbook://preview-branch")
+3. Agent: docent.resource("runbook://preview-branch")
 4. Agent follows runbook, executes correctly
 5. 30 seconds, first try ✅
 ```
@@ -66,16 +66,16 @@ Discovery → Context → Execution
 analyze()   resource()  (agent acts)
 ```
 
-Docket provides **documentation as configuration for agents**, not execution.
+Docent provides **documentation as configuration for agents**, not execution.
 
 **Who is affected:**
-- Solo developers using docket with AI agents
+- Solo developers using docent with AI agents
 - Teams establishing operational procedures
 - Anyone building agent-driven workflows
 - Projects needing documentation-driven development
 
 **Consequences of not solving:**
-- Docket remains "tools only" (1/3 of MCP capabilities)
+- Docent remains "tools only" (1/3 of MCP capabilities)
 - Workflows require custom agent code (not standardized)
 - Knowledge buried in docs (not discoverable by agents)
 - RFC-0003 workflow orchestration requires CLI (more complex)
@@ -128,7 +128,7 @@ MCP provides three complementary capabilities:
 - **Parameterized**: Pass arguments (rfc_path, perspective, etc.)
 
 **Why this is huge:**
-- RFC-0003 proposed `docket workflow start review-rfc` (CLI orchestration)
+- RFC-0003 proposed `docent workflow start review-rfc` (CLI orchestration)
 - **Better approach:** MCP prompt "Review RFC" (native workflow)
 - Simpler, more elegant, MCP-native
 
@@ -137,13 +137,13 @@ MCP provides three complementary capabilities:
 1. **Enable content discovery**: Agents browse runbooks, templates, standards, docs, journal
 2. **Standardize workflows**: Common procedures invocable via prompts
 3. **Replace CLI workflows**: MCP prompts > CLI orchestration (simpler architecture)
-4. **Maintain "context provider" role**: Docket provides documentation, agents execute
+4. **Maintain "context provider" role**: Docent provides documentation, agents execute
 5. **Preserve tools**: Keep existing tools, enhance with resources/prompts
 6. **Stay agent-agnostic**: Work with any MCP-compatible agent
 
 ### Non-Goals
 
-1. **Not an execution engine**: Docket doesn't run commands (agents do)
+1. **Not an execution engine**: Docent doesn't run commands (agents do)
 2. **Not replacing templates directory**: Resources expose existing templates
 3. **Not a general workflow engine**: Prompts guide, don't control
 4. **Not breaking existing tools**: Additive enhancement
@@ -152,11 +152,11 @@ MCP provides three complementary capabilities:
 
 ### Overview
 
-Extend docket's MCP server (`src/mcp/server.ts`) to expose three capabilities:
+Extend docent's MCP server (`src/mcp/server.ts`) to expose three capabilities:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│         Docket MCP Server (Enhanced)            │
+│         Docent MCP Server (Enhanced)            │
 ├─────────────────────────────────────────────────┤
 │ TOOLS (existing)                                │
 │  - analyze(path) → project analysis             │
@@ -181,7 +181,7 @@ Extend docket's MCP server (`src/mcp/server.ts`) to expose three capabilities:
 
 **Architectural Principle (from context):**
 
-> "Docket provides **context** (discovery + instructions), not **execution**.
+> "Docent provides **context** (discovery + instructions), not **execution**.
 > Documentation becomes **configuration for AI agents**."
 
 ### Architecture
@@ -195,7 +195,7 @@ Extend docket's MCP server (`src/mcp/server.ts`) to expose three capabilities:
      │          │          │
      ▼          ▼          ▼
 ┌─────────────────────────────────────────┐
-│       MCP Server (docket)                │
+│       MCP Server (docent)                │
 │  ┌──────────────────────────────────┐   │
 │  │  Tools Handler                    │   │
 │  │  - analyze()                      │   │
@@ -220,7 +220,7 @@ Extend docket's MCP server (`src/mcp/server.ts`) to expose three capabilities:
     │   Project Documentation   │
     │   - templates/            │
     │   - docs/                 │
-    │   - .docket/journal.md    │
+    │   - .docent/journal.md    │
     │   - runbooks/             │
     │   - standards/            │
     └──────────────────────────┘
@@ -317,8 +317,8 @@ class ResourceHandler {
   private async readJournal(identifier: string): Promise<ResourceContent> {
     // identifier: 'current' | 'YYYY-MM-DD'
     const path = identifier === 'current'
-      ? '.docket/journal.md'
-      : `.docket/journal-${identifier}.md`
+      ? '.docent/journal.md'
+      : `.docent/journal-${identifier}.md`
 
     const content = await fs.readFile(path, 'utf-8')
     return {
@@ -567,7 +567,7 @@ Create a database preview branch for this project by following the runbook.
 The step-by-step procedure is provided as a resource: ${runbookUri}
 
 Please:
-1. Read the runbook using \`docket.resource('${runbookUri}')\`
+1. Read the runbook using \`docent.resource('${runbookUri}')\`
 2. Follow each step in the runbook
 3. Report progress and any issues
 4. Confirm completion
@@ -627,7 +627,7 @@ Analyze recent work and provide context to help me continue where I left off.
 
 ## Context Gathered
 
-### Work Journal (${'.docket/journal.md'})
+### Work Journal (${'.docent/journal.md'})
 <journal>
 ${journal}
 </journal>
@@ -762,7 +762,7 @@ Types:
 - template/{type}             → templates/{type}-template.md
 - standard/{type}             → docs/standards/{type}.md
 - doc/{path}                  → docs/{path}
-- journal/{date|'current'}    → .docket/journal[-{date}].md
+- journal/{date|'current'}    → .docent/journal[-{date}].md
 
 Examples:
 - docent://runbook/preview-branch
@@ -804,7 +804,7 @@ import { PromptBuilder, PROMPTS } from './prompts/builder.js'
 
 const server = new Server(
   {
-    name: 'docket',
+    name: 'docent',
     version: '0.4.0',
   },
   {
@@ -1002,7 +1002,7 @@ Agent:
 2. **Discoverable documentation**: Agents browse runbooks, templates, standards
 3. **Standardized workflows**: Pre-defined prompts replace ad-hoc processes
 4. **Simpler than CLI workflows**: MCP-native > CLI orchestration (RFC-0003)
-5. **Maintains context provider role**: Docket guides, doesn't execute
+5. **Maintains context provider role**: Docent guides, doesn't execute
 6. **Cacheable resources**: MCP clients cache content (performance)
 
 **Disadvantages:**
@@ -1013,7 +1013,7 @@ Agent:
 4. **MCP client dependency**: Only works with MCP-compatible agents
 5. **Resource discovery overhead**: Agents must list/browse resources
 
-**Our assessment:** Advantages strongly outweigh disadvantages. Full MCP capabilities unlock docket's potential as documentation intelligence platform.
+**Our assessment:** Advantages strongly outweigh disadvantages. Full MCP capabilities unlock docent's potential as documentation intelligence platform.
 
 ### Alternative 1: Stay Tools-Only (Current)
 
@@ -1047,9 +1047,9 @@ Agent:
 - Not MCP-native (feels bolted on)
 - Requires more code than prompts
 - Less discoverable than MCP prompts
-- Violates "context provider" principle (docket becomes executor)
+- Violates "context provider" principle (docent becomes executor)
 
-**Why not chosen:** MCP prompts are more elegant, native, and align better with docket's role as context provider.
+**Why not chosen:** MCP prompts are more elegant, native, and align better with docent's role as context provider.
 
 ### Alternative 3: Prompts Only (No Resources)
 
@@ -1096,7 +1096,7 @@ Agent:
 
 **Cons:**
 - Heavy dependency (separate service)
-- Over-engineered for docket's needs
+- Over-engineered for docent's needs
 - Not MCP-native
 - Complex setup for users
 - Violates "context provider" principle
@@ -1295,7 +1295,7 @@ Enhanced MCP has minimal performance overhead:
 3. Agents opt-in to using resources/prompts
 4. Tools-only agents still work
 
-**For existing docket users:**
+**For existing docent users:**
 - No changes to current usage
 - Enhanced capabilities available when agents support them
 - Backward compatible
@@ -1357,7 +1357,7 @@ Goal: Document new capabilities and refine
 
 Tasks:
 - Update README with resources/prompts examples
-- Write guide: "Using Docket Workflows"
+- Write guide: "Using Docent Workflows"
 - Create runbook examples (preview-branch, deploy, etc.)
 - Add prompt templates documentation
 - Update ADR-0004 if architectural decisions changed
@@ -1368,7 +1368,7 @@ Deliverable: Complete documentation, polished implementation
 
 **Phase 5: Dogfooding & Iteration (ongoing)**
 
-Goal: Use docket via MCP while developing docket
+Goal: Use docent via MCP while developing docent
 
 Tasks:
 - Use "Review RFC" prompt on new RFCs
@@ -1388,7 +1388,7 @@ Deliverable: Validated workflows, real-world feedback
 - Additive enhancement only
 
 **Upgrade path:**
-- Users update to docket 0.4.0
+- Users update to docent 0.4.0
 - MCP clients detect new capabilities automatically
 - Agents opt-in to resources/prompts
 - Fallback to tools-only if needed
@@ -1402,7 +1402,7 @@ Deliverable: Validated workflows, real-world feedback
    - Quick start examples
    - Link to detailed guides
 
-2. **Guide: Using Docket Workflows**
+2. **Guide: Using Docent Workflows**
    - What are prompts and when to use them
    - Available workflows ("Review RFC", "Resume Work", etc.)
    - How to invoke prompts
@@ -1455,7 +1455,7 @@ Deliverable: Validated workflows, real-world feedback
    - Testing resources
 
 3. **MCP SDK Integration**
-   - How docket uses MCP SDK
+   - How docent uses MCP SDK
    - Request handlers implementation
    - Error handling patterns
    - Testing with MCP clients
@@ -1468,7 +1468,7 @@ Deliverable: Validated workflows, real-world feedback
    - **Recommendation:** Defer to Phase 4, start with v1 implicit
 
 2. **Custom Prompt Location:** Where should projects define custom prompts?
-   - `.docket/prompts/` directory?
+   - `.docent/prompts/` directory?
    - Register in config file?
    - **Recommendation:** Research in Phase 1, implement in Phase 3
 
@@ -1488,8 +1488,8 @@ Deliverable: Validated workflows, real-world feedback
    - **Recommendation:** Start static (Phase 2), consider dynamic later
 
 6. **Prompt Feedback:** How do prompts receive agent results?
-   - One-way (agent receives prompt, docket doesn't see result)?
-   - Two-way (agent reports back to docket)?
+   - One-way (agent receives prompt, docent doesn't see result)?
+   - Two-way (agent reports back to docent)?
    - **Recommendation:** Start one-way, simpler model
 
 7. **Multi-Step Prompts:** How to handle multi-stage workflows?
@@ -1538,8 +1538,8 @@ Once resources and prompts are established:
 ### New Capabilities
 
 1. **Sampling** (4th MCP capability)
-   - Let docket request completions from agent
-   - Example: Docket asks agent to generate runbook section
+   - Let docent request completions from agent
+   - Example: Docent asks agent to generate runbook section
    - Bidirectional agent interaction
 
 2. **Resource Bundles**
@@ -1559,7 +1559,7 @@ Once resources and prompts are established:
 
 ## References
 
-### Related Docket Documentation
+### Related Docent Documentation
 
 - [ADR-0004: MCP-Only Architecture](../adr/adr-0004-mcp-only-architecture.md) - Current architecture
 - [RFC-0001: MCP Server Integration](./rfc-0001-mcp-server-for-agent-integration.md) - MCP implementation
@@ -1583,4 +1583,4 @@ Once resources and prompts are established:
 
 ---
 
-**This RFC proposes extending docket's MCP server with resources and prompts, transforming it from action executor to context provider. Documentation becomes configuration for AI agents, with discoverable runbooks, templates, and standardized workflows replacing manual orchestration.**
+**This RFC proposes extending docent's MCP server with resources and prompts, transforming it from action executor to context provider. Documentation becomes configuration for AI agents, with discoverable runbooks, templates, and standardized workflows replacing manual orchestration.**

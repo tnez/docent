@@ -8,7 +8,7 @@
 
 ## Context
 
-Docket started as a collection of 11 production-ready documentation templates. During Phase 3.9 (dogfooding), a critical insight emerged: documentation initialization and maintenance are inherently **agentic tasks** that require:
+Docent started as a collection of 11 production-ready documentation templates. During Phase 3.9 (dogfooding), a critical insight emerged: documentation initialization and maintenance are inherently **agentic tasks** that require:
 
 - Analyzing codebase structure
 - Asking contextual questions about the project
@@ -26,30 +26,30 @@ Docket started as a collection of 11 production-ready documentation templates. D
    - Agent landscape is rapidly evolving
    - Vendor lock-in kills adoption and longevity
 
-3. **User feedback** - During planning, the question "How will I use docket to inform agents about building features and maintain consistent standards?" revealed the templates didn't address this need.
+3. **User feedback** - During planning, the question "How will I use docent to inform agents about building features and maintain consistent standards?" revealed the templates didn't address this need.
 
 4. **The "smart-init" insight** - User stated: "I think the `smart-init` is actually **critical** for using the product. We also need a _smart_ way to keep things maintained."
 
 **The Core Problem:**
-Documentation tasks are agentic, but coupling to any specific agent creates lock-in. We need a way to make docket work with ANY agent framework.
+Documentation tasks are agentic, but coupling to any specific agent creates lock-in. We need a way to make docent work with ANY agent framework.
 
 ## Decision
 
-Transform docket from "template collection" to a **complete documentation platform** with three components:
+Transform docent from "template collection" to a **complete documentation platform** with three components:
 
 ### 1. Smart CLI
 Build command-line tools that intelligently analyze projects and documentation:
 
-- **`docket analyze`** - Detect languages, frameworks, project structure
-- **`docket init`** - Smart initialization with context-aware customization
-- **`docket audit`** - Find documentation gaps (completeness scoring)
-- **`docket review`** - Detect staleness and code/documentation drift
+- **`docent analyze`** - Detect languages, frameworks, project structure
+- **`docent init`** - Smart initialization with context-aware customization
+- **`docent audit`** - Find documentation gaps (completeness scoring)
+- **`docent review`** - Detect staleness and code/documentation drift
 
 ### 2. Agent-Agnostic Protocol
 Create a protocol that any AI agent can use:
 
 - All commands support `--output json` for structured data
-- Comprehensive protocol documentation in `.docket-protocol/`
+- Comprehensive protocol documentation in `.docent-protocol/`
 - JSON schemas for all command outputs
 - No agent-specific features or integrations
 
@@ -57,7 +57,7 @@ Create a protocol that any AI agent can use:
 Keep the 11 existing templates as the foundation, but make them smarter:
 
 - Templates customized based on project analysis
-- Context saved to `.docket/context.json` for agent use
+- Context saved to `.docent/context.json` for agent use
 - Templates filled in with project-specific placeholders
 
 **Framework Choice:** Use oclif for CLI implementation (see ADR-0002)
@@ -94,7 +94,7 @@ Keep the 11 existing templates as the foundation, but make them smarter:
 
 ### Alternative 1: Build Claude Code Integration Only
 
-**Description:** Build docket as a Claude Code plugin/extension with deep integration.
+**Description:** Build docent as a Claude Code plugin/extension with deep integration.
 
 **Pros:**
 - Fastest to build
@@ -155,13 +155,13 @@ Keep the 11 existing templates as the foundation, but make them smarter:
 ### Architecture
 
 ```
-docket/
+docent/
 ├── templates/        # 11 markdown templates (existing)
 ├── scripts/          # Shell scripts (existing, kept for compatibility)
 ├── src/              # TypeScript CLI source
 │   ├── commands/     # analyze, init, audit, review
 │   └── lib/          # detector, installer, auditor, reviewer
-├── .docket-protocol/ # Agent integration documentation
+├── .docent-protocol/ # Agent integration documentation
 │   ├── agent-guide.md
 │   └── schemas/      # JSON schemas for all outputs
 └── bin/              # CLI entry points
@@ -178,7 +178,7 @@ docket/
 ### Rollout Strategy
 
 1. **Phase 1:** Build and test CLI locally
-2. **Phase 2:** Publish to npm as `@tnezdev/docket`
+2. **Phase 2:** Publish to npm as `@tnezdev/docent`
 3. **Phase 3:** Update documentation and examples
 4. **Phase 4:** Keep shell scripts for backward compatibility
 5. **Phase 5:** Gather feedback from agent framework developers
@@ -187,7 +187,7 @@ docket/
 
 - Existing template users: No migration needed, templates still work
 - New users: Can use CLI or templates depending on preference
-- Agent developers: Follow `.docket-protocol/agent-guide.md`
+- Agent developers: Follow `.docent-protocol/agent-guide.md`
 
 ### Rollback Plan
 
@@ -199,10 +199,10 @@ If CLI adoption is poor:
 ## References
 
 - [Phase 3.9 Dogfooding Plan](./phase-3.9-dogfooding-plan.md) - Original planning discussion
-- [Agent Guide](./.docket-protocol/agent-guide.md) - Complete protocol documentation
+- [Agent Guide](./.docent-protocol/agent-guide.md) - Complete protocol documentation
 - [oclif Documentation](https://oclif.io/) - CLI framework we chose
 - [ADR-0002: Use Oclif for CLI Framework](./adr-0002-oclif-for-cli.md) - Related decision
 
 ---
 
-**This ADR represents the transformation of docket from a template collection to a complete documentation platform. It's the most significant architectural decision in the project's history.**
+**This ADR represents the transformation of docent from a template collection to a complete documentation platform. It's the most significant architectural decision in the project's history.**

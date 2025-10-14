@@ -5,8 +5,8 @@
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
 - **Related:**
-  - Implementation: `/Users/tnez/Code/tnez/docket/src/commands/audit.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docket/src/lib/auditor.ts`
+  - Implementation: `/Users/tnez/Code/tnez/docent/src/commands/audit.ts`
+  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/auditor.ts`
   - Depends on: analyze command for project analysis
 
 ## Context
@@ -21,7 +21,7 @@ This command helps solo developers and teams maintain documentation standards an
 
 ### Scenario: Well-Documented Project
 **Given:** A project with comprehensive documentation (architecture, ADRs, testing, API docs)
-**When:** User runs `docket audit`
+**When:** User runs `docent audit`
 **Then:**
 - Command analyzes project structure and technology stack
 - Scans docs/ directory for documentation files
@@ -33,7 +33,7 @@ This command helps solo developers and teams maintain documentation standards an
 
 #### Example:
 ```bash
-docket audit
+docent audit
 ```
 
 ```
@@ -60,14 +60,14 @@ docket audit
 💡 Recommendations
   • Documentation coverage is good! Focus on keeping it up to date
 
-Run docket review to check for stale documentation
+Run docent review to check for stale documentation
 
 Audit completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: Project with Missing Critical Documentation
 **Given:** A multi-language project with backend framework but no architecture or API docs
-**When:** User runs `docket audit`
+**When:** User runs `docent audit`
 **Then:**
 - Detects project has multiple languages and backend framework
 - Identifies missing architecture and API docs as high-severity gaps
@@ -79,7 +79,7 @@ Audit completed at 10/13/2025, 3:45:00 PM
 
 #### Example:
 ```bash
-docket audit
+docent audit
 ```
 
 ```
@@ -129,19 +129,19 @@ Audit completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: No Documentation Directory
-**Given:** A project that has never run `docket init`
-**When:** User runs `docket audit`
+**Given:** A project that has never run `docent init`
+**When:** User runs `docent audit`
 **Then:**
 - Detects docs/ directory doesn't exist
 - Returns score of 0
 - Reports single high-severity gap: "No documentation directory found"
 - All coverage items show ✗
-- Suggests running `docket init`
-- Displays tip to initialize docket
+- Suggests running `docent init`
+- Displays tip to initialize docent
 
 #### Example:
 ```bash
-docket audit
+docent audit
 ```
 
 ```
@@ -163,19 +163,19 @@ docket audit
 
   🔴 HIGH Priority:
     • Setup: No documentation directory found
-      → Run 'docket init' to set up documentation
+      → Run 'docent init' to set up documentation
 
 💡 Recommendations
-  • Initialize docket documentation
+  • Initialize docent documentation
 
-💡 Tip: Run docket init to set up structured documentation
+💡 Tip: Run docent init to set up structured documentation
 
 Audit completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: JSON Output for Agent Integration
 **Given:** Any project
-**When:** User runs `docket audit --output json`
+**When:** User runs `docent audit --output json`
 **Then:**
 - Outputs valid JSON to stdout (no progress messages, no colors)
 - JSON structure matches `AuditResult` interface:
@@ -188,7 +188,7 @@ Audit completed at 10/13/2025, 3:45:00 PM
 
 #### Example:
 ```bash
-docket audit --output json
+docent audit --output json
 ```
 
 ```json
@@ -234,7 +234,7 @@ docket audit --output json
 
 ### Scenario: Custom Documentation Directory
 **Given:** A project using a non-standard docs directory (e.g., "documentation")
-**When:** User runs `docket audit --docs-dir documentation`
+**When:** User runs `docent audit --docs-dir documentation`
 **Then:**
 - Scans "documentation/" instead of "docs/"
 - All other behavior remains the same
@@ -242,12 +242,12 @@ docket audit --output json
 
 #### Example:
 ```bash
-docket audit --docs-dir documentation --output json
+docent audit --docs-dir documentation --output json
 ```
 
 ### Scenario: Empty or Placeholder Documentation Files
 **Given:** A project with docs/ directory containing template files not yet filled in
-**When:** User runs `docket audit`
+**When:** User runs `docent audit`
 **Then:**
 - Detects files with <100 characters of content
 - Detects files with many placeholder patterns (5+ `[...]`)
@@ -265,7 +265,7 @@ docket audit --docs-dir documentation --output json
 
 ### Scenario: ADR Format Compliance Check
 **Given:** A project with ADR files that are missing required sections
-**When:** User runs `docket audit`
+**When:** User runs `docent audit`
 **Then:**
 - Identifies files matching ADR pattern (`adr-001.md`, `adr001.md`, etc.)
 - Checks for required sections: Status, Context, Decision, Consequences
@@ -282,7 +282,7 @@ docket audit --docs-dir documentation --output json
 
 ### Scenario: Context-Aware Gap Detection - Simple CLI Tool
 **Given:** A simple CLI tool (single language, no backend framework, no tests)
-**When:** User runs `docket audit`
+**When:** User runs `docent audit`
 **Then:**
 - Does NOT flag missing API docs (not a backend project)
 - Does NOT flag missing testing docs (no tests exist)
@@ -291,7 +291,7 @@ docket audit --docs-dir documentation --output json
 
 ### Scenario: Context-Aware Gap Detection - Backend Service
 **Given:** A backend service with Express/FastAPI but no API documentation
-**When:** User runs `docket audit`
+**When:** User runs `docent audit`
 **Then:**
 - Detects backend framework (type: 'backend' or 'web')
 - Flags missing API docs as HIGH severity
@@ -300,7 +300,7 @@ docket audit --docs-dir documentation --output json
 
 ### Scenario: Context-Aware Gap Detection - Test Suite Exists
 **Given:** A project with test/ or tests/ directory but no testing documentation
-**When:** User runs `docket audit`
+**When:** User runs `docent audit`
 **Then:**
 - Uses project structure analysis to detect test directories
 - Flags missing testing docs as HIGH severity (tests exist but undocumented)
@@ -308,14 +308,14 @@ docket audit --docs-dir documentation --output json
 
 ### Scenario: Analyze Non-Current Directory
 **Given:** User wants to audit a different project
-**When:** User runs `docket audit --path /path/to/other/project`
+**When:** User runs `docent audit --path /path/to/other/project`
 **Then:**
 - Analyzes specified directory instead of current directory
 - All other behavior remains the same
 
 #### Example:
 ```bash
-docket audit --path ~/projects/my-app --output json
+docent audit --path ~/projects/my-app --output json
 ```
 
 ### Scenario: Score Calculation Example
@@ -407,8 +407,8 @@ docket audit --path ~/projects/my-app --output json
 
 **Integration with Other Commands:**
 - Uses `analyzeProject()` from analyze command
-- Uses `loadContext()` to detect if `docket init` was run
-- Human output suggests running `docket review` if score < 100
+- Uses `loadContext()` to detect if `docent init` was run
+- Human output suggests running `docent review` if score < 100
 
 ## Test Hints
 

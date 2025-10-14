@@ -7,7 +7,7 @@
 
 ## Summary
 
-Add docket capability to capture work artifacts (decisions, tasks, questions, improvements) discovered during development sessions and surface them at contextually relevant times. Prevents the "bottomless pit" problem where discovered work gets lost or forgotten.
+Add docent capability to capture work artifacts (decisions, tasks, questions, improvements) discovered during development sessions and surface them at contextually relevant times. Prevents the "bottomless pit" problem where discovered work gets lost or forgotten.
 
 **Core insight:** Documentation isn't just writing docs - it's capturing what you learn and decide *during* work, so it doesn't vanish.
 
@@ -67,7 +67,7 @@ While updating architecture docs from CLI to MCP-only:
 
 ### Overview
 
-Docket maintains a **work journal** that captures artifacts discovered during development:
+Docent maintains a **work journal** that captures artifacts discovered during development:
 - **Decisions** - "We chose X because Y"
 - **Tasks** - "Need to update section Z"
 - **Questions** - "Does this apply to situation W?"
@@ -75,7 +75,7 @@ Docket maintains a **work journal** that captures artifacts discovered during de
 - **Discoveries** - "Found that component uses old pattern"
 
 **Key principles:**
-1. **Capture is frictionless** - Agent command or single docket call
+1. **Capture is frictionless** - Agent command or single docent call
 2. **Context is preserved** - What file, what change, what conversation
 3. **Surfacing is smart** - Show relevant items when working nearby
 4. **Promotion is easy** - Convert capture to RFC, ADR, or issue when ready
@@ -122,17 +122,17 @@ Docket maintains a **work journal** that captures artifacts discovered during de
 **Options:**
 1. Archive to docs/archive/cli-specs/ (preserve history)
 2. Convert to MCP tool behavior specs (reuse scenarios)
-**Context:** Discovered during docket audit-quality assessment
+**Context:** Discovered during docent audit-quality assessment
 
 ### Question
 **Where:** Entire docs/ directory
 **What:** How many CLI references exist across all documentation?
-**Next step:** Run grep search for "docket audit", "docket analyze", etc.
+**Next step:** Run grep search for "docent audit", "docent analyze", etc.
 **Why matters:** Need to update all references to reflect MCP-only
 
 ### Meta-Discovery
 **What:** This exact workflow problem - capturing work without bottomless pit
-**Evidence:** "This actually illustrates a point of friction that I want docket to solve"
+**Evidence:** "This actually illustrates a point of friction that I want docent to solve"
 **Action:** Created RFC-0004 to capture this
 ```
 
@@ -148,15 +148,15 @@ Docket maintains a **work journal** that captures artifacts discovered during de
         │  Capture Commands      │
         │  (via agent or CLI)    │
         │                        │
-        │  - docket capture      │
-        │  - docket journal      │
-        │  - docket surface      │
+        │  - docent capture      │
+        │  - docent journal      │
+        │  - docent surface      │
         └────────┬───────────────┘
                  │
                  ▼
         ┌────────────────────────┐
         │   Work Journal         │
-        │   (.docket/journal.md) │
+        │   (.docent/journal.md) │
         │                        │
         │  - Timestamped entries │
         │  - File context        │
@@ -241,7 +241,7 @@ Docket maintains a **work journal** that captures artifacts discovered during de
 
 **2. Storage Format**
 
-Store in `.docket/journal.md` (human-readable, agent-parseable):
+Store in `.docent/journal.md` (human-readable, agent-parseable):
 
 ```markdown
 # Work Journal
@@ -299,7 +299,7 @@ Start at line 129 "Component 1: CLI Layer (oclif)"
 How many CLI references exist across all docs/?
 
 **Next Action:**
-grep -r "docket audit" docs/
+grep -r "docent audit" docs/
 grep -r "CLI" docs/
 
 **Why Matters:**
@@ -315,13 +315,13 @@ Need comprehensive update to reflect MCP-only architecture.
 This workflow problem itself - need way to capture work without bottomless pit.
 
 **Evidence:**
-"This actually illustrates a point of friction that I want docket to solve."
+"This actually illustrates a point of friction that I want docent to solve."
 
 **Action Taken:**
 Created RFC-0004 to design solution.
 
 **Potential Impact:**
-Could be docket's killer feature - solve documentation *workflow*, not just templates.
+Could be docent's killer feature - solve documentation *workflow*, not just templates.
 ```
 
 **3. Smart Surfacing**
@@ -432,12 +432,12 @@ promote_work({
 **Advantages:**
 - Captures knowledge that would otherwise be lost
 - Preserves context automatically
-- Reduces cognitive load (offload to docket)
+- Reduces cognitive load (offload to docent)
 - Enables safe pause/resume of complex work
 - Makes agent more helpful (proactive surfacing)
 
 **Disadvantages:**
-- Another file to maintain (.docket/journal.md)
+- Another file to maintain (.docent/journal.md)
 - Requires discipline to capture (though agent can prompt)
 - Could accumulate cruft if not pruned
 - Need conventions for when to capture vs just do the work
@@ -497,7 +497,7 @@ promote_work({
 
 ## Security Considerations
 
-- **Local only** - Journal stored in `.docket/` (gitignored by default)
+- **Local only** - Journal stored in `.docent/` (gitignored by default)
 - **No secrets** - Capture shouldn't include credentials/keys
 - **Privacy** - Conversation IDs are optional, local references only
 
@@ -519,7 +519,7 @@ promote_work({
 ## Migration and Rollout
 
 ### Phase 1: Manual Dogfooding
-- Manually maintain `.docket/journal.md` during docket development
+- Manually maintain `.docent/journal.md` during docent development
 - Learn what works/doesn't
 - Refine format
 
@@ -580,6 +580,6 @@ During the MCP documentation update, we discovered:
 - Discovered tasks (CLI spec conversion)
 - Open questions (how many CLI references?)
 
-Rather than losing this in the "bottomless pit," we're capturing it formally. This RFC itself demonstrates the workflow docket should enable.
+Rather than losing this in the "bottomless pit," we're capturing it formally. This RFC itself demonstrates the workflow docent should enable.
 
 **Dogfooding signal:** If this RFC helps us track and complete the documentation update, it validates the approach.

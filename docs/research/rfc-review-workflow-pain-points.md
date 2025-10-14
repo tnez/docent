@@ -6,7 +6,7 @@
 
 ## Summary
 
-During the manual review of RFC-0002, we documented every step required to conduct an architectural review. This document captures the pain points, inefficiencies, and manual work that `docket review` and workflow orchestration should automate.
+During the manual review of RFC-0002, we documented every step required to conduct an architectural review. This document captures the pain points, inefficiencies, and manual work that `docent review` and workflow orchestration should automate.
 
 **Key Finding:** What took ~45 minutes of manual orchestration should take 30 seconds with automation.
 
@@ -32,10 +32,10 @@ During the manual review of RFC-0002, we documented every step required to condu
 - Uncertain if we included everything relevant
 - Time-consuming and error-prone
 
-**What `docket review rfc-0002` should do:**
+**What `docent review rfc-0002` should do:**
 ```bash
 # Automated context gathering
-docket review docs/rfcs/rfc-0002-... --perspective architecture
+docent review docs/rfcs/rfc-0002-... --perspective architecture
 
 # Behind the scenes:
 # 1. Parse RFC references section
@@ -66,7 +66,7 @@ docket review docs/rfcs/rfc-0002-... --perspective architecture
 - Prompt quality determines review quality
 - Recreating wheel each time
 
-**What `docket review` should provide:**
+**What `docent review` should provide:**
 - Pre-built review templates for document types:
   - RFC architectural review
   - RFC implementation feasibility review
@@ -77,7 +77,7 @@ docket review docs/rfcs/rfc-0002-... --perspective architecture
 
 **Example:**
 ```bash
-docket review rfc-0002 --perspective architecture
+docent review rfc-0002 --perspective architecture
 # Uses: templates/review-prompts/rfc-architecture.md
 # Output: Structured review with: assessment, strengths, issues, recommendations
 ```
@@ -105,20 +105,20 @@ docket review rfc-0002 --perspective architecture
 **What workflow orchestration should provide:**
 ```bash
 # Launch with status tracking
-docket workflow start rfc-review --target rfc-0002
+docent workflow start rfc-review --target rfc-0002
 # Output: Workflow ID: rfc-review-abc123
 
 # Check progress
-docket workflow status rfc-review-abc123
+docent workflow status rfc-review-abc123
 # Output: Stage 2/4 - Architecture Review (3m 15s elapsed)
 # Last activity: Reading ADR-0003...
 
 # Stream logs
-docket workflow logs rfc-review-abc123 --follow
+docent workflow logs rfc-review-abc123 --follow
 # Real-time output from agent
 
 # Get results when complete
-docket workflow results rfc-review-abc123
+docent workflow results rfc-review-abc123
 # Structured output with findings
 ```
 
@@ -144,7 +144,7 @@ docket workflow results rfc-review-abc123
 **What should be automated:**
 ```bash
 # Review produces structured feedback
-docket workflow results rfc-review-abc123 --format json
+docent workflow results rfc-review-abc123 --format json
 {
   "assessment": "APPROVE_WITH_CHANGES",
   "blockers": [
@@ -161,7 +161,7 @@ docket workflow results rfc-review-abc123 --format json
 }
 
 # Track issue resolution
-docket review-issue resolve BLOCK-001
+docent review-issue resolve BLOCK-001
 # Marks issue as addressed, updates RFC status
 ```
 
@@ -184,7 +184,7 @@ docket review-issue resolve BLOCK-001
 **What should be automated:**
 ```bash
 # Automatic status transitions
-docket workflow complete rfc-review-abc123
+docent workflow complete rfc-review-abc123
 
 # Behind the scenes:
 # - Updates RFC status: Draft → In Review
@@ -235,7 +235,7 @@ docs/rfcs/.reviews/rfc-0002-2025-10-13-architecture.md
 ### Automated Review Process (Future - 30 sec + editing)
 ```bash
 # Single command
-docket review docs/rfcs/rfc-0002-... --perspective architecture
+docent review docs/rfcs/rfc-0002-... --perspective architecture
 
 # Behind the scenes (30 seconds):
 # 1. Gather context automatically (5s)
@@ -298,7 +298,7 @@ docket review docs/rfcs/rfc-0002-... --perspective architecture
 
 **Single command invocation:**
 ```bash
-docket review <document> [--perspective <type>]
+docent review <document> [--perspective <type>]
 ```
 
 **Clear progress indication:**
@@ -319,8 +319,8 @@ Critical Blockers (must fix):
   3. JSON schema additions unclear
 
 Next steps:
-  - Fix blockers: docket review-issue resolve BLOCK-001
-  - Re-review: docket review rfc-0002 --verify-fixes
+  - Fix blockers: docent review-issue resolve BLOCK-001
+  - Re-review: docent review rfc-0002 --verify-fixes
 ```
 
 ---
@@ -382,7 +382,7 @@ The custom RFC review agent provided valuable meta-commentary on what made revie
 
 ## Conclusion
 
-Manual RFC review revealed significant workflow friction that docket can eliminate. The gap between current manual process (45 min) and ideal automated process (30 sec + editing) represents the opportunity for RFC-0003.
+Manual RFC review revealed significant workflow friction that docent can eliminate. The gap between current manual process (45 min) and ideal automated process (30 sec + editing) represents the opportunity for RFC-0003.
 
 **Key insight:** Users should spend time on decisions and content, not on orchestration and context gathering. That's what tools are for.
 

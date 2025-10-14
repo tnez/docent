@@ -1,4 +1,4 @@
-# Architecture Overview: Docket
+# Architecture Overview: Docent
 
 **Version:** 0.3.0
 **Last Updated:** 2025-10-13
@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-Docket is documentation intelligence for AI agents. It provides agents with semantic analysis, project context, and documentation templates through the Model Context Protocol (MCP). Agents use docket automatically—users configure once and forget about it.
+Docent is documentation intelligence for AI agents. It provides agents with semantic analysis, project context, and documentation templates through the Model Context Protocol (MCP). Agents use docent automatically—users configure once and forget about it.
 
 The system consists of three main components: an MCP server exposing 5 tools, core analysis libraries written in TypeScript that provide both heuristic and agent-driven assessments, and 10 comprehensive documentation templates.
 
@@ -22,9 +22,9 @@ The system consists of three main components: an MCP server exposing 5 tools, co
 
 ### Purpose
 
-Docket makes AI agents smarter at understanding and improving documentation. It provides semantic analysis, project context, and templates so agents can assess documentation quality beyond simple pattern matching.
+Docent makes AI agents smarter at understanding and improving documentation. It provides semantic analysis, project context, and templates so agents can assess documentation quality beyond simple pattern matching.
 
-**How agents use docket:**
+**How agents use docent:**
 
 1. **Analyze projects** - Understand languages, frameworks, and structure
 2. **Assess quality** - Semantic evaluation using agent reasoning (73/100) vs heuristics (21/100)
@@ -43,7 +43,7 @@ Docket makes AI agents smarter at understanding and improving documentation. It 
 - Prefer invisible infrastructure over explicit tooling
 
 **Not the target:**
-- Teams needing CI/CD documentation gates (not docket's lane)
+- Teams needing CI/CD documentation gates (not docent's lane)
 - Developers without AI agent integration
 - Traditional documentation workflows without agent assistance
 
@@ -58,9 +58,9 @@ External dependencies:
 
 ### Dependents
 
-Systems that depend on docket:
+Systems that depend on docent:
 
-- **AI coding agents** - MCP-compatible agents using docket tools for documentation intelligence
+- **AI coding agents** - MCP-compatible agents using docent tools for documentation intelligence
 - **User projects** - Documentation templates and analysis provided through agents
 
 ## Architecture Diagram
@@ -128,7 +128,7 @@ Systems that depend on docket:
 
 ### Component 1: MCP Server
 
-**Purpose:** Model Context Protocol server providing docket intelligence to AI agents
+**Purpose:** Model Context Protocol server providing docent intelligence to AI agents
 
 **Technology:** TypeScript, @modelcontextprotocol/sdk (stdio transport)
 
@@ -166,7 +166,7 @@ Systems that depend on docket:
 
 **Deployment:**
 - Entry point: `bin/mcp-server.js`
-- Distributed via npm: `npx @tnezdev/docket`
+- Distributed via npm: `npx @tnezdev/docent`
 - Configured in agent's MCP settings (e.g., `~/.claude.json`)
 - Runs as persistent process (stdio transport)
 
@@ -349,9 +349,9 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 
 ### Distribution
 - **Registry:** npm
-- **Package Name:** `@tnezdev/docket`
+- **Package Name:** `@tnezdev/docent`
 - **Entry Point:** `bin/mcp-server.js`
-- **Usage:** `npx @tnezdev/docket`
+- **Usage:** `npx @tnezdev/docent`
 
 ### Documentation
 - **Format:** Markdown
@@ -377,7 +377,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 
 ### Scaling Strategy
 
-**MCP Architecture** - Docket runs as persistent MCP server:
+**MCP Architecture** - Docent runs as persistent MCP server:
 - Individual user machines (no central service)
 - One process per agent session (stdio transport)
 - npm CDN for package distribution
@@ -392,7 +392,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 
 ### File System Access
 - **Read access:** Scans project files for analysis
-- **Write access:** Creates docs/ directory and .docket/ context
+- **Write access:** Creates docs/ directory and .docent/ context
 - **Permissions:** Respects standard file system permissions
 - **Safety:** Idempotent operations (won't overwrite existing files)
 
@@ -430,17 +430,17 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ## Deployment
 
 ### Distribution Method
-**npm Package** - Published to npm registry as `@tnezdev/docket`
+**npm Package** - Published to npm registry as `@tnezdev/docent`
 
 ### MCP Configuration
 ```json
 // ~/.claude.json or agent's MCP config
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tnezdev/docket"],
+      "args": ["-y", "@tnezdev/docent"],
       "env": {}
     }
   }
@@ -451,9 +451,9 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ```json
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "type": "stdio",
-      "command": "/absolute/path/to/docket/bin/mcp-server.js",
+      "command": "/absolute/path/to/docent/bin/mcp-server.js",
       "args": [],
       "env": {}
     }
@@ -493,7 +493,7 @@ npm publish    # Publishes to registry
 - **More languages** - Expand language detection (Elixir, Zig, V, etc.)
 
 ### Long Term (Post 1.0)
-- **Agent collaboration** - Multiple agents sharing same docket instance
+- **Agent collaboration** - Multiple agents sharing same docent instance
 - **Integration tests** - Test against multiple MCP agents
 - **Template customization** - Project-specific template variants
 - **Analytics** - Track documentation quality trends over time
@@ -513,7 +513,7 @@ Key architectural decisions documented in ADRs:
 - [RFC-0004: Work Artifact Capture](./rfcs/rfc-0004-work-artifact-capture-and-surfacing.md) - Future workflow features
 - [MCP Spec](https://spec.modelcontextprotocol.io/) - Model Context Protocol specification
 - [README](../README.md) - Project overview and quick start
-- [Contributing Guide](../CONTRIBUTING.md) - How to contribute to docket
+- [Contributing Guide](../CONTRIBUTING.md) - How to contribute to docent
 
 ## Glossary
 
@@ -528,4 +528,4 @@ Key architectural decisions documented in ADRs:
 
 ---
 
-**This architecture overview documents docket's current implementation as of v0.3.0. It reflects the transformation to MCP-only, agent-first architecture based on validation showing agent-driven analysis outperforms heuristics by 3.5x (ADR-0004).**
+**This architecture overview documents docent's current implementation as of v0.3.0. It reflects the transformation to MCP-only, agent-first architecture based on validation showing agent-driven analysis outperforms heuristics by 3.5x (ADR-0004).**

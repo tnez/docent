@@ -5,8 +5,8 @@
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
 - **Related:**
-  - Future Implementation: `/Users/tnez/Code/tnez/docket/src/mcp/tools/review.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docket/src/lib/reviewer.ts`
+  - Future Implementation: `/Users/tnez/Code/tnez/docent/src/mcp/tools/review.ts`
+  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/reviewer.ts`
   - Depends on: analyze tool for project analysis
 
 ## Context

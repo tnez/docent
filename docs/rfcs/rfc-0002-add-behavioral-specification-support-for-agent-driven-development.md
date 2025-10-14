@@ -8,7 +8,7 @@
 
 ## Summary
 
-Add behavioral specification support to docket, enabling AI agents to understand WHAT features should do through Gherkin-style scenarios with concrete examples. Specifications will live in a `specs/` directory, use descriptive naming (e.g., `analyze-command.spec.md`), and integrate with existing docket commands (`audit`, `review`, `new`). This addresses a critical gap in agent-driven development: providing testable, navigable behavior contracts that scale beyond monolithic AGENTS.md files.
+Add behavioral specification support to docent, enabling AI agents to understand WHAT features should do through Gherkin-style scenarios with concrete examples. Specifications will live in a `specs/` directory, use descriptive naming (e.g., `analyze-command.spec.md`), and integrate with existing docent commands (`audit`, `review`, `new`). This addresses a critical gap in agent-driven development: providing testable, navigable behavior contracts that scale beyond monolithic AGENTS.md files.
 
 ## Motivation
 
@@ -34,16 +34,16 @@ Current practice in AI-assisted development involves creating a single `AGENTS.m
 - Testing becomes implementation-driven instead of spec-driven
 - Knowledge remains locked in code rather than accessible documentation
 
-### Docket's Vision: Documentation as Agent-Navigable Knowledge Base
+### Docent's Vision: Documentation as Agent-Navigable Knowledge Base
 
-Docket already provides the architecture for scalable agent documentation:
+Docent already provides the architecture for scalable agent documentation:
 
 **Structured Discovery Instead of Monolithic Docs:**
 ```bash
 # Agents discover what exists
-docket analyze    # Languages, frameworks, structure
-docket audit      # Documentation coverage, gaps
-docket review     # Freshness, staleness, drift
+docent analyze    # Languages, frameworks, structure
+docent audit      # Documentation coverage, gaps
+docent review     # Freshness, staleness, drift
 
 # Agents navigate selectively
 docs/
@@ -55,14 +55,14 @@ docs/
 ```
 
 **The approach scales:**
-- Small AGENTS.md: "Run `docket audit` to understand documentation"
+- Small AGENTS.md: "Run `docent audit` to understand documentation"
 - Structured docs: Organized by type and purpose
 - Just-in-time reading: Load only relevant docs
 - Discovery tools: Find what you need when you need it
 
 ### The Missing Piece: Behavioral Specifications
 
-Docket currently supports:
+Docent currently supports:
 - **ADRs** - Document decisions and their rationale (past)
 - **RFCs** - Propose changes and gather feedback (future)
 - **Architecture docs** - Explain system design (structure)
@@ -87,7 +87,7 @@ Without behavioral specs, agents must:
 
 1. **Enable spec-first development:** Define behavior before implementation
 2. **Provide agent-readable contracts:** Clear Given/When/Then scenarios with examples
-3. **Scale documentation:** Specs integrate with docket's discovery architecture
+3. **Scale documentation:** Specs integrate with docent's discovery architecture
 4. **Support testing:** Specs provide test scenarios agents can implement
 5. **Maintain traceability:** Link specs to ADRs, RFCs, and implementation
 6. **Track implementation status:** Agents know what's done, what's next
@@ -135,7 +135,7 @@ Brief description of what this feature does and why it exists.
 #### Example:
 \`\`\`bash
 # Command input
-$ docket analyze --output json
+$ docent analyze --output json
 \`\`\`
 
 \`\`\`json
@@ -172,7 +172,7 @@ Suggested test cases or testing approaches (optional).
 ## Metadata
 - **Status:** implemented
 - **Created:** 2025-10-12
-- **Related:** [ADR-0003](/Users/tnez/Code/tnez/docket/docs/adr/adr-0003-agent-agnostic-architecture.md), [detector.ts](/Users/tnez/Code/tnez/docket/src/lib/detector.ts)
+- **Related:** [ADR-0003](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md), [detector.ts](/Users/tnez/Code/tnez/docent/src/lib/detector.ts)
 
 ## Context
 The analyze command examines a project directory to detect programming languages, frameworks, and project structure. It provides JSON output for agent consumption.
@@ -181,12 +181,12 @@ The analyze command examines a project directory to detect programming languages
 
 ### Scenario: Analyze JavaScript/TypeScript project
 **Given:** A project directory containing package.json and source files
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:** System detects languages and frameworks with confidence scores
 
 #### Example:
 \`\`\`bash
-$ docket analyze --output json
+$ docent analyze --output json
 \`\`\`
 
 \`\`\`json
@@ -209,7 +209,7 @@ $ docket analyze --output json
 
 ### Scenario: Empty directory analysis
 **Given:** A directory with no code files
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:** System returns empty arrays for languages and frameworks
 
 #### Example:
@@ -227,7 +227,7 @@ $ docket analyze --output json
 
 ### Scenario: Monorepo detection
 **Given:** A directory with multiple package.json files in subdirectories
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:** System identifies monorepo structure and analyzes each package
 
 ## Acceptance Criteria
@@ -257,7 +257,7 @@ $ docket analyze --output json
 
 **Location:** `/templates/spec-template.md`
 
-The spec template will be stored alongside existing docket templates (adr-template.md, rfc-template.md, etc.) and used by `docket new spec` to generate new specification files.
+The spec template will be stored alongside existing docent templates (adr-template.md, rfc-template.md, etc.) and used by `docent new spec` to generate new specification files.
 
 **Template Structure:**
 
@@ -320,7 +320,7 @@ The spec template will be stored alongside existing docket templates (adr-templa
 
 **Template Processing:**
 
-When running `docket new spec "Analyze Command"`:
+When running `docent new spec "Analyze Command"`:
 1. Load template from `/templates/spec-template.md`
 2. Replace `[SPEC_TITLE]` with title
 3. Replace `[CREATED_DATE]` with current date
@@ -362,12 +362,12 @@ export default class Analyze extends Command {
 **Bidirectional Linking Benefits:**
 - Spec → Code: Find implementation from spec
 - Code → Spec: Understand behavior from implementation
-- `docket review` can validate links and detect drift
+- `docent review` can validate links and detect drift
 - Agents can navigate between behavior contract and implementation
 
 **Future Enhancement:**
 
-Phase 4+ could add `docket validate-links` to check:
+Phase 4+ could add `docent validate-links` to check:
 - Do Related links point to existing files?
 - Do implementation files reference their specs?
 - Are there orphaned specs (no implementation)?
@@ -418,7 +418,7 @@ Phase 4+ could add `docket validate-links` to check:
       └── mcp-server.spec.md
   ```
 
-**Future enhancement:** `docket audit` could suggest reorganization when flat structure has 10+ specs.
+**Future enhancement:** `docent audit` could suggest reorganization when flat structure has 10+ specs.
 
 ### Status Tracking
 
@@ -449,32 +449,32 @@ draft → ready → implemented → deprecated
 
 **Update Method:**
 - Manual: Developer edits spec metadata `Status:` field
-- Future automation: `docket review` could suggest status updates based on code analysis
+- Future automation: `docent review` could suggest status updates based on code analysis
 
 **Why this matters for agents:**
 - Agents know what needs building (ready → implemented)
 - Agents avoid implementing deprecated features
 - Agents can validate implementations against current specs
-- Project status visible through `docket audit --include-specs`
+- Project status visible through `docent audit --include-specs`
 - Clear criteria prevent ambiguity about "done"
 
 ### CLI Integration
 
-#### Enhanced Command: `docket new spec`
+#### Enhanced Command: `docent new spec`
 
-Following the existing `docket new` pattern, spec creation extends the existing command rather than introducing a new namespace:
+Following the existing `docent new` pattern, spec creation extends the existing command rather than introducing a new namespace:
 
 ```bash
 # Create new specification (follows existing pattern)
-$ docket new spec "analyze-command"
+$ docent new spec "analyze-command"
 
 # Creates: specs/analyze-command.spec.md
 # Contains: Template with metadata, scenarios, acceptance criteria
 
 # Consistent with existing commands:
-# docket new adr "title"
-# docket new rfc "title"
-# docket new guide "title"
+# docent new adr "title"
+# docent new rfc "title"
+# docent new guide "title"
 ```
 
 **Implementation details:**
@@ -501,10 +501,10 @@ type DocType = 'adr' | 'rfc' | 'guide' | 'runbook' | 'architecture' | 'spec'
 - Returns spec path in JSON output
 - Consistent with existing `new` command UX
 
-#### Enhanced: `docket audit --include-specs`
+#### Enhanced: `docent audit --include-specs`
 
 ```bash
-$ docket audit --include-specs --output json
+$ docent audit --include-specs --output json
 ```
 
 **Additional audit checks:**
@@ -515,7 +515,7 @@ $ docket audit --include-specs --output json
 
 **JSON Schema Addition:**
 
-Adds `specifications` field to `AuditResult` type in `.docket-protocol/schemas/audit.schema.json`:
+Adds `specifications` field to `AuditResult` type in `.docent-protocol/schemas/audit.schema.json`:
 
 ```typescript
 interface AuditResult {
@@ -556,16 +556,16 @@ interface AuditResult {
 }
 ```
 
-#### Enhanced: `docket review` (spec drift detection)
+#### Enhanced: `docent review` (spec drift detection)
 
-`docket review` will detect:
+`docent review` will detect:
 - Specs marked "implemented" but code changed recently (drift risk)
 - Specs marked "draft" for >30 days (stalled work?)
 - Implemented features without specs (coverage gap)
 
 **JSON Schema Addition:**
 
-Adds `specDrift` field to `ReviewResult` type in `.docket-protocol/schemas/review.schema.json`:
+Adds `specDrift` field to `ReviewResult` type in `.docent-protocol/schemas/review.schema.json`:
 
 ```typescript
 interface ReviewResult {
@@ -632,12 +632,12 @@ interface ReviewResult {
 ### User Experience
 
 **For solo developers:**
-1. Start new feature: `docket spec new feature-name`
+1. Start new feature: `docent spec new feature-name`
 2. Fill in Given/When/Then scenarios
 3. Agent reads spec and implements
 4. Agent generates tests from scenarios
 5. Update spec status to "implemented"
-6. `docket audit` shows progress
+6. `docent audit` shows progress
 
 **For agents:**
 1. Receive task: "Implement semantic search"
@@ -656,7 +656,7 @@ interface ReviewResult {
 - **Human-readable:** Natural language scenarios anyone can understand
 - **Agent-friendly:** Structured format with clear Given/When/Then contracts
 - **Flexible:** Markdown allows customization for specific needs
-- **Scalable:** Integrates with docket's discovery architecture
+- **Scalable:** Integrates with docent's discovery architecture
 - **Testable:** Scenarios translate directly to test cases
 - **No tooling lock-in:** Plain markdown, works with any editor
 
@@ -666,7 +666,7 @@ interface ReviewResult {
 - **Can drift:** Specs and implementation may diverge without discipline
 - **Custom format:** Not industry standard like OpenAPI or pure Gherkin
 
-**Our assessment:** Advantages outweigh disadvantages for docket's use case (documentation platform, not test framework).
+**Our assessment:** Advantages outweigh disadvantages for docent's use case (documentation platform, not test framework).
 
 ### Alternative 1: Pure Gherkin with Cucumber
 
@@ -683,9 +683,9 @@ interface ReviewResult {
 - Adds Cucumber as dependency
 - More complex setup for developers
 - Testing framework, not documentation system
-- Doesn't integrate with docket's markdown-based docs
+- Doesn't integrate with docent's markdown-based docs
 
-**Why not chosen:** Docket is a documentation platform, not a testing framework. We want specs as readable contracts, not executable tests. Developers can use Cucumber separately if they want executable specs.
+**Why not chosen:** Docent is a documentation platform, not a testing framework. We want specs as readable contracts, not executable tests. Developers can use Cucumber separately if they want executable specs.
 
 ### Alternative 2: Extend AGENTS.md Only
 
@@ -701,7 +701,7 @@ interface ReviewResult {
 - Monolithic file becomes unmaintainable
 - No status tracking per feature
 - Hard to find specific behaviors
-- Contradicts docket's architecture (structured, navigable docs)
+- Contradicts docent's architecture (structured, navigable docs)
 
 **Why not chosen:** This is exactly the scaling problem we identified in Problem Statement. AGENTS.md is fine for project-level context, but behavioral specs need separate, organized files.
 
@@ -721,7 +721,7 @@ interface ReviewResult {
 - Doesn't capture scenarios or workflows
 - Too narrow (only works for APIs/data)
 
-**Why not chosen:** JSON Schema is great for "what does the data look like" but terrible for "what does the feature do." We can use JSON Schema alongside specs (in `.docket-protocol/schemas/`) for data validation, but it doesn't replace behavioral specifications.
+**Why not chosen:** JSON Schema is great for "what does the data look like" but terrible for "what does the feature do." We can use JSON Schema alongside specs (in `.docent-protocol/schemas/`) for data validation, but it doesn't replace behavioral specifications.
 
 ### Alternative 4: RSpec/Jest-Style Describe-It
 
@@ -761,11 +761,11 @@ Minimal performance impact:
 - **Lazy loading:** Agents read only relevant specs, not all at once
 
 **Estimated impact:**
-- `docket spec new`: <100ms (template copying)
-- `docket audit --include-specs`: +50-200ms (scan specs directory)
-- `docket review` (spec drift): +100-300ms (compare file timestamps)
+- `docent spec new`: <100ms (template copying)
+- `docent audit --include-specs`: +50-200ms (scan specs directory)
+- `docent review` (spec drift): +100-300ms (compare file timestamps)
 
-These additions are negligible compared to existing docket operations.
+These additions are negligible compared to existing docent operations.
 
 ## Testing Strategy
 
@@ -781,14 +781,14 @@ These additions are negligible compared to existing docket operations.
 - Subdirectory organization (flat vs. nested)
 
 ### Manual Testing (Dogfooding)
-- Create specs for docket's own commands (analyze, audit, review)
+- Create specs for docent's own commands (analyze, audit, review)
 - Validate format is clear and useful
 - Test agent consumption (can agents understand and use specs?)
 - Iterate on template based on real usage
 
 ### Success Criteria
-- ✅ `docket spec new` creates valid spec from template
-- ✅ `docket audit --include-specs` counts specs correctly
+- ✅ `docent spec new` creates valid spec from template
+- ✅ `docent audit --include-specs` counts specs correctly
 - ✅ Agents can read specs and understand behavior
 - ✅ Format scales to 10+ specs without confusion
 
@@ -796,7 +796,7 @@ These additions are negligible compared to existing docket operations.
 
 ### Migration Path
 
-**For existing docket users:**
+**For existing docent users:**
 - No breaking changes to existing commands
 - `specs/` directory is new, doesn't affect existing docs
 - `--include-specs` flag is optional on audit
@@ -811,12 +811,12 @@ These additions are negligible compared to existing docket operations.
 
 **Phase 1: Foundation (2-3 days)**
 - Create spec template in `templates/spec-template.md`
-- Implement `docket spec new` command
+- Implement `docent spec new` command
 - Add `specs/` to init directory structure
 - Basic documentation in README
 
 **Phase 2: Dogfooding (1 week)**
-- Create specs for docket's core commands:
+- Create specs for docent's core commands:
   - `specs/analyze-command.spec.md`
   - `specs/audit-command.spec.md`
   - `specs/review-command.spec.md`
@@ -847,7 +847,7 @@ These additions are negligible compared to existing docket operations.
 ### User-Facing Documentation
 - README: Add "Behavioral Specifications" section
 - Guide: "Writing Specifications for Agent-Driven Development"
-- Examples: Show 2-3 real specs from docket itself
+- Examples: Show 2-3 real specs from docent itself
 
 ### Internal Documentation
 - ADR documenting decision to add specs (after RFC accepted)
@@ -864,15 +864,15 @@ These additions are negligible compared to existing docket operations.
    - Current decision: Descriptive only
    - Could support both in future if needed
 
-2. **Cross-reference validation:** Should docket validate that specs link to real ADRs/RFCs?
+2. **Cross-reference validation:** Should docent validate that specs link to real ADRs/RFCs?
    - Defer to future: Nice-to-have, not Phase 1
-   - Could add to `docket review` later
+   - Could add to `docent review` later
 
 3. **Spec templates for different types:** Should we have different templates (CLI command spec, API spec, library spec)?
    - Start with one general template
    - Evaluate after dogfooding if specialization needed
 
-4. **Integration with test frameworks:** Should docket help generate test scaffolding from specs?
+4. **Integration with test frameworks:** Should docent help generate test scaffolding from specs?
    - Defer to future: Focus on documentation first
    - Agents can generate tests from specs manually
 
@@ -890,9 +890,9 @@ This RFC focuses on basic behavioral specification support, but future work coul
 1. **Spec-to-test scaffolding:** Generate test templates from Given/When/Then scenarios
 2. **Cross-reference validation:** Verify links between specs, ADRs, RFCs, and code
 3. **Spec coverage analysis:** Detect which code files lack specs
-4. **Smart organization:** `docket audit` suggests subdirectory structure at 10+ specs
+4. **Smart organization:** `docent audit` suggests subdirectory structure at 10+ specs
 5. **Multiple format support:** Allow alternative formats (pure Gherkin, RSpec-style) via templates
-6. **Spec search:** `docket search "authentication"` finds relevant specs
+6. **Spec search:** `docent search "authentication"` finds relevant specs
 7. **Spec status automation:** Auto-detect when implementation changes after spec marked "implemented"
 8. **MCP integration:** When MCP server exists (RFC-0001), expose specs via MCP for richer agent queries
 
@@ -905,10 +905,10 @@ This RFC focuses on basic behavioral specification support, but future work coul
 
 ## References
 
-### Related Docket Documentation
-- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docket/docs/adr/adr-0003-agent-agnostic-architecture.md) - Why JSON output and protocol matter
-- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docket/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Future richer agent integration
-- [Research: Behavioral Specifications Investigation](/Users/tnez/Code/tnez/docket/docs/research/behavioral-specifications-investigation.md) - Comprehensive format analysis
+### Related Docent Documentation
+- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md) - Why JSON output and protocol matter
+- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Future richer agent integration
+- [Research: Behavioral Specifications Investigation](/Users/tnez/Code/tnez/docent/docs/research/behavioral-specifications-investigation.md) - Comprehensive format analysis
 
 ### External Resources
 - [Gherkin Reference](https://cucumber.io/docs/gherkin/) - Given/When/Then syntax

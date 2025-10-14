@@ -5,8 +5,8 @@
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
 - **Related:**
-  - Implementation: `/Users/tnez/Code/tnez/docket/src/commands/analyze.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docket/src/lib/detector.ts`
+  - Implementation: `/Users/tnez/Code/tnez/docent/src/commands/analyze.ts`
+  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/detector.ts`
 
 ## Context
 
@@ -18,7 +18,7 @@ This command is designed to help both humans and AI agents quickly understand a 
 
 ### Scenario: Basic Project Analysis (Human Output)
 **Given:** A TypeScript project with standard structure (src/, tests/, docs/ directories)
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:**
 - Command scans the current directory
 - Displays color-coded human-readable output with sections:
@@ -33,7 +33,7 @@ This command is designed to help both humans and AI agents quickly understand a 
 
 #### Example:
 ```bash
-docket analyze
+docent analyze
 ```
 
 ```
@@ -73,7 +73,7 @@ Analysis completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: JSON Output for Agent Integration
 **Given:** Any project
-**When:** User runs `docket analyze --output json`
+**When:** User runs `docent analyze --output json`
 **Then:**
 - Command outputs valid JSON to stdout (no color codes, no progress messages)
 - JSON structure matches `AnalysisResult` interface:
@@ -87,7 +87,7 @@ Analysis completed at 10/13/2025, 3:45:00 PM
 
 #### Example:
 ```bash
-docket analyze --output json
+docent analyze --output json
 ```
 
 ```json
@@ -143,7 +143,7 @@ docket analyze --output json
 
 ### Scenario: Analyze Non-Current Directory
 **Given:** User wants to analyze a different project
-**When:** User runs `docket analyze --path /path/to/other/project`
+**When:** User runs `docent analyze --path /path/to/other/project`
 **Then:**
 - Command analyzes the specified directory instead of current directory
 - All other behavior remains the same (respects --output flag)
@@ -151,12 +151,12 @@ docket analyze --output json
 
 #### Example:
 ```bash
-docket analyze --path ~/projects/my-app --output json
+docent analyze --path ~/projects/my-app --output json
 ```
 
 ### Scenario: Empty or Minimal Project
 **Given:** A directory with no recognized languages or frameworks
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:**
 - Command completes successfully (exit code 0)
 - Displays "No languages detected" in dimmed text
@@ -167,7 +167,7 @@ docket analyze --path ~/projects/my-app --output json
 
 #### Example:
 ```bash
-docket analyze
+docent analyze
 ```
 
 ```
@@ -194,7 +194,7 @@ Analysis completed at 10/13/2025, 3:45:00 PM
 
 ### Scenario: Multi-Language Polyglot Project
 **Given:** A project with multiple languages (e.g., TypeScript frontend, Python backend)
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:**
 - All detected languages listed in descending order by file count
 - Confidence calculated independently for each language based on percentage of total files
@@ -203,7 +203,7 @@ Analysis completed at 10/13/2025, 3:45:00 PM
 
 #### Example:
 ```bash
-docket analyze
+docent analyze
 ```
 
 ```
@@ -323,7 +323,7 @@ docket analyze
 - Test exclusion patterns (ensure node_modules ignored)
 
 **Integration Tests:**
-- Test against real-world projects (docket itself, example repos)
+- Test against real-world projects (docent itself, example repos)
 - Verify JSON output is valid and matches schema
 - Test --path flag with absolute and relative paths
 - Test error handling (non-existent paths, permission errors)

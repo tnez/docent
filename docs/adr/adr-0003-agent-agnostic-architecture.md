@@ -6,7 +6,7 @@
 **Technical Story:** CLI Platform Design (ADR-0001)
 **Updated:** 2025-10-13 - See [ADR-0004](./adr-0004-mcp-only-architecture.md)
 
-> **Implementation Note:** This ADR's **core principle** (agent-agnostic architecture) remains valid. However, [ADR-0004](./adr-0004-mcp-only-architecture.md) changed the **implementation** from CLI commands to MCP tools. The "standardized protocol" is now MCP (Model Context Protocol) rather than shell commands with JSON output. The agent-agnostic philosophy is preserved - docket works with any MCP-compatible agent.
+> **Implementation Note:** This ADR's **core principle** (agent-agnostic architecture) remains valid. However, [ADR-0004](./adr-0004-mcp-only-architecture.md) changed the **implementation** from CLI commands to MCP tools. The "standardized protocol" is now MCP (Model Context Protocol) rather than shell commands with JSON output. The agent-agnostic philosophy is preserved - docent works with any MCP-compatible agent.
 
 ## Context
 
@@ -25,10 +25,10 @@ Documentation tasks (analyzing projects, finding gaps, detecting drift) are inhe
 
 2. **Landscape is Unstable** - Agent tools are rapidly evolving. New entrants appear, existing tools pivot, some may shut down.
 
-3. **Lock-in is Fatal** - If docket only works with one agent:
+3. **Lock-in is Fatal** - If docent only works with one agent:
    - Users locked to that agent can't switch
-   - Non-users of that agent won't adopt docket
-   - If the agent changes/dies, docket becomes worthless
+   - Non-users of that agent won't adopt docent
+   - If the agent changes/dies, docent becomes worthless
    - Limits total addressable market significantly
 
 4. **Integration Approaches Differ** - Each agent has different integration patterns:
@@ -43,27 +43,27 @@ Documentation tasks (analyzing projects, finding gaps, detecting drift) are inhe
    - Access file systems
    - Follow documentation
 
-**The Question:** How do we make docket useful for AI agents without coupling to any specific agent?
+**The Question:** How do we make docent useful for AI agents without coupling to any specific agent?
 
 ## Decision
 
-Build an **agent-agnostic architecture** where docket provides a standardized protocol that ANY agent can use, regardless of implementation.
+Build an **agent-agnostic architecture** where docent provides a standardized protocol that ANY agent can use, regardless of implementation.
 
 ### Core Principles
 
 1. **CLI as Interface** - All functionality exposed via command-line tools
 2. **Structured Output** - Every command supports `--output json` mode
-3. **Documented Protocol** - Complete integration guide in `.docket-protocol/`
+3. **Documented Protocol** - Complete integration guide in `.docent-protocol/`
 4. **JSON Schemas** - Typed, validated output for reliable parsing
 5. **No Agent-Specific Features** - Zero special cases for specific agents
 
 ### Protocol Components
 
 **1. Commands**
-- `docket analyze --output json` → Project analysis
-- `docket init --non-interactive --output json` → Setup
-- `docket audit --output json` → Gap detection
-- `docket review --output json` → Health check
+- `docent analyze --output json` → Project analysis
+- `docent init --non-interactive --output json` → Setup
+- `docent audit --output json` → Gap detection
+- `docent review --output json` → Health check
 
 **2. JSON Schemas**
 - `analysis.schema.json` - Language/framework detection format
@@ -72,7 +72,7 @@ Build an **agent-agnostic architecture** where docket provides a standardized pr
 - `init.schema.json` - Initialization result format
 
 **3. Agent Guide**
-- `.docket-protocol/agent-guide.md` - Complete integration documentation
+- `.docent-protocol/agent-guide.md` - Complete integration documentation
 - Workflow examples for common tasks
 - Best practices for agent developers
 - Example code snippets
@@ -100,12 +100,12 @@ Build an **agent-agnostic architecture** where docket provides a standardized pr
 - **Universal Compatibility** - Works with any current or future agent
 - **No Lock-in** - Users can switch agents anytime
 - **Broader Adoption** - Appeals to all agent users, not just one
-- **Future-Proof** - New agents automatically work with docket
+- **Future-Proof** - New agents automatically work with docent
 - **Clean Interface** - Simple shell commands + JSON
-- **Easy Integration** - Any agent that can run commands can use docket
+- **Easy Integration** - Any agent that can run commands can use docent
 - **Documentation Benefits Humans** - Agent guide helps human users too
 - **Network Effects** - Each agent integration benefits all users
-- **Decoupled Evolution** - Docket and agents evolve independently
+- **Decoupled Evolution** - Docent and agents evolve independently
 
 ### Negative
 
@@ -127,7 +127,7 @@ Build an **agent-agnostic architecture** where docket provides a standardized pr
 
 ### Alternative 1: Claude Code Native Integration
 
-**Description:** Build docket as a Claude Code MCP server or native integration.
+**Description:** Build docent as a Claude Code MCP server or native integration.
 
 **Pros:**
 - Deep integration with Claude Code
@@ -190,7 +190,7 @@ Build an **agent-agnostic architecture** where docket provides a standardized pr
 
 ### Alternative 4: GraphQL API
 
-**Description:** Run docket as a service with GraphQL API for rich querying.
+**Description:** Run docent as a service with GraphQL API for rich querying.
 
 **Pros:**
 - Rich query capabilities
@@ -229,7 +229,7 @@ Errors returned as JSON in `--output json` mode:
 ```json
 {
   "error": "already_initialized",
-  "details": {"contextPath": ".docket/context.json"}
+  "details": {"contextPath": ".docent/context.json"}
 }
 ```
 
@@ -238,7 +238,7 @@ Errors returned as JSON in `--output json` mode:
 ```typescript
 // Any agent can do this:
 const analysis = JSON.parse(
-  await exec('docket analyze --output json')
+  await exec('docent analyze --output json')
 )
 
 const primaryLang = analysis.languages[0]?.name
@@ -261,11 +261,11 @@ const primaryLang = analysis.languages[0]?.name
 ## References
 
 - [ADR-0001: CLI Platform Decision](./adr-0001-cli-platform-over-templates-only.md)
-- [Agent Guide](../.docket-protocol/agent-guide.md)
+- [Agent Guide](../.docent-protocol/agent-guide.md)
 - [JSON Schema Specification](https://json-schema.org/)
 - [UNIX Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) - "Do one thing well, compose via interfaces"
 - [The Rule of Least Power](https://www.w3.org/2001/tag/doc/leastPower.html) - Use simplest tool that works
 
 ---
 
-**This ADR is the philosophical core of docket. Agent-agnostic architecture ensures docket remains useful regardless of which agents succeed in the market. We build once, work everywhere.**
+**This ADR is the philosophical core of docent. Agent-agnostic architecture ensures docent remains useful regardless of which agents succeed in the market. We build once, work everywhere.**

@@ -6,11 +6,11 @@
 **Updated:** 2025-10-13
 **Related:** PRD-0001, RFC-0002, research/rfc-review-workflow-pain-points.md
 
-> **Note:** This RFC was drafted when docket had CLI commands. [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) changed to MCP-only architecture. The workflow concepts remain valid, but CLI command examples (`docket workflow start`) would be replaced with MCP tool calls or agent conversation patterns. The RFC will be updated when workflow orchestration is implemented.
+> **Note:** This RFC was drafted when docent had CLI commands. [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) changed to MCP-only architecture. The workflow concepts remain valid, but CLI command examples (`docent workflow start`) would be replaced with MCP tool calls or agent conversation patterns. The RFC will be updated when workflow orchestration is implemented.
 
 ## Summary
 
-Add workflow orchestration to docket, enabling automated multi-stage processes that coordinate agent tasks with human decision points. Starting with document review workflows (RFC review, ADR review, spec validation), the system will eliminate 30+ minutes of manual orchestration per workflow by automating context gathering, agent launching, result storage, and status management. Workflows are defined in YAML, executed via CLI commands, and maintain full state for resumption and auditing.
+Add workflow orchestration to docent, enabling automated multi-stage processes that coordinate agent tasks with human decision points. Starting with document review workflows (RFC review, ADR review, spec validation), the system will eliminate 30+ minutes of manual orchestration per workflow by automating context gathering, agent launching, result storage, and status management. Workflows are defined in YAML, executed via CLI commands, and maintain full state for resumption and auditing.
 
 ## Motivation
 
@@ -45,25 +45,25 @@ During RFC-0002 architectural review, we documented the manual process required:
 **Who is affected:**
 - Solo developers running reviews, generating docs, validating designs
 - Teams coordinating agent-assisted workflows
-- Anyone using docket for agent-driven development
+- Anyone using docent for agent-driven development
 
 **Consequences of not solving:**
 - Time wasted on workflow mechanics instead of content
 - Inconsistent process quality across team members
 - Lost institutional knowledge (no review records)
 - Friction discourages best practices (reviews skipped)
-- Docket becomes "templates only" not "workflow platform"
+- Docent becomes "templates only" not "workflow platform"
 
 ### The Opportunity: PRD-0001 Vision
 
-PRD-0001 describes docket's vision:
+PRD-0001 describes docent's vision:
 
 > "Transform solo developers into high-output teams through agent orchestration. What used to take a team of 5 developers 1 week now takes 1 developer 1 hour."
 
 **Key workflows to enable:**
 
 1. **RFC Review** (this RFC's focus)
-   - Single command: `docket review rfc-0002 --perspective architecture`
+   - Single command: `docent review rfc-0002 --perspective architecture`
    - Automates: context gathering, agent launching, result storage
    - Time: 32 minutes → 30 seconds
 
@@ -73,7 +73,7 @@ PRD-0001 describes docket's vision:
    - Time: 2 days of coordination → 4 hours of focused work
 
 3. **Session Recovery** (PRD-0001 Journey 4)
-   - Command: `docket session start`
+   - Command: `docent session start`
    - Analyzes: Recent commits, todos, RFC/spec status, project health
    - Time: 15-30 minutes of context reconstruction → 30 seconds
 
@@ -102,7 +102,7 @@ PRD-0001 describes docket's vision:
 
 ### Overview
 
-Workflow orchestration adds three new capabilities to docket:
+Workflow orchestration adds three new capabilities to docent:
 
 1. **Workflow Definitions** - YAML files describing multi-stage processes
 2. **Workflow Execution** - CLI commands to run, monitor, and resume workflows
@@ -126,7 +126,7 @@ Following ADR-0003 (agent-agnostic), workflows are:
          CLI Commands                 JSON Output
                     │                      │
     ┌───────────────▼──────────────────────▼───────────────┐
-    │            Workflow Engine (docket)                   │
+    │            Workflow Engine (docent)                   │
     │  ┌──────────────────────────────────────────────┐   │
     │  │  Workflow Execution                           │   │
     │  │  - Load definition                            │   │
@@ -160,7 +160,7 @@ Following ADR-0003 (agent-agnostic), workflows are:
                              ▼
                   ┌────────────────────┐
                   │  Workflow Storage   │
-                  │  .docket/workflows/ │
+                  │  .docent/workflows/ │
                   │  - Definitions      │
                   │  - State            │
                   │  - Results          │
@@ -176,10 +176,10 @@ Following ADR-0003 (agent-agnostic), workflows are:
 
 ### Workflow Definition Format
 
-Workflows are defined in YAML files stored in `.docket/workflows/`:
+Workflows are defined in YAML files stored in `.docent/workflows/`:
 
 ```yaml
-# .docket/workflows/rfc-review.yml
+# .docent/workflows/rfc-review.yml
 name: RFC Review
 description: Architectural review of an RFC document
 version: 1
@@ -210,7 +210,7 @@ stages:
         - architecture_docs     # Include system architecture
     outputs:
       context_package:
-        path: .docket/workflows/{workflow_id}/context.json
+        path: .docent/workflows/{workflow_id}/context.json
         schema: context-package.schema.json
 
   # Stage 2: Launch review agent
@@ -225,7 +225,7 @@ stages:
       timeout: 600  # 10 minutes
     outputs:
       review_results:
-        path: .docket/workflows/{workflow_id}/review-results.json
+        path: .docent/workflows/{workflow_id}/review-results.json
         schema: review-results.schema.json
 
   # Stage 3: Store results
@@ -456,30 +456,30 @@ class AgentLauncher {
 
 ```bash
 # Start a workflow
-docket workflow start <workflow-name> [inputs...]
+docent workflow start <workflow-name> [inputs...]
 
 # Examples:
-docket workflow start rfc-review --rfc-path docs/rfcs/rfc-0003-... --perspective architecture
-docket workflow start spec-to-impl --spec-path docs/specs/analyze-command.spec.md
+docent workflow start rfc-review --rfc-path docs/rfcs/rfc-0003-... --perspective architecture
+docent workflow start spec-to-impl --spec-path docs/specs/analyze-command.spec.md
 
 # Check workflow status
-docket workflow status <workflow-id>
+docent workflow status <workflow-id>
 # Output: JSON with current stage, progress, outputs
 
 # View workflow logs
-docket workflow logs <workflow-id> [--follow]
+docent workflow logs <workflow-id> [--follow]
 
 # Pause workflow (after current stage)
-docket workflow pause <workflow-id>
+docent workflow pause <workflow-id>
 
 # Resume paused workflow
-docket workflow resume <workflow-id>
+docent workflow resume <workflow-id>
 
 # List workflows
-docket workflow list [--status running|completed|failed]
+docent workflow list [--status running|completed|failed]
 
 # Get workflow results
-docket workflow results <workflow-id> [--format json|markdown]
+docent workflow results <workflow-id> [--format json|markdown]
 ```
 
 **CLI Command Structure:**
@@ -497,7 +497,7 @@ Add to `src/commands/workflow/`:
 ### Storage Structure
 
 ```
-.docket/
+.docent/
 ├── workflows/
 │   ├── definitions/           # Workflow definitions
 │   │   ├── rfc-review.yml
@@ -530,7 +530,7 @@ docs/
 #### Starting a Workflow
 
 ```bash
-$ docket workflow start rfc-review --rfc-path docs/rfcs/rfc-0003-... --perspective architecture
+$ docent workflow start rfc-review --rfc-path docs/rfcs/rfc-0003-... --perspective architecture
 
 ⏳ Starting workflow: RFC Review
 ✅ Workflow started: wf-a1b2c3
@@ -550,7 +550,7 @@ Stage 2/4: Launching architecture review...
 #### Checking Status
 
 ```bash
-$ docket workflow status wf-a1b2c3
+$ docent workflow status wf-a1b2c3
 
 Workflow: RFC Review (wf-a1b2c3)
 Status: Running
@@ -571,7 +571,7 @@ Last activity: Reading ADR-0003... (15s ago)
 #### Getting Results
 
 ```bash
-$ docket workflow results wf-a1b2c3
+$ docent workflow results wf-a1b2c3
 
 Workflow: RFC Review (wf-a1b2c3)
 Status: Completed
@@ -633,7 +633,7 @@ Next Steps:
 - Not agent-agnostic (shell-specific)
 - Harder to maintain and extend
 
-**Why not chosen:** Shell scripts lack the state management, audit trail, and structured results needed for reliable workflows. Docket's CLI-first approach already provides better orchestration primitives.
+**Why not chosen:** Shell scripts lack the state management, audit trail, and structured results needed for reliable workflows. Docent's CLI-first approach already provides better orchestration primitives.
 
 ### Alternative 2: Full Workflow Engine (Temporal, Airflow)
 
@@ -646,11 +646,11 @@ Next Steps:
 
 **Cons:**
 - Heavy dependency (separate service required)
-- Over-engineered for docket's needs
+- Over-engineered for docent's needs
 - Complex setup for users
 - Not agent-focused
 
-**Why not chosen:** Overkill for docket's use case. We need simple, local workflow orchestration for documentation tasks, not distributed task execution.
+**Why not chosen:** Overkill for docent's use case. We need simple, local workflow orchestration for documentation tasks, not distributed task execution.
 
 ### Alternative 3: Interactive Wizards
 
@@ -667,9 +667,9 @@ Next Steps:
 - Doesn't scale to complex workflows
 - Violates ADR-0003 (agent-agnostic requires non-interactive)
 
-**Why not chosen:** Contradicts docket's agent-agnostic principle. CLI tools for agents must be non-interactive with JSON output.
+**Why not chosen:** Contradicts docent's agent-agnostic principle. CLI tools for agents must be non-interactive with JSON output.
 
-### Alternative 4: Extend Existing `docket review`
+### Alternative 4: Extend Existing `docent review`
 
 **Description:** Add workflow features to existing review command instead of new workflow subsystem.
 
@@ -700,7 +700,7 @@ Workflow orchestration has minimal new security concerns:
 
 3. **State Storage**
    - Workflow state may contain sensitive data
-   - **Mitigation:** Stored in `.docket/` (gitignored by default), user file permissions apply
+   - **Mitigation:** Stored in `.docent/` (gitignored by default), user file permissions apply
 
 4. **File System Access**
    - Workflows read/write project files
@@ -709,7 +709,7 @@ Workflow orchestration has minimal new security concerns:
 **Best practices:**
 - Don't store secrets in workflow definitions
 - Review workflow YAML before running untrusted workflows
-- Use `.gitignore` to exclude `.docket/workflows/state/` from version control
+- Use `.gitignore` to exclude `.docent/workflows/state/` from version control
 
 ## Performance Considerations
 
@@ -814,12 +814,12 @@ Workflow orchestration adds minimal performance overhead:
 
 ### Migration Path
 
-No migration needed - this is a new feature. Existing docket functionality unchanged.
+No migration needed - this is a new feature. Existing docent functionality unchanged.
 
-**For existing docket users:**
+**For existing docent users:**
 - No breaking changes
 - Workflow commands are additive
-- Can continue using `docket review`, `docket audit` as before
+- Can continue using `docent review`, `docent audit` as before
 - Workflows are opt-in enhancement
 
 ### Rollout Plan
@@ -834,7 +834,7 @@ Goal: Basic workflow engine and RFC review workflow
 - Create RFC review workflow definition
 - **Agent integration:** Manual (user launches agent, pastes prompt)
 
-**Phase 1 Success:** Can run `docket workflow start rfc-review`, which:
+**Phase 1 Success:** Can run `docent workflow start rfc-review`, which:
 1. Gathers context automatically
 2. Outputs prompt for user to paste into Claude Code
 3. User manually launches agent
@@ -878,7 +878,7 @@ Goal: Generalize to other workflow types
 **No breaking changes:**
 - All existing commands work unchanged
 - Workflow subsystem is additive
-- Existing `docket review` continues to work (workflow is enhancement)
+- Existing `docent review` continues to work (workflow is enhancement)
 
 ## Documentation Plan
 
@@ -947,8 +947,8 @@ Goal: Generalize to other workflow types
    - **Recommendation:** Option A for Phase 1 (manual), Option C or MCP for Phase 2
 
 2. **Workflow Definition Location:** Where should users add custom workflows?
-   - Option A: `.docket/workflows/definitions/` (project-specific)
-   - Option B: `~/.docket/workflows/` (user global)
+   - Option A: `.docent/workflows/definitions/` (project-specific)
+   - Option B: `~/.docent/workflows/` (user global)
    - Option C: Both (user global + project override)
    - **Recommendation:** Option C (like git config)
 
@@ -965,7 +965,7 @@ Goal: Generalize to other workflow types
 5. **Workflow Sharing:** Should workflows be shareable?
    - Commit workflow definitions to git?
    - Community workflow library?
-   - **Recommendation:** Yes, built-in workflows in docket, custom workflows in project
+   - **Recommendation:** Yes, built-in workflows in docent, custom workflows in project
 
 6. **Human Decision Points:** How to handle workflows that need human approval mid-execution?
    - Pause automatically when stage requires decision?
@@ -1005,7 +1005,7 @@ This RFC focuses on basic workflow orchestration with RFC review as first use ca
 
 6. **Workflow Templates**
    - Generator for common workflow patterns
-   - `docket workflow new` command
+   - `docent workflow new` command
    - Interactive workflow builder
 
 7. **Distributed Execution**
@@ -1021,7 +1021,7 @@ This RFC focuses on basic workflow orchestration with RFC review as first use ca
    - Agent reasons about completeness and quality
    - Generate structured recommendations
    - **Why this matters:** Replaces brittle heuristics with adaptable reasoning
-   - **Example:** `docket audit --agent` for documentation quality assessment
+   - **Example:** `docent audit --agent` for documentation quality assessment
 
 2. **Session Recovery** (PRD-0001 Journey 4)
    - Analyze recent work
@@ -1050,13 +1050,13 @@ This RFC focuses on basic workflow orchestration with RFC review as first use ca
 
 ## References
 
-### Related Docket Documentation
+### Related Docent Documentation
 
-- [PRD-0001: Agent-Orchestrated Workflows](/Users/tnez/Code/tnez/docket/docs/prds/prd-0001-agent-orchestrated-workflows-for-solo-developer-productivity.md) - Product vision
-- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docket/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Agent integration (Phase 2 dependency)
-- [RFC-0002: Behavioral Specifications](/Users/tnez/Code/tnez/docket/docs/rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Spec validation workflow use case
-- [Research: RFC Review Workflow Pain Points](/Users/tnez/Code/tnez/docket/docs/research/rfc-review-workflow-pain-points.md) - Motivation and requirements
-- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docket/docs/adr/adr-0003-agent-agnostic-architecture.md) - Design principles
+- [PRD-0001: Agent-Orchestrated Workflows](/Users/tnez/Code/tnez/docent/docs/prds/prd-0001-agent-orchestrated-workflows-for-solo-developer-productivity.md) - Product vision
+- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Agent integration (Phase 2 dependency)
+- [RFC-0002: Behavioral Specifications](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Spec validation workflow use case
+- [Research: RFC Review Workflow Pain Points](/Users/tnez/Code/tnez/docent/docs/research/rfc-review-workflow-pain-points.md) - Motivation and requirements
+- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md) - Design principles
 
 ### External Resources
 

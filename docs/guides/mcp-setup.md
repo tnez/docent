@@ -1,10 +1,10 @@
-# Docket MCP Server Setup
+# Docent MCP Server Setup
 
-This guide shows how to integrate docket's MCP (Model Context Protocol) server with AI agents like Claude Desktop.
+This guide shows how to integrate docent's MCP (Model Context Protocol) server with AI agents like Claude Desktop.
 
 ## What is the MCP Server?
 
-The docket MCP server exposes docket's functionality through native tool calling instead of shell commands. This enables:
+The docent MCP server exposes docent's functionality through native tool calling instead of shell commands. This enables:
 
 - **Agent-driven analysis** - Agents can use semantic reasoning instead of brittle heuristics
 - **Seamless integration** - No shell command parsing required
@@ -13,10 +13,10 @@ The docket MCP server exposes docket's functionality through native tool calling
 
 ## Quick Start
 
-### 1. Build Docket
+### 1. Build Docent
 
 ```bash
-cd /path/to/docket
+cd /path/to/docent
 npm install
 npm run build
 ```
@@ -28,21 +28,21 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 ```json
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "command": "node",
-      "args": ["/absolute/path/to/docket/lib/mcp/server.js"]
+      "args": ["/absolute/path/to/docent/lib/mcp/server.js"]
     }
   }
 }
 ```
 
-Or use the docket-mcp command:
+Or use the docent-mcp command:
 
 ```json
 {
   "mcpServers": {
-    "docket": {
-      "command": "/absolute/path/to/docket/bin/mcp-server.js"
+    "docent": {
+      "command": "/absolute/path/to/docent/bin/mcp-server.js"
     }
   }
 }
@@ -50,13 +50,13 @@ Or use the docket-mcp command:
 
 ### 3. Restart Claude Desktop
 
-Close and reopen Claude Desktop. The docket MCP server will now be available.
+Close and reopen Claude Desktop. The docent MCP server will now be available.
 
 ### 4. Verify Setup
 
 In Claude Desktop, ask:
 
-> "What MCP tools do you have available from docket?"
+> "What MCP tools do you have available from docent?"
 
 You should see:
 - `analyze` - Project structure analysis
@@ -178,7 +178,7 @@ Agent calls `audit` and gets fast heuristic results.
            │ MCP Protocol (JSON-RPC via stdio)
            ▼
 ┌─────────────────────┐
-│  Docket MCP Server  │
+│  Docent MCP Server  │
 │  (lib/mcp/server.js)│
 └──────────┬──────────┘
            │
@@ -198,28 +198,28 @@ Agent calls `audit` and gets fast heuristic results.
 
 2. Verify absolute paths (not relative):
    ```json
-   "args": ["/absolute/path/to/docket/lib/mcp/server.js"]
+   "args": ["/absolute/path/to/docent/lib/mcp/server.js"]
    ```
 
 3. Check build succeeded:
    ```bash
-   ls /path/to/docket/lib/mcp/server.js  # Should exist
+   ls /path/to/docent/lib/mcp/server.js  # Should exist
    ```
 
 4. Test manually:
    ```bash
-   node /path/to/docket/test-mcp.js
+   node /path/to/docent/test-mcp.js
    ```
 
 ### Tools Not Working
 
 Check for errors in Claude Desktop logs:
 - macOS: `~/Library/Logs/Claude/mcp*.log`
-- Look for docket-related errors
+- Look for docent-related errors
 
 ## Architecture History: MCP-Only Decision
 
-Docket originally planned dual CLI+MCP interfaces (see [RFC-0001](../rfcs/rfc-0001-mcp-server-for-agent-integration.md)). However, [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) chose MCP-only architecture after validating that:
+Docent originally planned dual CLI+MCP interfaces (see [RFC-0001](../rfcs/rfc-0001-mcp-server-for-agent-integration.md)). However, [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) chose MCP-only architecture after validating that:
 
 1. Agent-driven analysis (73/100) significantly outperforms heuristics (21/100)
 2. All target users are AI agents (solo devs using AI as coding partners)
@@ -245,7 +245,7 @@ const audit = await mcp.callTool('audit-quality', {path: '.'})
 
 - See [RFC-0001](../rfcs/rfc-0001-mcp-server-for-agent-integration.md) for architecture details
 - Check [Audit Command Spec](../specs/audit-command.md) for behavior documentation
-- Read [Agent Guide](../../.docket-protocol/agent-guide.md) for integration patterns
+- Read [Agent Guide](../../.docent-protocol/agent-guide.md) for integration patterns
 
 ## Performance
 

@@ -1,20 +1,20 @@
-# Project Naming Analysis: "Docket" - Availability, Meaning, and Narrative Potential
+# Project Naming Analysis: "Docent" - Availability, Meaning, and Narrative Potential
 
 **Created:** 2025-10-13
-**Purpose:** Evaluate whether "docket" is the optimal name for a documentation intelligence MCP server
+**Purpose:** Evaluate whether "docent" is the optimal name for a documentation intelligence MCP server
 **Status:** Complete
 
 ## Executive Summary
 
-The name "docket" has **moderate availability** but **significant concerns** regarding meaning and narrative potential. While the NPM package is effectively abandoned (9 years old) and GitHub namespace is workable, the name suffers from three critical issues:
+The name "docent" has **moderate availability** but **significant concerns** regarding meaning and narrative potential. While the NPM package is effectively abandoned (9 years old) and GitHub namespace is workable, the name suffers from three critical issues:
 
-1. **Strong legal association** - "Court docket" is the primary meaning for most users
-2. **Docker confusion** - Multiple typo-based repos (docket/docker) create namespace pollution
+1. **Strong legal association** - "Court docent" is the primary meaning for most users
+2. **Docker confusion** - Multiple typo-based repos (docent/docker) create namespace pollution
 3. **Weak documentation narrative** - The connection to documentation is indirect (via "summary/list") and buried under legal meaning
 
 **Key Findings:**
-- NPM: Package "docket" exists but abandoned (1.1K weekly downloads, last updated 2016)
-- GitHub: ~8 repos named "docket", mostly Docker-related or abandoned
+- NPM: Package "docent" exists but abandoned (1.1K weekly downloads, last updated 2016)
+- GitHub: ~8 repos named "docent", mostly Docker-related or abandoned
 - Meaning: Primarily legal term (court calendar), secondarily British delivery slip
 - MCP Pattern: Doesn't align with function-based (Filesystem, Fetch) or service-based (GitHub, Slack) patterns
 - Story Potential: Limited - legal associations overshadow documentation use case
@@ -30,14 +30,14 @@ The name "docket" has **moderate availability** but **significant concerns** reg
 
 ### Research Conducted
 
-WebSearch: "npm package docket"
+WebSearch: "npm package docent"
 
 ### Findings
 
-**Primary Package: `docket`**
+**Primary Package: `docent`**
 - **Status**: Published 9 years ago (2016)
 - **Version**: 1.1.0
-- **Description**: "Build a docket of tasks as you work"
+- **Description**: "Build a docent of tasks as you work"
 - **Purpose**: Task builder/tracker (different from our use case)
 - **Downloads**: ~1.1K weekly
 - **Maintenance**: Effectively abandoned
@@ -45,8 +45,8 @@ WebSearch: "npm package docket"
 
 **Related Packages:**
 - `docketjs` - Markdown/AsciiDoc to HTML converter (active)
-- `docket-parser` - JavaScript documentation generator (updated 8 months ago, 2 dependents)
-- `@docket/docket-sdk` - Deprecated 6 years ago
+- `docent-parser` - JavaScript documentation generator (updated 8 months ago, 2 dependents)
+- `@docent/docent-sdk` - Deprecated 6 years ago
 
 ### Analysis
 
@@ -59,10 +59,10 @@ WebSearch: "npm package docket"
 
 ❌ **Cons:**
 - Package already exists (would need negotiation or scoped package)
-- `docket-parser` is still maintained (potential confusion)
+- `docent-parser` is still maintained (potential confusion)
 - `docketjs` is active (namespace pollution)
 
-**Recommendation:** If keeping the name, publish as `@tnezdev/docket` or similar scoped package.
+**Recommendation:** If keeping the name, publish as `@tnezdev/docent` or similar scoped package.
 
 ---
 
@@ -70,35 +70,35 @@ WebSearch: "npm package docket"
 
 ### Research Conducted
 
-WebSearch: "github repository docket"
+WebSearch: "github repository docent"
 
 ### Findings
 
 **Major Repositories:**
 
-1. **iwillspeak/docket** - Markdown to HTML documentation rendering (similar domain!)
-2. **netvarun/docket** - Custom Docker registry using bittorrent
-3. **defunctzombie/docket** - Build Docker images with secrets
-4. **rocknsm/docket** - RESTful API frontend for Stenographer
-5. **shykes/docket** - Docker image management with git versioning
-6. **bloomberg/docket** - Docker Compose test environment manager
-7. **markstory/docket-app** - Personal todo list application
+1. **iwillspeak/docent** - Markdown to HTML documentation rendering (similar domain!)
+2. **netvarun/docent** - Custom Docker registry using bittorrent
+3. **defunctzombie/docent** - Build Docker images with secrets
+4. **rocknsm/docent** - RESTful API frontend for Stenographer
+5. **shykes/docent** - Docker image management with git versioning
+6. **bloomberg/docent** - Docker Compose test environment manager
+7. **markstory/docent-app** - Personal todo list application
 
 ### Analysis
 
 **Crowding Score: 5/10**
 
 ✅ **Pros:**
-- No dominant "docket" repository (no 10K+ star repo)
+- No dominant "docent" repository (no 10K+ star repo)
 - Most repos are Docker-related (different domain)
 - Many repos appear abandoned
 
 ❌ **Cons:**
-- **Significant Docker confusion** - 5 of 7 repos are Docker-related (docket/docker typo)
-- iwillspeak/docket is directly in documentation space (potential confusion)
-- "docket" GitHub topic exists (namespace is claimed)
+- **Significant Docker confusion** - 5 of 7 repos are Docker-related (docent/docker typo)
+- iwillspeak/docent is directly in documentation space (potential confusion)
+- "docent" GitHub topic exists (namespace is claimed)
 
-**Key Insight:** The Docker confusion is significant. Users searching "docket" often mean "docker" and vice versa. This creates SEO/discoverability issues.
+**Key Insight:** The Docker confusion is significant. Users searching "docent" often mean "docker" and vice versa. This creates SEO/discoverability issues.
 
 ---
 
@@ -106,7 +106,7 @@ WebSearch: "github repository docket"
 
 ### Research Conducted
 
-WebSearch: "docket word meaning definition documentation"
+WebSearch: "docent word meaning definition documentation"
 WebFetch: Merriam-Webster, Cambridge Dictionary, Wikipedia
 
 ### Findings
@@ -121,13 +121,13 @@ WebFetch: Merriam-Webster, Cambridge Dictionary, Wikipedia
 
 **Etymology:**
 - Origin: 1485, England
-- Form variations: doggette, doket, dogget(t), docquett, docquet, docket
+- Form variations: doggette, doket, dogget(t), docquett, docquet, docent
 - Root meaning: "brief written summary"
 
 **Connection to Documentation:**
 - **Indirect**: Via "summary" or "list"
 - **Buried**: Behind strong legal association
-- **Weak narrative**: Users don't naturally think "docket = documentation"
+- **Weak narrative**: Users don't naturally think "docent = documentation"
 
 ### Analysis
 
@@ -139,14 +139,14 @@ WebFetch: Merriam-Webster, Cambridge Dictionary, Wikipedia
 - British usage includes document tracking
 
 ❌ **Cons:**
-- **Legal association dominates** - First thought is "court docket" not "docs docket"
+- **Legal association dominates** - First thought is "court docent" not "docs docent"
 - No clear connection to AI/agents/intelligence
-- Name requires explanation ("Why is it called docket?")
+- Name requires explanation ("Why is it called docent?")
 - Doesn't communicate value proposition
 
 **User Mental Model Test:**
 ```
-Question: "What does 'docket' do?"
+Question: "What does 'docent' do?"
 
 Expected answer (current name): "Uh... legal stuff? Court documents?"
 Desired answer: "Documentation intelligence for AI agents"
@@ -186,7 +186,7 @@ Analysis of official Anthropic MCP servers
 
 **Pattern Alignment Score: 3/10**
 
-❌ **Docket doesn't fit any pattern:**
+❌ **Docent doesn't fit any pattern:**
 
 - **Not function-based**: Name doesn't describe action (like "fetch" or "search")
 - **Not service-based**: Doesn't integrate with external service
@@ -197,7 +197,7 @@ Analysis of official Anthropic MCP servers
 - Service-based: (N/A - we don't integrate a specific service)
 - Descriptive: `documentation-intelligence`, `doc-context`
 
-**Key Insight:** MCP servers benefit from immediately obvious names. "docket" requires explanation.
+**Key Insight:** MCP servers benefit from immediately obvious names. "docent" requires explanation.
 
 ---
 
@@ -265,7 +265,7 @@ From clig.dev and industry sources:
 **Comparison with Successful Tools:**
 - `bat` → immediately suggests "like cat, but better"
 - `fd` → immediately suggests "find"
-- `docket` → suggests "legal court schedule"
+- `docent` → suggests "legal court schedule"
 
 ---
 
@@ -273,28 +273,28 @@ From clig.dev and industry sources:
 
 ### Analysis
 
-**Can we build a compelling story around "docket"?**
+**Can we build a compelling story around "docent"?**
 
 **Attempted Narratives:**
 
-**Narrative 1: "The Court Docket"** ❌
-- "Just as a court docket organizes cases, docket organizes documentation"
+**Narrative 1: "The Court Docent"** ❌
+- "Just as a court docent organizes cases, docent organizes documentation"
 - **Problem**: Legal analogy is confusing, not inspiring
 - **Audience reaction**: "Why legal? This isn't a legal tool..."
 
-**Narrative 2: "The Shipping Docket"** ❌
-- "Like a delivery docket that lists contents, docket lists documentation"
+**Narrative 2: "The Shipping Docent"** ❌
+- "Like a delivery docent that lists contents, docent lists documentation"
 - **Problem**: British-specific term, weak connection
-- **Audience reaction**: "What's a shipping docket?"
+- **Audience reaction**: "What's a shipping docent?"
 
 **Narrative 3: "The Summary Doc"** ⚠️
-- "Docket historically means 'summary' - we summarize docs for agents"
+- "Docent historically means 'summary' - we summarize docs for agents"
 - **Problem**: Etymology is buried, requires explanation
 - **Audience reaction**: "Interesting, but still think of courts"
 
-**Narrative 4: "The Task Docket"** ❌
-- "Your docket of documentation tasks"
-- **Problem**: Conflicts with existing docket npm package (task builder)
+**Narrative 4: "The Task Docent"** ❌
+- "Your docent of documentation tasks"
+- **Problem**: Conflicts with existing docent npm package (task builder)
 - **Audience reaction**: "So it's a todo list?"
 
 ### Narrative Potential Score: 3/10
@@ -386,7 +386,7 @@ Based on research findings, here are alternative names that score higher on avai
 
 | Name | NPM Avail | GitHub Clean | Meaning Clarity | Narrative | MCP Pattern | Overall |
 |------|-----------|--------------|-----------------|-----------|-------------|---------|
-| **docket** (current) | 6/10 | 5/10 | 4/10 | 3/10 | 3/10 | **4.2/10** |
+| **docent** (current) | 6/10 | 5/10 | 4/10 | 3/10 | 3/10 | **4.2/10** |
 | **docent** ⭐ | 9/10 | 8/10 | 9/10 | 10/10 | 9/10 | **9.0/10** |
 | **sherpa** | 8/10 | 7/10 | 9/10 | 9/10 | 8/10 | **8.2/10** |
 | **atlas** | 4/10 | 3/10 | 8/10 | 8/10 | 7/10 | **6.0/10** |
@@ -428,14 +428,14 @@ Evaluate the cost/benefit of renaming:
 **Story:**
 > "Docent is your AI documentation guide. Just as a museum docent guides visitors through exhibits, explaining context and connections, docent guides AI agents through your codebase, surfacing relevant docs, runbooks, and standards."
 
-**3. If Keeping "docket":**
+**3. If Keeping "docent":**
 
 **Mitigation strategies:**
-- Publish as `@tnezdev/docket` (scoped package to avoid conflict)
+- Publish as `@tnezdev/docent` (scoped package to avoid conflict)
 - Create strong tagline: "Documentation Intelligence for AI Agents" (de-emphasize name)
-- Address "Why docket?" in README FAQ
-- Optimize SEO for "documentation MCP" not "docket"
-- Consider "docket-mcp" or "docket-ai" for clarity
+- Address "Why docent?" in README FAQ
+- Optimize SEO for "documentation MCP" not "docent"
+- Consider "docent-mcp" or "docent-ai" for clarity
 
 ### Implementation Approach
 
@@ -467,7 +467,7 @@ curl https://github.com/tnezdev/docent  # Should 404
 
 **Phase 4: Migration (if published)**
 ```bash
-# Deprecate @tnezdev/docket (if exists)
+# Deprecate @tnezdev/docent (if exists)
 # Publish @tnezdev/docent
 # Add migration guide
 ```
@@ -484,12 +484,12 @@ curl https://github.com/tnezdev/docent  # Should 404
 
 **Lesson:** Short, playful, immediately conveys "like X but better"
 
-### Example 2: Name Confusion Issue (docket/docker)
+### Example 2: Name Confusion Issue (docent/docker)
 
 **Evidence from GitHub:**
-- Multiple repos named "docket" are Docker-related
-- Many typos in issues: "docket build" meaning "docker build"
-- SEO pollution: Searching "docket" returns Docker results
+- Multiple repos named "docent" are Docker-related
+- Many typos in issues: "docent build" meaning "docker build"
+- SEO pollution: Searching "docent" returns Docker results
 
 **Lesson:** Similar-sounding names in related domains create confusion
 
@@ -506,8 +506,8 @@ curl https://github.com/tnezdev/docent  # Should 404
 
 ### Official Documentation
 
-- [Merriam-Webster: Docket](https://www.merriam-webster.com/dictionary/docket) - Etymology and definitions
-- [NPM Package: docket](https://www.npmjs.com/package/docket) - Existing package analysis
+- [Merriam-Webster: Docent](https://www.merriam-webster.com/dictionary/docent) - Etymology and definitions
+- [NPM Package: docent](https://www.npmjs.com/package/docent) - Existing package analysis
 - [Model Context Protocol Servers](https://github.com/modelcontextprotocol/servers) - Official MCP naming examples
 
 ### Tutorials and Articles
@@ -519,7 +519,7 @@ curl https://github.com/tnezdev/docent  # Should 404
 ### GitHub Repositories
 
 - [github.com/modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) - Official MCP servers
-- [github.com/iwillspeak/docket](https://github.com/iwillspeak/docket) - Similar domain (docs to HTML)
+- [github.com/iwillspeak/docent](https://github.com/iwillspeak/docent) - Similar domain (docs to HTML)
 - [github.com/agarrharr/awesome-cli-apps](https://github.com/agarrharr/awesome-cli-apps) - CLI naming examples
 
 ### Community Resources
@@ -535,7 +535,7 @@ curl https://github.com/tnezdev/docent  # Should 404
 
 ## Appendix: Quick Decision Framework
 
-**Should you change from "docket"?**
+**Should you change from "docent"?**
 
 Answer these questions:
 
@@ -552,7 +552,7 @@ Answer these questions:
    - Weak (just code) → Lower cost
 
 4. **Is discoverability important?**
-   - Yes → "docket" has SEO issues (Docker confusion, legal results)
+   - Yes → "docent" has SEO issues (Docker confusion, legal results)
    - No → Less critical
 
 5. **Will you pitch this tool to others?**
@@ -560,7 +560,7 @@ Answer these questions:
    - No (internal only) → Name less critical
 
 **Quick Score:**
-- 0-2 "Yes" answers → Consider keeping "docket" with mitigation
+- 0-2 "Yes" answers → Consider keeping "docent" with mitigation
 - 3-4 "Yes" answers → Lean toward changing to "docent"
 - 5 "Yes" answers → Change to "docent" strongly recommended
 

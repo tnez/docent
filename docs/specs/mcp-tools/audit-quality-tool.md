@@ -5,8 +5,8 @@
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
 - **Related:**
-  - Implementation: `/Users/tnez/Code/tnez/docket/src/mcp/tools/audit-quality.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docket/src/lib/auditor.ts`
+  - Implementation: `/Users/tnez/Code/tnez/docent/src/mcp/tools/audit-quality.ts`
+  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/auditor.ts`
   - Depends on: analyze tool for project analysis
 
 ## Context

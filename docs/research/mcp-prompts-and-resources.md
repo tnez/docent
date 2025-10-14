@@ -1,7 +1,7 @@
 # MCP Resources and Prompts Research
 
 **Created:** 2025-10-13
-**Purpose:** Research findings for implementing MCP resources and prompts in docket (RFC-0005)
+**Purpose:** Research findings for implementing MCP resources and prompts in docent (RFC-0005)
 **Status:** Complete
 
 ## Executive Summary
@@ -14,10 +14,10 @@ The Model Context Protocol (MCP) provides three core capabilities for servers: *
 - Both use standard request handlers (`server.setRequestHandler`) with schema validation
 - Caching via resource URIs is critical for token efficiency in RAG scenarios
 
-**Relevance to docket:**
+**Relevance to docent:**
 - Resources expose runbooks, templates, standards, docs, journal as discoverable URIs
 - Prompts standardize workflows (Review RFC, Resume Work, etc.) with context gathering
-- Both align with docket's "context provider" principle (documentation as agent configuration)
+- Both align with docent's "context provider" principle (documentation as agent configuration)
 
 ---
 
@@ -29,7 +29,7 @@ The Model Context Protocol (MCP) provides three core capabilities for servers: *
 4. [Caching Mechanisms](#caching-mechanisms)
 5. [Best Practices](#best-practices)
 6. [Real-World Examples](#real-world-examples)
-7. [Recommendations for Docket](#recommendations-for-docket)
+7. [Recommendations for Docent](#recommendations-for-docent)
 8. [References](#references)
 
 ---
@@ -57,7 +57,7 @@ Servers must declare the `resources` capability:
 ```typescript
 const server = new Server(
   {
-    name: "docket",
+    name: "docent",
     version: "0.4.0"
   },
   {
@@ -154,7 +154,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const { uri } = request.params;
 
   // Parse URI: docent://runbook/preview-branch
-  const match = uri.match(/^docket:\/\/([^\/]+)\/(.+)$/);
+  const match = uri.match(/^docent:\/\/([^\/]+)\/(.+)$/);
   if (!match) {
     throw new Error(`Invalid URI format: ${uri}`);
   }
@@ -188,8 +188,8 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 
     case 'journal': {
       const path = identifier === 'current'
-        ? '.docket/journal.md'
-        : `.docket/journal-${identifier}.md`;
+        ? '.docent/journal.md'
+        : `.docent/journal-${identifier}.md`;
       const content = await fs.readFile(path, 'utf-8');
       return {
         contents: [{
@@ -214,7 +214,7 @@ MCP defines standard URI schemes, but implementations can use custom schemes:
 - `http://` / `https://` - Web resources (client fetches directly)
 - `file://` - Filesystem-like resources (may be virtual)
 
-**Custom Schemes (for docket):**
+**Custom Schemes (for docent):**
 - `docent://runbook/{name}` - Operational runbooks
 - `docent://template/{type}` - Documentation templates
 - `docent://standard/{type}` - Project standards/conventions
@@ -267,7 +267,7 @@ Servers must declare the `prompts` capability:
 ```typescript
 const server = new Server(
   {
-    name: "docket",
+    name: "docent",
     version: "0.4.0"
   },
   {
@@ -648,7 +648,7 @@ import {
 
 const server = new Server(
   {
-    name: 'docket',
+    name: 'docent',
     version: '0.4.0',
   },
   {
@@ -688,7 +688,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error('Docket MCP server running');
+console.error('Docent MCP server running');
 ```
 
 ### Modular Handler Organization
@@ -918,7 +918,7 @@ While MCP spec doesn't mandate caching headers, servers can include metadata:
 
 ---
 
-## Recommendations for Docket
+## Recommendations for Docent
 
 ### Phase 1: Resources Implementation
 
@@ -1002,7 +1002,7 @@ describe('ResourceHandler', () => {
   it('reads journal resource', async () => {
     const handler = new ResourceHandler();
     const content = await handler.read('docent://journal/current');
-    expect(content.contents[0].text).toContain('# Docket Work Journal');
+    expect(content.contents[0].text).toContain('# Docent Work Journal');
   });
 
   it('rejects path traversal attempts', async () => {
@@ -1050,7 +1050,7 @@ describe('PromptBuilder', () => {
 
 **Leverage existing tools:**
 ```typescript
-// Prompts can call existing docket tools
+// Prompts can call existing docent tools
 import { analyzeProject } from '../lib/detector.js';
 import { auditDocumentation } from '../lib/auditor.js';
 
@@ -1104,7 +1104,7 @@ async readTemplate(type: string): Promise<ResourceContent> {
 - Add resource metadata (tags, related)
 
 **Phase 5: Dogfooding (Ongoing)**
-- Use docket via MCP daily
+- Use docent via MCP daily
 - Iterate on prompts based on real usage
 - Add new prompts as needs emerge
 
@@ -1175,7 +1175,7 @@ import {
 import fs from 'fs/promises';
 
 const server = new Server(
-  { name: 'docket', version: '0.4.0' },
+  { name: 'docent', version: '0.4.0' },
   { capabilities: { resources: {}, prompts: {} } }
 );
 
@@ -1202,7 +1202,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const { uri } = request.params;
 
   if (uri === 'docent://journal/current') {
-    const text = await fs.readFile('.docket/journal.md', 'utf-8');
+    const text = await fs.readFile('.docent/journal.md', 'utf-8');
     return { contents: [{ uri, mimeType: 'text/markdown', text }] };
   }
 
@@ -1232,7 +1232,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
   const { name } = request.params;
 
   if (name === 'resume-work') {
-    const journal = await fs.readFile('.docket/journal.md', 'utf-8');
+    const journal = await fs.readFile('.docent/journal.md', 'utf-8');
 
     return {
       messages: [
@@ -1260,7 +1260,7 @@ ${journal}
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error('Docket MCP server running');
+console.error('Docent MCP server running');
 ```
 
 **Run:**
@@ -1272,9 +1272,9 @@ node server.ts
 ```json
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "command": "node",
-      "args": ["/path/to/docket/dist/mcp/server.js"]
+      "args": ["/path/to/docent/dist/mcp/server.js"]
     }
   }
 }

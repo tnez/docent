@@ -105,12 +105,12 @@ How developers work today:
 
 ### What We're Building
 
-**Docket becomes an agent orchestration platform** that guides developers through structured workflows, automatically coordinating multiple AI agents to achieve complex goals.
+**Docent becomes an agent orchestration platform** that guides developers through structured workflows, automatically coordinating multiple AI agents to achieve complex goals.
 
 **Core concept:**
 ```bash
 # Describe problem, get complete RFC in 1 hour
-docket workflow rfc "Should we add behavioral specs?"
+docent workflow rfc "Should we add behavioral specs?"
 
 # Workflow automatically:
 # 1. Launches research-analyst (10 min research)
@@ -170,7 +170,7 @@ docket workflow rfc "Should we add behavioral specs?"
 ### Secondary Metrics
 
 **Quality indicators:**
-- Documentation completeness: Average docket audit score >80 for projects using workflows
+- Documentation completeness: Average docent audit score >80 for projects using workflows
 - Architecture review adoption: 70%+ of RFCs get automated architecture review
 - Multi-agent usage: Average 2.5 agents per workflow
 
@@ -196,7 +196,7 @@ docket workflow rfc "Should we add behavioral specs?"
 **For initial launch, these are non-negotiable:**
 
 1. **CLI Workflow Engine**
-   - `docket workflow rfc "Problem"` - RFC creation workflow
+   - `docent workflow rfc "Problem"` - RFC creation workflow
    - Interactive checkpoints for key decisions
    - Progress tracking (TodoWrite integration)
    - JSON output for agent consumption
@@ -233,15 +233,15 @@ docket workflow rfc "Should we add behavioral specs?"
    - Interactive decision prompts in agent context
 
 2. **Additional Workflows**
-   - `docket workflow feature "Feature name"` - Full feature development
-   - `docket workflow decide "Decision"` - ADR creation with research
-   - `docket workflow debug "Problem"` - Structured debugging workflow
+   - `docent workflow feature "Feature name"` - Full feature development
+   - `docent workflow decide "Decision"` - ADR creation with research
+   - `docent workflow debug "Problem"` - Structured debugging workflow
 
 3. **Workflow Management**
-   - `docket workflow list` - Show all workflows (active and completed)
-   - `docket workflow status <id>` - Check progress
-   - `docket workflow resume <id>` - Continue interrupted workflow
-   - `docket workflow cancel <id>` - Abort running workflow
+   - `docent workflow list` - Show all workflows (active and completed)
+   - `docent workflow status <id>` - Check progress
+   - `docent workflow resume <id>` - Continue interrupted workflow
+   - `docent workflow cancel <id>` - Abort running workflow
 
 4. **Checkpoint Customization**
    - Configure which decisions require human input
@@ -249,7 +249,7 @@ docket workflow rfc "Should we add behavioral specs?"
    - Batch checkpoints to reduce interruptions
 
 5. **Session Recovery (Cold-Start Solution)**
-   - `docket session start` - Instant context recovery
+   - `docent session start` - Instant context recovery
    - Analyze recent commits, todos, RFC/PRD status
    - Display: What was completed, what's pending, suggested next steps
    - Project health summary (audit/review scores)
@@ -260,8 +260,8 @@ docket workflow rfc "Should we add behavioral specs?"
 **Future enhancements:**
 
 1. **Advanced Workflows**
-   - `docket workflow full-cycle` - Spec → Implement → Test → Review → ADR → Commit
-   - `docket workflow refactor` - Safe refactoring with testing validation
+   - `docent workflow full-cycle` - Spec → Implement → Test → Review → ADR → Commit
+   - `docent workflow refactor` - Safe refactoring with testing validation
    - Custom workflow definitions (user-defined workflows)
 
 2. **Workflow Analytics**
@@ -299,7 +299,7 @@ docket workflow rfc "Should we add behavioral specs?"
 **Scenario:** Developer needs to decide whether to add a new feature (behavioral specifications). They want to research options and create a complete RFC in their lunch break.
 
 **Steps:**
-1. Developer runs: `docket workflow rfc "Should we add behavioral specs?"`
+1. Developer runs: `docent workflow rfc "Should we add behavioral specs?"`
 2. System launches research-analyst, shows progress: "Researching specification formats..."
 3. After 10 minutes, system presents findings: "Found 6 formats. Key insight: Gherkin works well for agents"
 4. System asks checkpoint question: "Naming: numbered or descriptive?"
@@ -319,7 +319,7 @@ docket workflow rfc "Should we add behavioral specs?"
 **Scenario:** Developer needs to implement semantic search. They want spec, implementation, tests, and documentation - all coordinated through agents.
 
 **Steps:**
-1. Developer runs: `docket workflow feature "semantic search" --full-cycle`
+1. Developer runs: `docent workflow feature "semantic search" --full-cycle`
 2. System: "Phase 1: Creating behavioral spec..."
 3. Interactive: Developer fills in Given/When/Then scenarios
 4. System: "Phase 2: Agent implementing from spec..."
@@ -368,10 +368,10 @@ docket workflow rfc "Should we add behavioral specs?"
 
 #### Journey 4: Cold-Start Session Recovery
 
-**Scenario:** Developer worked on docket for 3 hours yesterday, now returning after a break. They need to quickly remember what was accomplished and what's next, without manually digging through git logs and documentation.
+**Scenario:** Developer worked on docent for 3 hours yesterday, now returning after a break. They need to quickly remember what was accomplished and what's next, without manually digging through git logs and documentation.
 
 **Steps:**
-1. Developer runs: `docket session start`
+1. Developer runs: `docent session start`
 2. System analyzes recent activity:
    - Reads last 5 commits from git log
    - Parses pending todos from last session
@@ -415,7 +415,7 @@ docket workflow rfc "Should we add behavioral specs?"
 
 **Success outcome:** Full project context in 30 seconds instead of 15-30 minutes of manual investigation. Developer starts productive work immediately instead of spending time reconstructing mental state.
 
-**Why this matters:** Solo developers are constantly interrupted (meetings, context switches, breaks). The cold-start problem is a major productivity killer. This feature turns docket's structured documentation into a time machine - instantly recover where you were and what you were thinking.
+**Why this matters:** Solo developers are constantly interrupted (meetings, context switches, breaks). The cold-start problem is a major productivity killer. This feature turns docent's structured documentation into a time machine - instantly recover where you were and what you were thinking.
 
 ### User Stories
 
@@ -454,12 +454,12 @@ docket workflow rfc "Should we add behavioral specs?"
 - ✅ RFC-0002: Behavioral specifications (workflows will create these)
 - ⏳ MCP server (RFC-0001) - Optional enhancement, not blocker
 - ✅ Existing CLI commands (analyze, audit, review)
-- ✅ Agent communication protocol (.docket-protocol/)
+- ✅ Agent communication protocol (.docent-protocol/)
 
 ### Integration Points
 
 **How workflows fit with existing systems:**
-1. **Docket CLI:** Workflows extend CLI as new command namespace
+1. **Docent CLI:** Workflows extend CLI as new command namespace
 2. **Templates:** Workflows use existing templates (RFC, ADR, spec)
 3. **Audit/Review:** Workflows trigger audit/review automatically
 4. **Agent protocol:** Workflows consume/produce JSON per ADR-0003
@@ -473,7 +473,7 @@ docket workflow rfc "Should we add behavioral specs?"
 
 **Deliverables:**
 - Workflow engine implementation (`src/lib/workflow-engine.ts`)
-- `docket workflow rfc` command working end-to-end
+- `docent workflow rfc` command working end-to-end
 - Interactive checkpoints with user input
 - Progress tracking via TodoWrite
 - State serialization (resume capability)
@@ -490,11 +490,11 @@ docket workflow rfc "Should we add behavioral specs?"
 **Goal:** Validate workflow system with more use cases
 
 **Deliverables:**
-- `docket workflow feature` - Feature development workflow
-- `docket workflow decide` - Decision/ADR workflow
+- `docent workflow feature` - Feature development workflow
+- `docent workflow decide` - Decision/ADR workflow
 - Workflow management commands (list, status, resume, cancel)
 - Documentation and examples
-- Dogfooding: Use workflows for docket development
+- Dogfooding: Use workflows for docent development
 
 **Success criteria:**
 - 3 different workflow types working
@@ -601,9 +601,9 @@ docket workflow rfc "Should we add behavioral specs?"
 ## Related Documentation
 
 **Directly supports this vision:**
-- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docket/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Technical foundation for MCP workflows
-- [RFC-0002: Behavioral Specifications](/Users/tnez/Code/tnez/docket/docs/rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Workflows create specs
-- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docket/docs/adr/adr-0003-agent-agnostic-architecture.md) - Why CLI-first matters
+- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Technical foundation for MCP workflows
+- [RFC-0002: Behavioral Specifications](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Workflows create specs
+- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md) - Why CLI-first matters
 
 **Will reference this PRD:**
 - RFC-0003: Workflow Orchestration System (to be created)
@@ -613,9 +613,9 @@ docket workflow rfc "Should we add behavioral specs?"
 
 ## Vision Statement
 
-**Docket transforms solo developers into high-output teams through agent orchestration.**
+**Docent transforms solo developers into high-output teams through agent orchestration.**
 
-The future of development isn't writing code alone. It's orchestrating AI agents through structured workflows that compress weeks of work into hours. Docket provides the platform: CLI for any agent, MCP for rich UX, workflows for complex processes.
+The future of development isn't writing code alone. It's orchestrating AI agents through structured workflows that compress weeks of work into hours. Docent provides the platform: CLI for any agent, MCP for rich UX, workflows for complex processes.
 
 **What used to take a team of 5 developers 1 week now takes 1 developer 1 hour.**
 

@@ -1,6 +1,6 @@
-# Docket Documentation
+# Docent Documentation
 
-Welcome to the docket documentation! This is docket documenting itself - a real-world example of the documentation platform in action.
+Welcome to the docent documentation! This is docent documenting itself - a real-world example of the documentation platform in action.
 
 ## Quick Navigation
 
@@ -20,28 +20,28 @@ Welcome to the docket documentation! This is docket documenting itself - a real-
 - [RFC-0004: Work Artifact Capture](./rfcs/rfc-0004-work-artifact-capture-and-surfacing.md)
 
 ### 📚 Guides
-- [MCP Setup Guide](./guides/mcp-setup.md) - How to integrate docket MCP server with AI agents
-- [Contributing](../CONTRIBUTING.md) - How to contribute to docket (see repo root)
+- [MCP Setup Guide](./guides/mcp-setup.md) - How to integrate docent MCP server with AI agents
+- [Contributing](../CONTRIBUTING.md) - How to contribute to docent (see repo root)
 
 ### 🔧 Runbooks
-No runbooks yet. Docket is developer tooling with no operational procedures needed at this time.
+No runbooks yet. Docent is developer tooling with no operational procedures needed at this time.
 
-## About Docket
+## About Docent
 
 **Primary Language:** TypeScript
 **Primary Framework:** MCP SDK (Model Context Protocol)
 **Testing Framework:** Mocha
 **Package Manager:** npm
 
-Docket is documentation intelligence for AI agents. It provides MCP tools for project analysis, documentation quality assessment, and template generation. See [Architecture Overview](./architecture/overview.md) for complete details.
+Docent is documentation intelligence for AI agents. It provides MCP tools for project analysis, documentation quality assessment, and template generation. See [Architecture Overview](./architecture/overview.md) for complete details.
 
-## Using Docket
+## Using Docent
 
-Docket integrates with AI agents through MCP (Model Context Protocol):
+Docent integrates with AI agents through MCP (Model Context Protocol):
 
 ```typescript
 // Ask your AI agent to:
-"Analyze this project using docket's analyze tool"
+"Analyze this project using docent's analyze tool"
 "Assess documentation quality using audit-quality"
 "Generate a new ADR using the adr template"
 ```
@@ -58,9 +58,9 @@ See [MCP Setup Guide](./guides/mcp-setup.md) for configuration instructions.
 
 ## Documentation Philosophy
 
-Docket uses itself to document itself. This serves multiple purposes:
+Docent uses itself to document itself. This serves multiple purposes:
 
-1. **Validation** - If docket can't document docket, it's not ready
+1. **Validation** - If docent can't document docent, it's not ready
 2. **Demonstration** - Real-world example for users
 3. **Dogfooding** - We experience our own product
 4. **Quality** - Forces us to make the product actually useful
@@ -69,4 +69,4 @@ See [ADR-0004](./adr/adr-0004-mcp-only-architecture.md) for the architectural ev
 
 ---
 
-*This documentation was initialized and maintained using docket itself.*
+*This documentation was initialized and maintained using docent itself.*

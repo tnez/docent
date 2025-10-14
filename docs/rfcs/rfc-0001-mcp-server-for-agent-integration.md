@@ -9,13 +9,13 @@
 
 ## Summary
 
-Add a Model Context Protocol (MCP) server interface to docket alongside the existing CLI. This enables AI agents to interact with docket through native tool calling rather than shell command execution. The MCP server is implemented in the same repository as the CLI (`/src/mcp/`) sharing core logic and prompt templates. **Validated by audit prototype showing agent-driven analysis (73/100) significantly outperforms heuristic-based analysis (21/100).**
+Add a Model Context Protocol (MCP) server interface to docent alongside the existing CLI. This enables AI agents to interact with docent through native tool calling rather than shell command execution. The MCP server is implemented in the same repository as the CLI (`/src/mcp/`) sharing core logic and prompt templates. **Validated by audit prototype showing agent-driven analysis (73/100) significantly outperforms heuristic-based analysis (21/100).**
 
 ## Motivation
 
 ### Problem Statement
 
-Docket currently exposes functionality through CLI commands with JSON output (e.g., `docket analyze --output json`). While this works, it has limitations:
+Docent currently exposes functionality through CLI commands with JSON output (e.g., `docent analyze --output json`). While this works, it has limitations:
 
 **Current limitations:**
 - Requires agents to execute shell commands and parse stdout
@@ -27,7 +27,7 @@ Docket currently exposes functionality through CLI commands with JSON output (e.
 - **Manual copy/paste workflow for agent-driven features** (validated by audit prototype)
 
 **Prototype validation:**
-We built `docket audit --agent` to test agent-driven analysis. Results:
+We built `docent audit --agent` to test agent-driven analysis. Results:
 - **Heuristic analysis**: 21/100 score, 87% false positive rate (flagged 13/15 substantial docs as "empty")
 - **Agent analysis**: 73/100 score, contextual understanding, actionable recommendations
 - **3.5x improvement** - Agents can do what heuristics cannot
@@ -40,7 +40,7 @@ We built `docket audit --agent` to test agent-driven analysis. Results:
 - Agent developers building integrations
 
 **Consequences of not solving:**
-- Docket remains harder to integrate than tools with MCP support
+- Docent remains harder to integrate than tools with MCP support
 - Limited adoption in non-shell environments
 - Manual JSON parsing remains agent's responsibility
 - No standardized integration pattern as MCP gains adoption
@@ -51,7 +51,7 @@ We built `docket audit --agent` to test agent-driven analysis. Results:
 - **Maintain backward compatibility** with existing shell-based approach
 - **Support broader environments** (web, sandboxed, mobile agents)
 - **Provide native tool discovery** for agents
-- **Position docket for future** as MCP becomes standard
+- **Position docent for future** as MCP becomes standard
 
 ### Non-Goals
 
@@ -64,19 +64,19 @@ We built `docket audit --agent` to test agent-driven analysis. Results:
 
 ### Overview
 
-Implement MCP server in `/src/mcp/` within the main docket repository (monorepo approach). The MCP server shares core libraries (`detector`, `auditor`, `reviewer`, `installer`) and prompt templates (`/templates/prompts/`) with the CLI, providing identical functionality through a different interface.
+Implement MCP server in `/src/mcp/` within the main docent repository (monorepo approach). The MCP server shares core libraries (`detector`, `auditor`, `reviewer`, `installer`) and prompt templates (`/templates/prompts/`) with the CLI, providing identical functionality through a different interface.
 
 **Monorepo rationale:**
 - MCP is integral to product (not optional plugin)
 - Shared code: detector, auditor, prompt templates
 - Coordinated releases: CLI and MCP changes together
 - Single repo to understand, test, contribute
-- Easier dogfooding: run docket via MCP while developing
+- Easier dogfooding: run docent via MCP while developing
 
 ### Architecture
 
 ```
-@tnezdev/docket (monorepo)
+@tnezdev/docent (monorepo)
 ├── src/
 │   ├── commands/           # CLI commands
 │   ├── lib/                # Core libraries (shared)
@@ -111,7 +111,7 @@ Implement MCP server in `/src/mcp/` within the main docket repository (monorepo 
 ```
 
 **Monorepo approach:**
-- Single `@tnezdev/docket` package with dual interfaces
+- Single `@tnezdev/docent` package with dual interfaces
 - MCP server in `/src/mcp/` alongside CLI in `/src/commands/`
 - Shared core libraries in `/src/lib/`
 - Shared prompt templates in `/templates/prompts/`
@@ -173,7 +173,7 @@ Implement MCP server in `/src/mcp/` within the main docket repository (monorepo 
 **Project Structure:**
 
 ```
-docket/
+docent/
 ├── src/
 │   ├── commands/              # CLI commands (human interface)
 │   │   ├── analyze.ts
@@ -217,7 +217,7 @@ import {buildAuditPrompt} from '../lib/prompt-builder.js'
 
 const server = new Server(
   {
-    name: 'docket',
+    name: 'docent',
     version: '0.3.0',
   },
   {
@@ -327,7 +327,7 @@ const tools = await mcp.listTools()
 
 ```typescript
 // Agent code using shell commands
-const result = await exec('docket analyze --output json --path /my/project')
+const result = await exec('docent analyze --output json --path /my/project')
 const analysis = JSON.parse(result.stdout)
 // Still works, backward compatible
 ```
@@ -343,9 +343,9 @@ Two integration options:
    # Add to MCP configuration (e.g., Claude Desktop)
    {
      "mcpServers": {
-       "docket": {
+       "docent": {
          "command": "node",
-         "args": ["/path/to/docket/lib/mcp/server.js"]
+         "args": ["/path/to/docent/lib/mcp/server.js"]
        }
      }
    }
@@ -353,9 +353,9 @@ Two integration options:
    # Or via npx (after publishing)
    {
      "mcpServers": {
-       "docket": {
+       "docent": {
          "command": "npx",
-         "args": ["@tnezdev/docket", "mcp"]
+         "args": ["@tnezdev/docent", "mcp"]
        }
      }
    }
@@ -363,14 +363,14 @@ Two integration options:
 
 2. **CLI (works everywhere):**
    ```bash
-   docket analyze --output json
+   docent analyze --output json
    ```
 
 **For End Users:**
 
 No change - they continue using the CLI as normal. MCP is transparent to them.
 
-**For Docket Maintainers:**
+**For Docent Maintainers:**
 
 - Maintain two packages with shared core logic
 - Test both CLI and MCP interfaces
@@ -522,7 +522,7 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 ### Rollout Plan
 
 **Phase 0: Validation (Complete ✅)**
-- Built `docket audit --agent` prototype with manual workflow
+- Built `docent audit --agent` prototype with manual workflow
 - Validated agent-driven analysis (73/100) vs heuristics (21/100)
 - Confirmed prompt template system works
 - Demonstrated 3.5x quality improvement with agent reasoning
@@ -542,10 +542,10 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 **Phase 3: Full Feature Parity (1 week)**
 - Implement init, new tools for MCP
 - Document all tools in MCP schema
-- Add examples to `.docket-protocol/agent-guide.md`
+- Add examples to `.docent-protocol/agent-guide.md`
 
 **Phase 4: Release & Dogfooding (1 week)**
-- Use docket MCP while developing docket
+- Use docent MCP while developing docent
 - Update documentation with MCP setup
 - Publish npm package with MCP support
 - Announce to community
@@ -567,8 +567,8 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 
 **User-Facing Documentation:**
 - Update README with MCP installation instructions
-- Add MCP section to `.docket-protocol/agent-guide.md`
-- Create `packages/docket-mcp/README.md` with usage examples
+- Add MCP section to `.docent-protocol/agent-guide.md`
+- Create `packages/docent-mcp/README.md` with usage examples
 
 **Agent Developer Documentation:**
 - MCP configuration examples
@@ -584,8 +584,8 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 ## Open Questions
 
 - ~~**Package structure:** Monorepo or separate repos?~~ **RESOLVED: Monorepo** - MCP in `/src/mcp/` alongside CLI
-- ~~**Core library sharing:** Extract to `@tnezdev/docket-core`?~~ **RESOLVED: No** - Keep shared in `/src/lib/`
-- **Feature parity:** Should MCP support interactive prompts (like `docket init`)? **DEFER** - Start with read-only tools
+- ~~**Core library sharing:** Extract to `@tnezdev/docent-core`?~~ **RESOLVED: No** - Keep shared in `/src/lib/`
+- **Feature parity:** Should MCP support interactive prompts (like `docent init`)? **DEFER** - Start with read-only tools
 - **Resource limits:** Should we add rate limiting or resource quotas? **DEFER** - Add if needed based on usage
 - **MCP version:** Which MCP protocol version to target? **ANSWER: Latest stable** - Use `@modelcontextprotocol/sdk` latest
 - **Testing with agents:** Which agents should we test with? **ANSWER: Claude Desktop** - Primary validation platform
@@ -597,9 +597,9 @@ Once MCP server is established:
 
 - **Streaming support** - Stream audit/review results as they're discovered
 - **Watch mode** - Monitor files and trigger reviews automatically
-- **Agent collaboration** - Multiple agents sharing same docket instance
+- **Agent collaboration** - Multiple agents sharing same docent instance
 - **Rich responses** - Return formatted markdown, images, diagrams
-- **Context integration** - Provide docket data as agent context
+- **Context integration** - Provide docent data as agent context
 - **Custom tools** - Allow projects to define custom MCP tools
 
 ## References
@@ -608,8 +608,8 @@ Once MCP server is established:
 - [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 - [Claude Desktop MCP Guide](https://modelcontextprotocol.io/quickstart)
 - [ADR-0003: Agent-Agnostic Architecture](../adr/adr-0003-agent-agnostic-architecture.md)
-- [Docket Agent Protocol Guide](../../.docket-protocol/agent-guide.md)
+- [Docent Agent Protocol Guide](../../.docent-protocol/agent-guide.md)
 
 ---
 
-**This RFC proposes adding MCP support to make docket a first-class citizen in the emerging agent ecosystem while maintaining our agent-agnostic philosophy through dual interfaces.**
+**This RFC proposes adding MCP support to make docent a first-class citizen in the emerging agent ecosystem while maintaining our agent-agnostic philosophy through dual interfaces.**

@@ -11,20 +11,20 @@ After implementing both CLI and MCP interfaces (per ADR-0001 and RFC-0001), a pr
 
 ### The Validation
 
-Built `docket audit --agent` to test agent-driven documentation assessment:
+Built `docent audit --agent` to test agent-driven documentation assessment:
 
 **Results:**
 - **Heuristic analysis:** 21/100 score, 87% false positive rate (flagged 13/15 substantial docs as "empty")
 - **Agent analysis:** 73/100 score, semantic understanding, contextual recommendations
 - **3.5x improvement** - Agents can reason about documentation quality in ways heuristics cannot
 
-**Key insight:** The CLI was scaffolding to validate the approach. Agents are not a feature - they're *required* for docket to work well.
+**Key insight:** The CLI was scaffolding to validate the approach. Agents are not a feature - they're *required* for docent to work well.
 
 ### Strategic Realizations
 
 Two critical insights emerged during the MCP implementation:
 
-1. **CI/CD is not docket's lane**
+1. **CI/CD is not docent's lane**
    - Documentation quality isn't a build gate (unlike tests or linting)
    - Blocking builds for doc gaps frustrates developers
    - Documentation is a human collaboration process, not a pass/fail check
@@ -39,9 +39,9 @@ Two critical insights emerged during the MCP implementation:
 ### The "Invisible Infrastructure" Insight
 
 From user feedback:
-> "docket should really just make your agent work better ... not be a separate thing you have to learn. Just configure the MCP ... maybe ask some questions to give it some initial direction, and off you go."
+> "docent should really just make your agent work better ... not be a separate thing you have to learn. Just configure the MCP ... maybe ask some questions to give it some initial direction, and off you go."
 
-**Analogy:** Docket is like a database
+**Analogy:** Docent is like a database
 - Humans don't query databases directly
 - Applications (agents) query databases
 - Makes applications smarter, not a separate tool to learn
@@ -55,7 +55,7 @@ From user feedback:
 - Dual maintenance increases complexity
 - Agent-driven features require agents (not CLI)
 - Simpler mental model: one interface, one audience
-- Users don't want to learn docket commands
+- Users don't want to learn docent commands
 
 **Against MCP-only:**
 - Removes human-facing interface
@@ -65,11 +65,11 @@ From user feedback:
 
 **The Decision Point:**
 
-If agents are required for docket to work well (validated by 73/100 vs 21/100), and all target users have agents, then the CLI is unnecessary complexity.
+If agents are required for docent to work well (validated by 73/100 vs 21/100), and all target users have agents, then the CLI is unnecessary complexity.
 
 ## Decision
 
-**Remove the CLI entirely. Make docket MCP-only.**
+**Remove the CLI entirely. Make docent MCP-only.**
 
 ### What This Means
 
@@ -83,7 +83,7 @@ If agents are required for docket to work well (validated by 73/100 vs 21/100), 
 ### New Architecture
 
 ```
-docket/
+docent/
 ├── src/
 │   ├── lib/              # Core intelligence (shared)
 │   │   ├── detector.ts     # Project analysis
@@ -109,26 +109,26 @@ docket/
 ### User Experience
 
 **Before (Dual Interface):**
-1. Learn docket commands: `docket analyze`, `docket audit`, etc.
+1. Learn docent commands: `docent analyze`, `docent audit`, etc.
 2. Configure MCP for agent integration
 3. Remember to run audits manually
 4. Context switch between terminal and agent
 
 **After (MCP-Only):**
-1. Configure MCP once: `npx @tnezdev/docket`
+1. Configure MCP once: `npx @tnezdev/docent`
 2. Restart agent
 3. Just talk naturally: "How's my documentation?"
-4. Agent uses docket automatically - invisible infrastructure
+4. Agent uses docent automatically - invisible infrastructure
 
 ### Distribution
 
 ```json
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tnezdev/docket"],
+      "args": ["-y", "@tnezdev/docent"],
       "env": {}
     }
   }
@@ -139,9 +139,9 @@ docket/
 ```json
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "type": "stdio",
-      "command": "/absolute/path/to/docket/bin/mcp-server.js",
+      "command": "/absolute/path/to/docent/bin/mcp-server.js",
       "args": [],
       "env": {}
     }
@@ -160,7 +160,7 @@ docket/
 - **Better UX** - Configure once, forget about it (not a separate tool to learn)
 - **True to vision** - Agents are required, so embrace it fully
 - **Faster iteration** - Change MCP tools without CLI compatibility concerns
-- **Dogfoodable** - Use docket via MCP while developing docket
+- **Dogfoodable** - Use docent via MCP while developing docent
 
 ### Negative
 
@@ -168,7 +168,7 @@ docket/
 - **MCP required** - No fallback for non-MCP environments
 - **Agent dependency** - Requires agent that supports MCP protocol
 - **Bold bet** - Assumes MCP becomes standard (reasonable given Anthropic backing)
-- **No human interface** - Can't run docket commands directly in terminal
+- **No human interface** - Can't run docent commands directly in terminal
 
 ### Neutral
 
@@ -190,7 +190,7 @@ docket/
 - Non-agent users weren't our target anyway
 
 **"What about CI/CD use cases?"**
-- Not docket's lane (documentation isn't a build gate)
+- Not docent's lane (documentation isn't a build gate)
 - If needed, agents can run in CI too
 - Alternative: separate thin CLI wrapper for CI (future consideration)
 
@@ -248,7 +248,7 @@ docket/
 - Misses the "invisible infrastructure" vision
 - Much more complex to build
 
-**Why not chosen:** Wrong direction. Docket is infrastructure, not an app.
+**Why not chosen:** Wrong direction. Docent is infrastructure, not an app.
 
 ## Implementation Notes
 
@@ -298,9 +298,9 @@ If anyone was using the CLI directly:
 
 **Before:**
 ```bash
-docket analyze
-docket audit
-docket review
+docent analyze
+docent audit
+docent review
 ```
 
 **After:**
@@ -308,10 +308,10 @@ docket review
 # Configure MCP in ~/.claude.json
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tnezdev/docket"],
+      "args": ["-y", "@tnezdev/docent"],
       "env": {}
     }
   }
@@ -325,9 +325,9 @@ docket review
 
 ### For New Users
 
-1. Add docket to MCP config
+1. Add docent to MCP config
 2. Restart agent
-3. Talk naturally - agent uses docket automatically
+3. Talk naturally - agent uses docent automatically
 
 ## References
 
@@ -341,7 +341,7 @@ docket review
 
 ## Reflection: The Journey
 
-Docket's evolution:
+Docent's evolution:
 1. **Templates-only** - Static markdown files
 2. **CLI + Agent Protocol** - Commands with JSON output (ADR-0001)
 3. **CLI + MCP Dual Interface** - Native tool calling (RFC-0001)

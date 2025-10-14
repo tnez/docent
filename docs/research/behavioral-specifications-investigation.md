@@ -2,13 +2,13 @@
 
 **Research Date:** 2025-10-12
 **Author:** Research Analyst
-**Purpose:** Investigate behavioral specification formats for enhancing docket with agent-readable specs
+**Purpose:** Investigate behavioral specification formats for enhancing docent with agent-readable specs
 
 ## Executive Summary
 
-This research investigates various behavioral specification formats suitable for agent-driven development, evaluating their applicability to docket's documentation platform. After analyzing multiple approaches including Gherkin/Cucumber, OpenAPI, RSpec/Jest patterns, JSON Schema, and the emerging AGENTS.md standard, we identify key considerations for implementing behavioral specifications that are both human-readable and agent-parseable.
+This research investigates various behavioral specification formats suitable for agent-driven development, evaluating their applicability to docent's documentation platform. After analyzing multiple approaches including Gherkin/Cucumber, OpenAPI, RSpec/Jest patterns, JSON Schema, and the emerging AGENTS.md standard, we identify key considerations for implementing behavioral specifications that are both human-readable and agent-parseable.
 
-**Key Finding:** The optimal approach for docket likely combines elements from multiple formats: Gherkin's natural language syntax for behavior specification, RSpec/Jest's hierarchical structure for test organization, and AGENTS.md's simplicity for agent instructions.
+**Key Finding:** The optimal approach for docent likely combines elements from multiple formats: Gherkin's natural language syntax for behavior specification, RSpec/Jest's hierarchical structure for test organization, and AGENTS.md's simplicity for agent instructions.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ This research investigates various behavioral specification formats suitable for
 2. [Agent-Driven Development Practices](#agent-driven-development-practices)
 3. [Real-World Examples](#real-world-examples)
 4. [Comparative Analysis](#comparative-analysis)
-5. [Docket-Specific Considerations](#docket-specific-considerations)
+5. [Docent-Specific Considerations](#docent-specific-considerations)
 6. [Recommendations](#recommendations)
 7. [Implementation Examples](#implementation-examples)
 8. [References](#references)
@@ -89,7 +89,7 @@ Feature: User Authentication
 ```yaml
 openapi: 3.1.0
 info:
-  title: Docket API
+  title: Docent API
   version: 1.0.0
 paths:
   /analyze:
@@ -151,20 +151,20 @@ paths:
 
 **Structure:**
 ```javascript
-describe('Docket CLI', () => {
+describe('Docent CLI', () => {
   describe('analyze command', () => {
     beforeEach(() => {
       // Setup test environment
     });
 
     it('should detect programming languages in the project', async () => {
-      const result = await docket.analyze('/path/to/project');
+      const result = await docent.analyze('/path/to/project');
       expect(result.languages).toContain('JavaScript');
       expect(result.languages).toContain('Python');
     });
 
     it('should identify frameworks being used', async () => {
-      const result = await docket.analyze('/path/to/project');
+      const result = await docent.analyze('/path/to/project');
       expect(result.frameworks).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ name: 'React', type: 'frontend' }),
@@ -175,7 +175,7 @@ describe('Docket CLI', () => {
 
     describe('when project has no code files', () => {
       it('should return empty analysis', async () => {
-        const result = await docket.analyze('/empty/project');
+        const result = await docent.analyze('/empty/project');
         expect(result.languages).toEqual([]);
         expect(result.frameworks).toEqual([]);
       });
@@ -592,9 +592,9 @@ This is a React component library. Each component:
 - ❌ Can drift from implementation
 - ❌ Manual validation
 
-## Docket-Specific Considerations
+## Docent-Specific Considerations
 
-### Current Docket Architecture
+### Current Docent Architecture
 
 Based on the codebase analysis:
 
@@ -607,14 +607,14 @@ Based on the codebase analysis:
 2. **Agent Integration**
    - Already provides structured JSON output
    - Designed for agent consumption
-   - Protocol documentation in `.docket-protocol/`
+   - Protocol documentation in `.docent-protocol/`
 
 3. **Documentation Philosophy**
    - Templates for different doc types (ADR, RFC, etc.)
    - Focus on maintaining documentation quality
    - Gap detection and staleness checking
 
-### Requirements for Behavioral Specs in Docket
+### Requirements for Behavioral Specs in Docent
 
 #### Must Have:
 1. **Agent-readable format** that AI assistants can parse and understand
@@ -637,7 +637,7 @@ Based on the codebase analysis:
 
 ### Integration Points
 
-1. **New Command:** `docket spec`
+1. **New Command:** `docent spec`
    - Create new behavioral specification
    - Support multiple formats via templates
    - Interactive and non-interactive modes
@@ -657,7 +657,7 @@ Based on the codebase analysis:
    - Find outdated specifications
    - Suggest spec updates
 
-### Proposed Specification Format for Docket
+### Proposed Specification Format for Docent
 
 A hybrid approach combining the best elements:
 
@@ -683,7 +683,7 @@ Brief description of the feature and its purpose.
 #### Example:
 \`\`\`javascript
 // Input
-docket.analyze('/path/to/project')
+docent.analyze('/path/to/project')
 
 // Expected Output
 {
@@ -723,7 +723,7 @@ Implement a flexible specification system that:
 
 1. **Supports multiple formats** through templates
 2. **Defaults to a simplified Gherkin-style** format
-3. **Integrates with existing docket commands**
+3. **Integrates with existing docent commands**
 4. **Provides validation and analysis**
 
 ### Implementation Approach
@@ -731,12 +731,12 @@ Implement a flexible specification system that:
 #### Phase 1: Foundation
 1. Add `specs/` directory to project structure
 2. Create base specification template
-3. Implement `docket spec new` command
-4. Add spec detection to `docket analyze`
+3. Implement `docent spec new` command
+4. Add spec detection to `docent analyze`
 
 #### Phase 2: Integration
-1. Enhance `docket audit` to check spec coverage
-2. Update `docket review` to detect spec/code drift
+1. Enhance `docent audit` to check spec coverage
+2. Update `docent review` to detect spec/code drift
 3. Add `--include-specs` flag to existing commands
 4. Create spec validation logic
 
@@ -756,7 +756,7 @@ Implement a flexible specification system that:
 | **Data Validation** | JSON Schema + Scenarios | Type safety, validation rules |
 | **Agent Instructions** | AGENTS.md + Specs link | Simple, flexible, contextual |
 
-### Best Practices for Docket Specs
+### Best Practices for Docent Specs
 
 1. **Start Simple**
    - Begin with basic scenarios
@@ -780,7 +780,7 @@ Implement a flexible specification system that:
 
 ## Implementation Examples
 
-### Example 1: Docket Analyze Command Specification
+### Example 1: Docent Analyze Command Specification
 
 ```markdown
 # Spec: Analyze Command
@@ -797,12 +797,12 @@ The analyze command examines a project directory to identify languages, framewor
 
 ### Scenario: Analyze JavaScript project
 **Given:** A project directory containing package.json and JavaScript files
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:** System returns detected languages and frameworks
 
 #### Example:
 \`\`\`bash
-$ docket analyze --output json
+$ docent analyze --output json
 \`\`\`
 
 \`\`\`json
@@ -825,12 +825,12 @@ $ docket analyze --output json
 
 ### Scenario: Empty directory analysis
 **Given:** An empty directory with no code files
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:** System returns empty analysis result
 
 ### Scenario: Monorepo detection
 **Given:** A directory with multiple package.json files in subdirectories
-**When:** User runs `docket analyze`
+**When:** User runs `docent analyze`
 **Then:** System identifies monorepo structure and analyzes each package
 
 ## Acceptance Criteria
@@ -856,7 +856,7 @@ $ docket analyze --output json
 6. Verify JSON schema compliance
 ```
 
-### Example 2: Docket Init Command Specification
+### Example 2: Docent Init Command Specification
 
 ```markdown
 # Spec: Init Command
@@ -867,13 +867,13 @@ $ docket analyze --output json
 - **Related:** [RFC-0001](../rfcs/rfc-0001-mcp-server-for-agent-integration.md)
 
 ## Context
-Initialize docket documentation structure in a project with smart defaults based on project analysis.
+Initialize docent documentation structure in a project with smart defaults based on project analysis.
 
 ## Behaviors
 
 ### Scenario: Interactive initialization
-**Given:** A project without docket initialization
-**When:** User runs `docket init` in interactive mode
+**Given:** A project without docent initialization
+**When:** User runs `docent init` in interactive mode
 **Then:**
 - System analyzes project
 - Prompts for configuration options
@@ -881,8 +881,8 @@ Initialize docket documentation structure in a project with smart defaults based
 - Saves context for future use
 
 ### Scenario: Non-interactive initialization with defaults
-**Given:** A project without docket initialization
-**When:** User runs `docket init --non-interactive`
+**Given:** A project without docent initialization
+**When:** User runs `docent init --non-interactive`
 **Then:**
 - System uses smart defaults
 - Creates docs/ directory
@@ -891,7 +891,7 @@ Initialize docket documentation structure in a project with smart defaults based
 
 #### Example:
 \`\`\`bash
-$ docket init --non-interactive --output json
+$ docent init --non-interactive --output json
 \`\`\`
 
 \`\`\`json
@@ -913,15 +913,15 @@ $ docket init --non-interactive --output json
 \`\`\`
 
 ### Scenario: Reinitialization attempt
-**Given:** A project already initialized with docket
-**When:** User runs `docket init` again
+**Given:** A project already initialized with docent
+**When:** User runs `docent init` again
 **Then:** System detects existing initialization and exits with error
 
 ## Acceptance Criteria
 - [ ] Detects existing initialization
 - [ ] Creates documentation directory structure
 - [ ] Installs relevant templates based on project type
-- [ ] Saves project context to .docket/context.json
+- [ ] Saves project context to .docent/context.json
 - [ ] Supports both interactive and non-interactive modes
 - [ ] Returns structured JSON in non-interactive mode
 
@@ -955,7 +955,7 @@ Add support for behavioral specifications that AI agents can read, understand, a
 
 ### Scenario: Create new specification
 **Given:** A developer wants to specify behavior for a feature
-**When:** They run `docket spec new [feature-name]`
+**When:** They run `docent spec new [feature-name]`
 **Then:**
 - System creates specs/[feature-name].spec.md
 - File contains spec template
@@ -963,7 +963,7 @@ Add support for behavioral specifications that AI agents can read, understand, a
 
 ### Scenario: Validate specifications
 **Given:** Existing specifications in specs/ directory
-**When:** User runs `docket spec validate`
+**When:** User runs `docent spec validate`
 **Then:**
 - System checks spec completeness
 - Validates internal consistency
@@ -971,7 +971,7 @@ Add support for behavioral specifications that AI agents can read, understand, a
 
 ### Scenario: Analyze spec coverage
 **Given:** Project with specs and implementation
-**When:** User runs `docket audit --include-specs`
+**When:** User runs `docent audit --include-specs`
 **Then:**
 - System calculates spec coverage percentage
 - Identifies unspecified features
@@ -1077,13 +1077,13 @@ Add support for behavioral specifications that AI agents can read, understand, a
 
 ## Conclusion
 
-The research indicates that implementing behavioral specifications in docket would significantly enhance its value for agent-driven development. The recommended hybrid approach—combining Gherkin's natural language scenarios, concrete examples from RSpec/Jest patterns, and the simplicity of AGENTS.md—provides the optimal balance of human readability and agent parseability.
+The research indicates that implementing behavioral specifications in docent would significantly enhance its value for agent-driven development. The recommended hybrid approach—combining Gherkin's natural language scenarios, concrete examples from RSpec/Jest patterns, and the simplicity of AGENTS.md—provides the optimal balance of human readability and agent parseability.
 
 Key success factors:
 1. Start with a simple, flexible format
 2. Support progressive enhancement
-3. Integrate deeply with existing docket commands
+3. Integrate deeply with existing docent commands
 4. Maintain clear separation between specification and implementation
 5. Optimize for both human authors and AI consumers
 
-This approach positions docket as a comprehensive documentation platform that bridges the gap between human-written specifications and agent-executed development workflows.
+This approach positions docent as a comprehensive documentation platform that bridges the gap between human-written specifications and agent-executed development workflows.
