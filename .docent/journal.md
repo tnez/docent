@@ -775,3 +775,24 @@ Returns: {
 
 ---
 
+## 2025-10-14T00:47:02.931Z
+
+**Summary:** Completed project rebrand from docket to docent
+
+**Key Discoveries:**
+- Rebrand executed smoothly - 12 files updated in one atomic commit
+- New branding: "Docent - Your guide through the codebase"
+- All URI schemes updated: docket:// → docent://
+- Directory migration successful: .docket → .docent (journal preserved)
+- TypeScript builds cleanly, MCP server loads with new name
+- Research-driven decision: docent 9.0/10 vs docket 4.2/10
+
+**Next Steps:**
+- Push changes to GitHub
+- Update GitHub repository name from tnez/docket to tnez/docent
+- Consider: Publish @tnezdev/docent to NPM
+- Update any external references (social, websites)
+- Test MCP server with new name in Claude Desktop
+
+---
+
