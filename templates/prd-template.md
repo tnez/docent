@@ -16,6 +16,7 @@ Brief summary of the product vision, the problem it solves, and the value it del
 ### User Pain Points
 
 What problems do users face today?
+
 - Pain point 1
 - Pain point 2
 - Pain point 3
@@ -23,6 +24,7 @@ What problems do users face today?
 ### Current State
 
 How do users solve this problem today?
+
 - Current approach 1
 - Current approach 2
 - Limitations of current approaches
@@ -30,6 +32,7 @@ How do users solve this problem today?
 ### Impact
 
 What are the consequences of not solving this?
+
 - Impact on productivity
 - Impact on quality
 - Impact on user satisfaction
@@ -40,11 +43,13 @@ What are the consequences of not solving this?
 ### Persona 1: [Name]
 
 **Who they are:**
+
 - Role/title
 - Technical level
 - Goals and motivations
 
 **Their needs:**
+
 - What they need to accomplish
 - What frustrates them
 - What would make them successful
@@ -52,11 +57,13 @@ What are the consequences of not solving this?
 ### Persona 2: [Name]
 
 **Who they are:**
+
 - Role/title
 - Technical level
 - Goals and motivations
 
 **Their needs:**
+
 - What they need to accomplish
 - What frustrates them
 - What would make them successful
@@ -66,6 +73,7 @@ What are the consequences of not solving this?
 ### What We're Building
 
 High-level description of the product or feature:
+
 - Core concept
 - Key differentiators
 - How it solves the problem
@@ -73,6 +81,7 @@ High-level description of the product or feature:
 ### Why Now
 
 Why is this the right time?
+
 - Market trends
 - Technology enablers
 - User readiness
@@ -83,6 +92,7 @@ Why is this the right time?
 ### Primary Metrics
 
 Key indicators that this is successful:
+
 - Metric 1: [Description] - Target: [Value]
 - Metric 2: [Description] - Target: [Value]
 - Metric 3: [Description] - Target: [Value]
@@ -90,12 +100,14 @@ Key indicators that this is successful:
 ### Secondary Metrics
 
 Supporting indicators:
+
 - Metric 1: [Description]
 - Metric 2: [Description]
 
 ### Success Criteria
 
 What does "done" and "successful" look like?
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 - [ ] Criterion 3
@@ -105,6 +117,7 @@ What does "done" and "successful" look like?
 ### Must Have (P0)
 
 Features that are absolutely required for launch:
+
 - Requirement 1
 - Requirement 2
 - Requirement 3
@@ -112,18 +125,21 @@ Features that are absolutely required for launch:
 ### Should Have (P1)
 
 Important features that should be included if possible:
+
 - Requirement 1
 - Requirement 2
 
 ### Nice to Have (P2)
 
 Features that would be great but aren't essential:
+
 - Requirement 1
 - Requirement 2
 
 ### Out of Scope
 
 What we explicitly will NOT do (at least not initially):
+
 - Non-feature 1
 - Non-feature 2
 - Non-feature 3
@@ -137,6 +153,7 @@ What we explicitly will NOT do (at least not initially):
 **Scenario:** [Context and goal]
 
 **Steps:**
+
 1. User does X
 2. System responds with Y
 3. User accomplishes Z
@@ -148,6 +165,7 @@ What we explicitly will NOT do (at least not initially):
 **Scenario:** [Context and goal]
 
 **Steps:**
+
 1. User does X
 2. System responds with Y
 3. User accomplishes Z
@@ -159,6 +177,7 @@ What we explicitly will NOT do (at least not initially):
 As a [persona], I want to [action] so that [benefit].
 
 **Examples:**
+
 - As a solo developer, I want to create RFCs in 1 hour instead of 1 week, so that I can make faster architectural decisions
 - As a product manager, I want to track feature specifications, so that I know what's been built and what's planned
 - As an AI agent, I want to discover project documentation structure, so that I can load only relevant context
@@ -168,18 +187,21 @@ As a [persona], I want to [action] so that [benefit].
 ### Constraints
 
 Technical limitations or requirements:
+
 - Constraint 1
 - Constraint 2
 
 ### Dependencies
 
 What needs to exist first?
+
 - Dependency 1
 - Dependency 2
 
 ### Integration Points
 
 How does this fit with existing systems?
+
 - Integration 1
 - Integration 2
 
@@ -190,6 +212,7 @@ How does this fit with existing systems?
 **Goal:** [What this phase achieves]
 
 **Deliverables:**
+
 - Deliverable 1
 - Deliverable 2
 
@@ -198,6 +221,7 @@ How does this fit with existing systems?
 **Goal:** [What this phase achieves]
 
 **Deliverables:**
+
 - Deliverable 1
 - Deliverable 2
 
@@ -206,6 +230,7 @@ How does this fit with existing systems?
 **Goal:** [What this phase achieves]
 
 **Deliverables:**
+
 - Deliverable 1
 - Deliverable 2
 
@@ -217,6 +242,7 @@ How does this fit with existing systems?
 **Impact:** High/Medium/Low
 
 **Mitigation:**
+
 - Mitigation strategy 1
 - Mitigation strategy 2
 
@@ -226,6 +252,7 @@ How does this fit with existing systems?
 **Impact:** High/Medium/Low
 
 **Mitigation:**
+
 - Mitigation strategy 1
 - Mitigation strategy 2
 
@@ -249,6 +276,7 @@ How does this fit with existing systems?
 ### When to Write a PRD
 
 Write a PRD for:
+
 - Product vision that spans multiple features
 - New product initiatives
 - Major feature sets requiring alignment
@@ -258,6 +286,7 @@ Write a PRD for:
 ### When NOT to Write a PRD
 
 Don't write a PRD for:
+
 - Individual features (use RFC instead)
 - Implementation details (use ADR after decision)
 - Technical proposals (use RFC)

@@ -103,6 +103,7 @@ Tests should run fast enough that developers run them frequently. If tests are s
 **Tests Should Be Independent**
 
 Each test should:
+
 - Set up its own data
 - Not depend on other tests
 - Clean up after itself
@@ -121,18 +122,21 @@ Based on our architecture (see [writing-software.md](./writing-software.md)), he
 #### Domain Layer (REQUIRED)
 
 **Actions** - All domain actions must be tested:
+
 - Happy path (valid input, successful operation)
 - Validation errors (invalid input)
 - Business rule violations (email already exists, etc.)
 - Error handling (database errors, external service failures)
 
 **Models** - All model logic must be tested:
+
 - Business rules (`canUserCheckout`, `isOrderShippable`)
 - State transitions (`order.cancel()`, `user.suspend()`)
 - Validation logic
 - Edge cases
 
 **Value Objects** - All value object validation must be tested:
+
 - Valid inputs are accepted
 - Invalid inputs are rejected
 - Edge cases (empty strings, special characters, etc.)
@@ -140,12 +144,14 @@ Based on our architecture (see [writing-software.md](./writing-software.md)), he
 #### Integration Points (RECOMMENDED)
 
 **Repositories** - Test integration with database:
+
 - CRUD operations work
 - Queries return correct data
 - Transactions work properly
 - Error handling
 
 **External Services** - Test adapters for external APIs:
+
 - Happy path calls work
 - Error handling (network failures, timeouts, etc.)
 - Retry logic (if applicable)
@@ -153,6 +159,7 @@ Based on our architecture (see [writing-software.md](./writing-software.md)), he
 #### API Layer (RECOMMENDED)
 
 **HTTP Endpoints** - Test request/response:
+
 - Valid requests return correct responses
 - Invalid requests return appropriate errors
 - Authentication/authorization enforced
@@ -163,6 +170,7 @@ Based on our architecture (see [writing-software.md](./writing-software.md)), he
 [TODO: Define UI testing approach]
 
 **Components** - Test user interactions, not rendering details:
+
 - User interactions trigger correct actions
 - Complex component logic
 - Accessibility (if critical)
@@ -198,12 +206,14 @@ We follow the testing pyramid pattern:
 **What**: Test individual functions/classes in isolation.
 
 **Characteristics**:
+
 - Fast (milliseconds)
 - No external dependencies (database, network, filesystem)
 - Use fakes/mocks for dependencies
 - Many tests, covering many scenarios
 
 **What to Test**:
+
 - Domain actions (with fake repositories)
 - Business logic in models
 - Complex utility functions
@@ -214,12 +224,14 @@ We follow the testing pyramid pattern:
 **What**: Test interactions between components or with external systems.
 
 **Characteristics**:
+
 - Slower (seconds)
 - May use real database (test database)
 - May hit real external APIs (staging environment)
 - Fewer tests, covering critical integrations
 
 **What to Test**:
+
 - Repository implementations (with test database)
 - API endpoints (with test server)
 - External service adapters (with test environment)
@@ -230,12 +242,14 @@ We follow the testing pyramid pattern:
 **What**: Test complete user workflows through the full system.
 
 **Characteristics**:
+
 - Slowest (minutes)
 - Use real or near-real environment
 - Brittle (break often)
 - Expensive to maintain
 
 **What to Test**:
+
 - Critical user flows (registration, checkout, payment)
 - Main happy paths
 - Cross-browser compatibility (if web app)
@@ -295,6 +309,7 @@ expect(fn).toThrow(Error);
 **Our Approach**: {{MOCKING_STRATEGY}}
 
 We prefer:
+
 1. **Fakes over mocks** - In-memory implementations over mock objects
 2. **Dependency injection** - Pass dependencies explicitly
 3. **Interfaces** - Test against interfaces, not concrete classes
@@ -315,6 +330,7 @@ const result = await createUser(input, {
 [TODO: Document test database setup]
 
 For integration tests, we use:
+
 - **Database**: {{TEST_DATABASE}}
 - **Setup**: {{TEST_DB_SETUP}}
 - **Cleanup**: {{TEST_DB_CLEANUP}}
@@ -354,6 +370,7 @@ const user = UserBuilder.create()
 Tests live {{TEST_LOCATION}}:
 
 **Option 1: Alongside source files**
+
 ```
 src/domains/users/
 ├── actions/
@@ -362,6 +379,7 @@ src/domains/users/
 ```
 
 **Option 2: Separate test directory**
+
 ```
 src/domains/users/
 ├── actions/
@@ -375,10 +393,12 @@ src/domains/users/
 [TODO: Define naming convention]
 
 Test files use {{NAMING_CONVENTION}}:
+
 - Source file: `{{SOURCE_FILENAME}}.{{EXT}}`
 - Test file: `{{TEST_FILENAME}}.{{TEST_EXT}}`
 
 Examples:
+
 - `create-user.ts` → `create-user.test.ts`
 - `user.py` → `test_user.py`
 - `user.rs` → `user_test.rs`
@@ -478,6 +498,7 @@ test('suspended users cannot log in')
 Format: `test('{{SUBJECT}} {{BEHAVIOR}} {{CONDITION}}')`
 
 Examples:
+
 - `test('creates order when inventory is available')`
 - `test('rejects payment when amount exceeds limit')`
 - `test('sends email notification after successful registration')`
@@ -729,6 +750,7 @@ For complex test data that's reused across tests:
 [TODO: Document debugging approach]
 
 **Option 1: Console logging**
+
 ```{{LANGUAGE}}
 test('debugging example', () => {
   console.log('Debug info:', value);
@@ -740,6 +762,7 @@ test('debugging example', () => {
 [TODO: Document debugger setup]
 
 **Option 3: Run single test**
+
 ```bash
 {{TEST_COMMAND}} {{SPECIFIC_TEST}}
 ```
@@ -747,6 +770,7 @@ test('debugging example', () => {
 ### Performance
 
 **Test Performance Guidelines**:
+
 - Unit tests: < 100ms each
 - Integration tests: < 5 seconds each
 - E2E tests: < 30 seconds each
@@ -763,11 +787,13 @@ If tests are slower, investigate why.
 [TODO: Document CI test process]
 
 Tests run automatically on:
+
 - Every commit to feature branches
 - Every pull request
 - Merge to {{MAIN_BRANCH}}
 
 **CI Test Pipeline**:
+
 1. Lint code
 2. Type check (if applicable)
 3. Run unit tests
@@ -776,6 +802,7 @@ Tests run automatically on:
 6. {{ADDITIONAL_STEPS}}
 
 **PR Requirements**:
+
 - [ ] All tests pass
 - [ ] Coverage doesn't decrease
 - [ ] No linting errors
@@ -785,12 +812,15 @@ Tests run automatically on:
 [TODO: Document test environments]
 
 **Local**: Developer's machine
+
 - Uses: {{LOCAL_DB}}, fakes for external services
 
 **CI**: {{CI_PLATFORM}}
+
 - Uses: {{CI_DB}}, fakes for external services
 
 **Staging**: {{STAGING_ENV}}
+
 - Uses: Staging database and services
 - E2E tests run here
 
@@ -803,11 +833,13 @@ Tests run automatically on:
 [TODO: Define coverage targets]
 
 **Coverage Targets**:
+
 - **Overall**: {{OVERALL_TARGET}}%
 - **Domain logic**: {{DOMAIN_TARGET}}%
 - **New code**: {{NEW_CODE_TARGET}}%
 
 **What Coverage Means**:
+
 - High coverage doesn't guarantee good tests
 - Low coverage definitely means missing tests
 - Focus on testing important code, not hitting a number
@@ -825,6 +857,7 @@ View report: {{COVERAGE_REPORT_LOCATION}}
 ### What NOT to Cover
 
 Don't waste time testing:
+
 - Generated code
 - Third-party libraries
 - Trivial getters/setters
@@ -843,12 +876,14 @@ Don't waste time testing:
 **Symptoms**: Test suite takes > {{SLOW_TIME}}
 
 **Possible Causes**:
+
 - Using real database instead of fakes
 - Not cleaning up resources
 - Too many E2E tests
 - Sequential tests that could be parallel
 
 **Solutions**:
+
 - Use fakes for external dependencies
 - Run tests in parallel
 - Reduce E2E test count
@@ -859,12 +894,14 @@ Don't waste time testing:
 **Symptoms**: Tests pass sometimes, fail other times
 
 **Possible Causes**:
+
 - Race conditions
 - Tests depend on each other
 - Tests depend on external state
 - Timing-dependent assertions
 
 **Solutions**:
+
 - Make tests independent
 - Use deterministic time in tests
 - Properly await async operations
@@ -875,11 +912,13 @@ Don't waste time testing:
 **Symptoms**: Tests fail when code structure changes but behavior doesn't
 
 **Possible Causes**:
+
 - Testing implementation details
 - Over-mocking
 - Tight coupling to structure
 
 **Solutions**:
+
 - Test behavior, not implementation
 - Use fakes instead of mocks
 - Test through public interfaces
@@ -895,12 +934,14 @@ Don't waste time testing:
 We use Claude Code to assist with testing:
 
 **What Claude Can Help With**:
+
 - Generating test cases for edge conditions
 - Writing boilerplate test setup
 - Identifying missing test coverage
 - Updating tests when code changes
 
 **What Humans Still Do**:
+
 - Define what needs to be tested (business requirements)
 - Review generated tests for correctness
 - Ensure tests give confidence

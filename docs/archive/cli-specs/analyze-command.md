@@ -1,6 +1,7 @@
 # Spec: Analyze Command
 
 ## Metadata
+
 - **Status:** draft
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
@@ -17,9 +18,11 @@ This command is designed to help both humans and AI agents quickly understand a 
 ## Behaviors
 
 ### Scenario: Basic Project Analysis (Human Output)
+
 **Given:** A TypeScript project with standard structure (src/, tests/, docs/ directories)
 **When:** User runs `docent analyze`
 **Then:**
+
 - Command scans the current directory
 - Displays color-coded human-readable output with sections:
   - Languages Detected (with file counts, extensions, confidence badges)
@@ -32,6 +35,7 @@ This command is designed to help both humans and AI agents quickly understand a 
 - Exit code 0
 
 #### Example:
+
 ```bash
 docent analyze
 ```
@@ -72,9 +76,11 @@ Analysis completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: JSON Output for Agent Integration
+
 **Given:** Any project
 **When:** User runs `docent analyze --output json`
 **Then:**
+
 - Command outputs valid JSON to stdout (no color codes, no progress messages)
 - JSON structure matches `AnalysisResult` interface:
   - `languages[]`: Array with name, fileCount, primaryExtensions, confidence
@@ -86,6 +92,7 @@ Analysis completed at 10/13/2025, 3:45:00 PM
 - Exit code 0
 
 #### Example:
+
 ```bash
 docent analyze --output json
 ```
@@ -142,22 +149,27 @@ docent analyze --output json
 ```
 
 ### Scenario: Analyze Non-Current Directory
+
 **Given:** User wants to analyze a different project
 **When:** User runs `docent analyze --path /path/to/other/project`
 **Then:**
+
 - Command analyzes the specified directory instead of current directory
 - All other behavior remains the same (respects --output flag)
 - If path doesn't exist, reports error
 
 #### Example:
+
 ```bash
 docent analyze --path ~/projects/my-app --output json
 ```
 
 ### Scenario: Empty or Minimal Project
+
 **Given:** A directory with no recognized languages or frameworks
 **When:** User runs `docent analyze`
 **Then:**
+
 - Command completes successfully (exit code 0)
 - Displays "No languages detected" in dimmed text
 - Displays "No frameworks detected" in dimmed text
@@ -166,6 +178,7 @@ docent analyze --path ~/projects/my-app --output json
 - Summary shows "Unknown" for primary language
 
 #### Example:
+
 ```bash
 docent analyze
 ```
@@ -193,15 +206,18 @@ Analysis completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: Multi-Language Polyglot Project
+
 **Given:** A project with multiple languages (e.g., TypeScript frontend, Python backend)
 **When:** User runs `docent analyze`
 **Then:**
+
 - All detected languages listed in descending order by file count
 - Confidence calculated independently for each language based on percentage of total files
 - Primary language is the one with most files
 - Frameworks from all languages detected (React + FastAPI)
 
 #### Example:
+
 ```bash
 docent analyze
 ```
@@ -223,17 +239,21 @@ docent analyze
 ```
 
 ### Scenario: Language Confidence Levels
+
 **Given:** A project with varying amounts of different languages
 **When:** Command analyzes file counts
 **Then:**
+
 - Confidence "high" (green ●) when language represents >30% of total files
 - Confidence "medium" (yellow ●) when language represents 10-30% of total files
 - Confidence "low" (red ●) when language represents <10% of total files
 
 ### Scenario: Framework Detection via Package Manifests
+
 **Given:** A Node.js project with package.json containing dependencies
 **When:** Command reads package.json
 **Then:**
+
 - Detects frameworks from both `dependencies` and `devDependencies`
 - Categorizes by type: web, backend, testing, mobile, desktop, other
 - Shows detection source in brackets: `[package.json]`
@@ -241,6 +261,7 @@ docent analyze
 - Gracefully handles JSON parse errors (ignores malformed files)
 
 #### Supported ecosystems:
+
 - **JavaScript/TypeScript:** package.json, deno.json, bun.lockb
 - **Python:** requirements.txt, pyproject.toml, setup.py, Pipfile, poetry.lock
 - **Rust:** Cargo.toml
@@ -248,20 +269,24 @@ docent analyze
 - **Ruby:** Gemfile
 - **PHP:** composer.json
 - **Java/Kotlin:** pom.xml, build.gradle, build.gradle.kts
-- **.NET:** *.csproj, *.fsproj
+- **.NET:** *.csproj,*.fsproj
 
 ### Scenario: Excluded Directories
+
 **Given:** A project with node_modules/, dist/, build/, .git/, coverage/ directories
 **When:** Command scans for language files
 **Then:**
+
 - These directories are automatically excluded from analysis
 - File counts only reflect actual source/test/doc files
 - Analysis completes faster due to exclusions
 
 ### Scenario: Project Structure Detection
+
 **Given:** A project with various directory names
 **When:** Command analyzes structure
 **Then:**
+
 - Source directories: Matches `src/`, `lib/`, `app/`, `source/`, `pkg/`
 - Test directories: Matches `test/`, `tests/`, `__tests__/`, `spec/`, `specs/`
 - Docs directories: Matches `docs/`, `doc/`, `documentation/`
@@ -269,6 +294,7 @@ docent analyze
 - Strips trailing slashes in output
 
 ## Acceptance Criteria
+
 - [ ] Command runs without errors on typical projects
 - [ ] Both human and JSON output modes work correctly
 - [ ] Language detection covers 40+ languages via extension mapping
@@ -289,6 +315,7 @@ docent analyze
 ## Technical Notes
 
 **Language Detection Algorithm:**
+
 - Uses `glob` library to find all files recursively
 - Maps file extensions to languages via `LANGUAGE_EXTENSIONS` dictionary
 - Excludes: `node_modules/`, `vendor/`, `dist/`, `build/`, `.git/`, `coverage/`
@@ -296,6 +323,7 @@ docent analyze
 - Sorted by file count descending
 
 **Framework Detection Strategy:**
+
 - Pattern-based: Searches for indicator files (package.json, Cargo.toml, etc.)
 - Each indicator has custom detector function
 - Detectors parse file contents and look for known dependency names
@@ -303,11 +331,13 @@ docent analyze
 - All file I/O wrapped in try-catch (ignore errors)
 
 **Performance Considerations:**
+
 - All detection routines run in parallel via Promise.all
 - Glob operations can be slow on large projects (mitigated by ignore patterns)
 - No network calls, no code execution (pure filesystem analysis)
 
 **Agent-Friendly Design:**
+
 - JSON output contains structured data suitable for programmatic use
 - No user interaction required (non-interactive command)
 - Deterministic output for same inputs
@@ -316,6 +346,7 @@ docent analyze
 ## Test Hints
 
 **Unit Tests:**
+
 - Test language detection with fixture directories containing known file sets
 - Test framework detection by creating mock package.json files
 - Test confidence calculation with various file count distributions
@@ -323,12 +354,14 @@ docent analyze
 - Test exclusion patterns (ensure node_modules ignored)
 
 **Integration Tests:**
+
 - Test against real-world projects (docent itself, example repos)
 - Verify JSON output is valid and matches schema
 - Test --path flag with absolute and relative paths
 - Test error handling (non-existent paths, permission errors)
 
 **Edge Cases:**
+
 - Empty directories
 - Projects with no recognized languages
 - Symlinks in project structure

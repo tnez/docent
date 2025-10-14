@@ -92,6 +92,7 @@ We value:
 We organize code by **domain** (business concept), not by technical layer:
 
 ```
+
 {{SRC_DIR}}/
 ├── domains/
 │   ├── {{DOMAIN_1}}/
@@ -109,6 +110,7 @@ We organize code by **domain** (business concept), not by technical layer:
 │   └── utils/            # Generic utilities
 │
 └── {{ENTRY_POINT}}       # Application entry point
+
 ```
 
 **Rationale**: Organizing by domain keeps related code together. When working on a feature, everything you need is in one place.
@@ -409,6 +411,7 @@ We focus tests on **business requirements** - what *needs* to be true for the sy
 Test names should express **business requirements**, not implementation details:
 
 **Good** (business-focused):
+
 ```{{LANGUAGE}}
 test('cannot create user with duplicate email')
 test('order total includes tax and shipping')
@@ -416,6 +419,7 @@ test('suspended users cannot log in')
 ```
 
 **Bad** (implementation-focused):
+
 ```{{LANGUAGE}}
 test('createUser returns error')
 test('calculateTotal adds three numbers')

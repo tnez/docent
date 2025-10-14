@@ -1,6 +1,7 @@
 # Spec: Audit Command
 
 ## Metadata
+
 - **Status:** draft
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
@@ -20,9 +21,11 @@ This command helps solo developers and teams maintain documentation standards an
 ## Behaviors
 
 ### Scenario: Well-Documented Project
+
 **Given:** A project with comprehensive documentation (architecture, ADRs, testing, API docs)
 **When:** User runs `docent audit`
 **Then:**
+
 - Command analyzes project structure and technology stack
 - Scans docs/ directory for documentation files
 - Displays score of 80-100 (green)
@@ -32,6 +35,7 @@ This command helps solo developers and teams maintain documentation standards an
 - Exit code 0
 
 #### Example:
+
 ```bash
 docent audit
 ```
@@ -66,9 +70,11 @@ Audit completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: Project with Missing Critical Documentation
+
 **Given:** A multi-language project with backend framework but no architecture or API docs
 **When:** User runs `docent audit`
 **Then:**
+
 - Detects project has multiple languages and backend framework
 - Identifies missing architecture and API docs as high-severity gaps
 - Displays score of 30-50 (red/yellow)
@@ -78,6 +84,7 @@ Audit completed at 10/13/2025, 3:45:00 PM
 - Recommends addressing high-priority items first
 
 #### Example:
+
 ```bash
 docent audit
 ```
@@ -129,9 +136,11 @@ Audit completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: No Documentation Directory
+
 **Given:** A project that has never run `docent init`
 **When:** User runs `docent audit`
 **Then:**
+
 - Detects docs/ directory doesn't exist
 - Returns score of 0
 - Reports single high-severity gap: "No documentation directory found"
@@ -140,6 +149,7 @@ Audit completed at 10/13/2025, 3:45:00 PM
 - Displays tip to initialize docent
 
 #### Example:
+
 ```bash
 docent audit
 ```
@@ -174,9 +184,11 @@ Audit completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: JSON Output for Agent Integration
+
 **Given:** Any project
 **When:** User runs `docent audit --output json`
 **Then:**
+
 - Outputs valid JSON to stdout (no progress messages, no colors)
 - JSON structure matches `AuditResult` interface:
   - `score`: Number 0-100
@@ -187,6 +199,7 @@ Audit completed at 10/13/2025, 3:45:00 PM
 - Exit code 0
 
 #### Example:
+
 ```bash
 docent audit --output json
 ```
@@ -233,22 +246,27 @@ docent audit --output json
 ```
 
 ### Scenario: Custom Documentation Directory
+
 **Given:** A project using a non-standard docs directory (e.g., "documentation")
 **When:** User runs `docent audit --docs-dir documentation`
 **Then:**
+
 - Scans "documentation/" instead of "docs/"
 - All other behavior remains the same
 - Coverage analysis and gap detection work identically
 
 #### Example:
+
 ```bash
 docent audit --docs-dir documentation --output json
 ```
 
 ### Scenario: Empty or Placeholder Documentation Files
+
 **Given:** A project with docs/ directory containing template files not yet filled in
 **When:** User runs `docent audit`
 **Then:**
+
 - Detects files with <100 characters of content
 - Detects files with many placeholder patterns (5+ `[...]`)
 - Reports medium-severity gap: "N documentation files are empty or contain only placeholders"
@@ -256,6 +274,7 @@ docent audit --docs-dir documentation --output json
 - Suggests filling in these files with actual content
 
 #### Example output snippet:
+
 ```
   🟡 MEDIUM Priority:
     • Content: 3 documentation files are empty or contain only placeholders
@@ -264,15 +283,18 @@ docent audit --docs-dir documentation --output json
 ```
 
 ### Scenario: ADR Format Compliance Check
+
 **Given:** A project with ADR files that are missing required sections
 **When:** User runs `docent audit`
 **Then:**
+
 - Identifies files matching ADR pattern (`adr-001.md`, `adr001.md`, etc.)
 - Checks for required sections: Status, Context, Decision, Consequences
 - Reports low-severity gap for ADRs missing sections
 - Lists affected ADR files
 
 #### Example output snippet:
+
 ```
   ⚪ LOW Priority:
     • Format: 2 ADRs are missing required sections
@@ -281,45 +303,56 @@ docent audit --docs-dir documentation --output json
 ```
 
 ### Scenario: Context-Aware Gap Detection - Simple CLI Tool
+
 **Given:** A simple CLI tool (single language, no backend framework, no tests)
 **When:** User runs `docent audit`
 **Then:**
+
 - Does NOT flag missing API docs (not a backend project)
 - Does NOT flag missing testing docs (no tests exist)
 - Does NOT flag missing architecture docs (simple single-language project)
 - Only suggests basic docs like README and standards
 
 ### Scenario: Context-Aware Gap Detection - Backend Service
+
 **Given:** A backend service with Express/FastAPI but no API documentation
 **When:** User runs `docent audit`
 **Then:**
+
 - Detects backend framework (type: 'backend' or 'web')
 - Flags missing API docs as HIGH severity
 - Flags missing troubleshooting docs as MEDIUM severity
 - Suggests documenting endpoints, authentication, and operational procedures
 
 ### Scenario: Context-Aware Gap Detection - Test Suite Exists
+
 **Given:** A project with test/ or tests/ directory but no testing documentation
 **When:** User runs `docent audit`
 **Then:**
+
 - Uses project structure analysis to detect test directories
 - Flags missing testing docs as HIGH severity (tests exist but undocumented)
 - Suggests documenting testing philosophy, structure, and how to run tests
 
 ### Scenario: Analyze Non-Current Directory
+
 **Given:** User wants to audit a different project
 **When:** User runs `docent audit --path /path/to/other/project`
 **Then:**
+
 - Analyzes specified directory instead of current directory
 - All other behavior remains the same
 
 #### Example:
+
 ```bash
 docent audit --path ~/projects/my-app --output json
 ```
 
 ### Scenario: Score Calculation Example
+
 **Given:** A project with the following status:
+
 - Has architecture docs (worth 15 points)
 - Has testing docs (worth 15 points)
 - Missing ADRs (loses 20 points)
@@ -332,6 +365,7 @@ docent audit --path ~/projects/my-app --output json
 
 **When:** Score is calculated
 **Then:**
+
 - Base: 100
 - Kept: +15 (architecture) + 15 (testing) = 30
 - Lost from missing coverage: 20+15+15+10+10 = 70
@@ -340,6 +374,7 @@ docent audit --path ~/projects/my-app --output json
 - Score: 5/100 (clamped to 0 minimum)
 
 ## Acceptance Criteria
+
 - [ ] Command runs without errors on typical projects
 - [ ] Both human and JSON output modes work correctly
 - [ ] Score calculated correctly (0-100, properly weighted)
@@ -362,6 +397,7 @@ docent audit --path ~/projects/my-app --output json
 ## Technical Notes
 
 **Coverage Detection Patterns:**
+
 - Architecture: Filename contains "architecture" or "overview"
 - ADRs: Filename matches regex `/adr-?\d+/i` (e.g., adr-001, adr001, ADR-1)
 - Standards: Filename contains "standard" or "convention"
@@ -371,6 +407,7 @@ docent audit --path ~/projects/my-app --output json
 - Onboarding: Filename contains "onboard"
 
 **Context-Aware Gap Rules:**
+
 - Architecture (high): Required if `languages.length > 1` OR `frameworks.length > 2`
 - ADRs (high): Required if `frameworks.length > 0`
 - Standards (medium): Always suggested if languages detected
@@ -380,6 +417,7 @@ docent audit --path ~/projects/my-app --output json
 - Onboarding (low): Always suggested
 
 **Score Weights:**
+
 - Architecture: 15 points
 - ADRs: 20 points (highest weight - decisions are critical)
 - Standards: 15 points
@@ -390,22 +428,26 @@ docent audit --path ~/projects/my-app --output json
 - Total possible from coverage: 100 points
 
 **Gap Severity Deductions:**
+
 - High severity: -10 points per gap
 - Medium severity: -5 points per gap
 - Low severity: -2 points per gap
 
 **Empty File Detection:**
+
 - Files with trimmed length < 100 characters
 - Files with 5+ placeholder patterns (`[...]`)
 - Based on simple heuristics (may have false positives)
 
 **ADR Validation:**
+
 - Checks for markdown headers matching required sections
 - Required sections: Title (# heading), Status, Context, Decision, Consequences
 - Case-insensitive section matching
 - Low severity if sections missing (documentation exists, just incomplete)
 
 **Integration with Other Commands:**
+
 - Uses `analyzeProject()` from analyze command
 - Uses `loadContext()` to detect if `docent init` was run
 - Human output suggests running `docent review` if score < 100
@@ -413,6 +455,7 @@ docent audit --path ~/projects/my-app --output json
 ## Test Hints
 
 **Unit Tests:**
+
 - Test coverage analysis with fixture documentation files
 - Test gap detection with various project types (CLI, backend, library)
 - Test score calculation with known coverage/gap combinations
@@ -421,6 +464,7 @@ docent audit --path ~/projects/my-app --output json
 - Test context-aware logic (ensure backend projects get API gaps)
 
 **Integration Tests:**
+
 - Test against real projects with known documentation states
 - Verify JSON output matches schema
 - Test --docs-dir flag with non-standard directories
@@ -428,6 +472,7 @@ docent audit --path ~/projects/my-app --output json
 - Test scoring produces expected results end-to-end
 
 **Edge Cases:**
+
 - Empty docs directory (has directory but no files)
 - Docs directory with only README.md
 - Very large documentation trees (100+ files)

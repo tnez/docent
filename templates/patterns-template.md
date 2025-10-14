@@ -192,6 +192,7 @@ export async function placeOrder(
 #### Trade-offs
 
 **Advantages**:
+
 - Clear entry points for business logic
 - Highly testable (inject dependencies)
 - Reusable across HTTP, CLI, background jobs
@@ -199,6 +200,7 @@ export async function placeOrder(
 - Transaction boundaries are clear
 
 **Disadvantages**:
+
 - More verbose than direct repository calls
 - Can feel like boilerplate for simple CRUD
 - Requires discipline to maintain pattern
@@ -322,12 +324,14 @@ export class InMemoryUserRepository implements UserRepository {
 #### Trade-offs
 
 **Advantages**:
+
 - Decouples business logic from database
 - Easy to test (in-memory implementation)
 - Can switch data sources
 - Clear data access API
 
 **Disadvantages**:
+
 - Adds layer of abstraction
 - Can lead to inefficient queries (N+1 problem)
 - May not expose full database capabilities
@@ -420,12 +424,14 @@ if (result.ok) {
 #### Trade-offs
 
 **Advantages**:
+
 - Explicit error handling (can't ignore errors)
 - Type-safe (TypeScript knows error types)
 - No hidden control flow (exceptions)
 - Errors are values (can map, chain, etc.)
 
 **Disadvantages**:
+
 - More verbose than exceptions
 - Requires discipline to use consistently
 - Can be awkward in languages without pattern matching
@@ -517,12 +523,14 @@ const result = await placeOrder(input, {
 #### Trade-offs
 
 **Advantages**:
+
 - Easy to test (inject fakes/mocks)
 - Explicit dependencies (no hidden imports)
 - Flexible (swap implementations)
 - No global state
 
 **Disadvantages**:
+
 - More verbose (pass dependencies everywhere)
 - Can be tedious for deep call stacks
 - Requires wiring at composition root
@@ -717,12 +725,14 @@ export class FakePaymentService implements PaymentService {
 #### Trade-offs
 
 **Advantages**:
+
 - Isolates external dependency changes
 - Easy to test (fake implementation)
 - Can swap providers without changing domain code
 - Hides vendor-specific details
 
 **Disadvantages**:
+
 - Adds abstraction layer
 - May not expose all provider features
 - Requires keeping adapter in sync with provider
@@ -874,6 +884,7 @@ console.log(email.getValue()); // Always valid email
 #### Trade-offs
 
 **Advantages**:
+
 - Cannot exist in invalid state
 - Encapsulates validation logic
 - Prevents primitive obsession
@@ -881,6 +892,7 @@ console.log(email.getValue()); // Always valid email
 - Immutable (thread-safe)
 
 **Disadvantages**:
+
 - More verbose than primitives
 - Requires unwrapping to get value
 - Can be tedious for simple types
@@ -1022,6 +1034,7 @@ test('verified users can post comments', async () => {
 #### Trade-offs
 
 **Advantages**:
+
 - Highly readable tests
 - Reduce test boilerplate
 - Easy to create variations
@@ -1029,6 +1042,7 @@ test('verified users can post comments', async () => {
 - Fluent API feels natural
 
 **Disadvantages**:
+
 - Additional code to maintain
 - Can hide important test details
 - May encourage testing implementation details

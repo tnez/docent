@@ -17,6 +17,7 @@ Add behavioral specification support to docent, enabling AI agents to understand
 Current practice in AI-assisted development involves creating a single `AGENTS.md` file that contains all context an agent needs: project setup, architecture, conventions, testing instructions, and deployment process. This approach has a critical scaling problem:
 
 **The Monolithic Documentation Trap:**
+
 - Projects attempt to cram all agent context into one file (often 5000+ lines)
 - Even with 200K token context windows, this becomes inefficient and unwieldy
 - Agents load irrelevant information for every task
@@ -24,11 +25,13 @@ Current practice in AI-assisted development involves creating a single `AGENTS.m
 - Doesn't scale beyond ~50 documentation topics
 
 **Who is affected:**
+
 - Solo developers trying to maintain comprehensive documentation
 - Teams working on projects with 100+ features
 - AI agents that need to understand specific behaviors without loading entire codebases
 
 **Consequences of not solving:**
+
 - Developers revert to undocumented or poorly documented behavior
 - Agents lack clear contracts for what features should do
 - Testing becomes implementation-driven instead of spec-driven
@@ -39,6 +42,7 @@ Current practice in AI-assisted development involves creating a single `AGENTS.m
 Docent already provides the architecture for scalable agent documentation:
 
 **Structured Discovery Instead of Monolithic Docs:**
+
 ```bash
 # Agents discover what exists
 docent analyze    # Languages, frameworks, structure
@@ -55,6 +59,7 @@ docs/
 ```
 
 **The approach scales:**
+
 - Small AGENTS.md: "Run `docent audit` to understand documentation"
 - Structured docs: Organized by type and purpose
 - Just-in-time reading: Load only relevant docs
@@ -63,21 +68,25 @@ docs/
 ### The Missing Piece: Behavioral Specifications
 
 Docent currently supports:
+
 - **ADRs** - Document decisions and their rationale (past)
 - **RFCs** - Propose changes and gather feedback (future)
 - **Architecture docs** - Explain system design (structure)
 - **Guides** - Describe how to do specific tasks (process)
 
 **What's missing:**
+
 - **Specifications** - Define WHAT features should do (behavior contracts)
 
 Without behavioral specs, agents must:
+
 1. Read implementation code to understand behavior
 2. Infer requirements from tests
 3. Guess at edge cases and error handling
 4. Lack clear acceptance criteria
 
 **With behavioral specs, agents can:**
+
 1. Understand feature behavior without reading implementation
 2. Generate appropriate tests from Given/When/Then scenarios
 3. Validate implementations against contracts
@@ -104,6 +113,7 @@ Without behavioral specs, agents must:
 ### Overview
 
 Behavioral specifications will be markdown documents stored in a `specs/` directory, using a hybrid format that combines:
+
 - **Gherkin-style scenarios** (Given/When/Then) for clarity
 - **Concrete examples** (input/output) for agent understanding
 - **Metadata** for tracking status and relationships
@@ -312,6 +322,7 @@ The spec template will be stored alongside existing docent templates (adr-templa
 ```
 
 **Placeholders:**
+
 - `[SPEC_TITLE]` - Feature name provided by user (e.g., "Analyze Command")
 - `[CREATED_DATE]` - Current date in YYYY-MM-DD format
 - Status defaults to "draft"
@@ -321,6 +332,7 @@ The spec template will be stored alongside existing docent templates (adr-templa
 **Template Processing:**
 
 When running `docent new spec "Analyze Command"`:
+
 1. Load template from `/templates/spec-template.md`
 2. Replace `[SPEC_TITLE]` with title
 3. Replace `[CREATED_DATE]` with current date
@@ -342,6 +354,7 @@ Related:
 ```
 
 **Path Format:**
+
 - Use project-relative paths starting from repo root
 - Example: `docs/adr/adr-0003-...` not `/Users/name/project/docs/...`
 - Makes specs portable across machines and environments
@@ -360,6 +373,7 @@ export default class Analyze extends Command {
 ```
 
 **Bidirectional Linking Benefits:**
+
 - Spec → Code: Find implementation from spec
 - Code → Spec: Understand behavior from implementation
 - `docent review` can validate links and detect drift
@@ -368,6 +382,7 @@ export default class Analyze extends Command {
 **Future Enhancement:**
 
 Phase 4+ could add `docent validate-links` to check:
+
 - Do Related links point to existing files?
 - Do implementation files reference their specs?
 - Are there orphaned specs (no implementation)?
@@ -378,6 +393,7 @@ Phase 4+ could add `docent validate-links` to check:
 **Location:** `specs/` directory at project root
 
 **Naming Convention:**
+
 - Use descriptive names: `analyze-command.spec.md`, `authentication.spec.md`
 - Use kebab-case for filenames
 - Extension: `.spec.md` for easy identification
@@ -390,20 +406,24 @@ Phase 4+ could add `docent validate-links` to check:
 | Specs | Descriptive (`feature-name.spec.md`) | **Feature behaviors** where topical grouping matters. "What does feature X do?" |
 
 **Advantages of descriptive spec naming:**
+
 - Agents can guess spec location: need auth behavior? Try `specs/authentication.spec.md`
 - Alphabetical sorting groups related features
 - Spec names match feature names (no number lookup required)
 - No merge conflicts when multiple developers create specs simultaneously
 
 **Examples:**
+
 - `specs/authentication.spec.md` - Clear what it covers
 - `specs/cli/analyze-command.spec.md` - Clear context
 - vs `specs/spec-0042-analyze-command.spec.md` - Number adds no value
 
 **Organization Strategy:**
+
 - **Start flat:** All specs in `specs/` directory initially
 - **Organize when needed:** Create subdirectories when you have 10+ specs
 - **Suggested structure for later:**
+
   ```
   specs/
   ├── README.md           # Index of specifications
@@ -448,10 +468,12 @@ draft → ready → implemented → deprecated
 | any → deprecated | Feature removed, replaced, or no longer relevant | Developer |
 
 **Update Method:**
+
 - Manual: Developer edits spec metadata `Status:` field
 - Future automation: `docent review` could suggest status updates based on code analysis
 
 **Why this matters for agents:**
+
 - Agents know what needs building (ready → implemented)
 - Agents avoid implementing deprecated features
 - Agents can validate implementations against current specs
@@ -491,11 +513,13 @@ spec: {
 ```
 
 Update type definition:
+
 ```typescript
 type DocType = 'adr' | 'rfc' | 'guide' | 'runbook' | 'architecture' | 'spec'
 ```
 
 **Command behavior:**
+
 - Creates spec from template with descriptive naming (no numbers)
 - Uses slugified title for filename (e.g., "Analyze Command" → `analyze-command.spec.md`)
 - Returns spec path in JSON output
@@ -504,10 +528,11 @@ type DocType = 'adr' | 'rfc' | 'guide' | 'runbook' | 'architecture' | 'spec'
 #### Enhanced: `docent audit --include-specs`
 
 ```bash
-$ docent audit --include-specs --output json
+docent audit --include-specs --output json
 ```
 
 **Additional audit checks:**
+
 - Count specifications by status
 - Identify features without specs
 - Suggest specs for undocumented features
@@ -535,6 +560,7 @@ interface AuditResult {
 ```
 
 **Example JSON output:**
+
 ```json
 {
   "score": 85,
@@ -559,6 +585,7 @@ interface AuditResult {
 #### Enhanced: `docent review` (spec drift detection)
 
 `docent review` will detect:
+
 - Specs marked "implemented" but code changed recently (drift risk)
 - Specs marked "draft" for >30 days (stalled work?)
 - Implemented features without specs (coverage gap)
@@ -593,6 +620,7 @@ interface ReviewResult {
 ```
 
 **Example JSON output:**
+
 ```json
 {
   "health": 95,
@@ -632,6 +660,7 @@ interface ReviewResult {
 ### User Experience
 
 **For solo developers:**
+
 1. Start new feature: `docent spec new feature-name`
 2. Fill in Given/When/Then scenarios
 3. Agent reads spec and implements
@@ -640,6 +669,7 @@ interface ReviewResult {
 6. `docent audit` shows progress
 
 **For agents:**
+
 1. Receive task: "Implement semantic search"
 2. Check for spec: `ls specs/ | grep search`
 3. Read spec: `cat specs/semantic-search.spec.md`
@@ -653,6 +683,7 @@ interface ReviewResult {
 ### Trade-offs of Hybrid Gherkin-Markdown Approach
 
 **Advantages:**
+
 - **Human-readable:** Natural language scenarios anyone can understand
 - **Agent-friendly:** Structured format with clear Given/When/Then contracts
 - **Flexible:** Markdown allows customization for specific needs
@@ -661,6 +692,7 @@ interface ReviewResult {
 - **No tooling lock-in:** Plain markdown, works with any editor
 
 **Disadvantages:**
+
 - **Not executable:** Unlike Cucumber, specs don't run as tests
 - **Manual validation:** No automatic checking that code matches spec
 - **Can drift:** Specs and implementation may diverge without discipline
@@ -673,12 +705,14 @@ interface ReviewResult {
 **Description:** Use standard Gherkin `.feature` files with Cucumber for execution.
 
 **Pros:**
+
 - Industry standard format
 - Executable specifications (tests run from specs)
 - Mature tooling ecosystem
 - Ensures specs stay in sync with code
 
 **Cons:**
+
 - Requires step definitions (mapping layer from Gherkin to code)
 - Adds Cucumber as dependency
 - More complex setup for developers
@@ -692,11 +726,13 @@ interface ReviewResult {
 **Description:** Don't add specs directory. Put behavioral descriptions in AGENTS.md.
 
 **Pros:**
+
 - No new directory structure
 - Single file for all agent context
 - Extremely simple approach
 
 **Cons:**
+
 - **Doesn't scale** (the core problem we're solving!)
 - Monolithic file becomes unmaintainable
 - No status tracking per feature
@@ -710,12 +746,14 @@ interface ReviewResult {
 **Description:** Use JSON Schema to define data contracts for inputs/outputs.
 
 **Pros:**
+
 - Machine-readable and validatable
 - Strong type definitions
 - Industry standard for APIs
 - Automatic validation possible
 
 **Cons:**
+
 - Only describes data shapes, not behavior
 - Not human-readable
 - Doesn't capture scenarios or workflows
@@ -728,11 +766,13 @@ interface ReviewResult {
 **Description:** Use test framework syntax (describe/it blocks) as specs.
 
 **Pros:**
+
 - Familiar to developers
 - Maps directly to test structure
 - Can be executable
 
 **Cons:**
+
 - Blurs line between spec and implementation
 - Less accessible to non-developers
 - Tied to specific testing frameworks
@@ -761,6 +801,7 @@ Minimal performance impact:
 - **Lazy loading:** Agents read only relevant specs, not all at once
 
 **Estimated impact:**
+
 - `docent spec new`: <100ms (template copying)
 - `docent audit --include-specs`: +50-200ms (scan specs directory)
 - `docent review` (spec drift): +100-300ms (compare file timestamps)
@@ -770,23 +811,27 @@ These additions are negligible compared to existing docent operations.
 ## Testing Strategy
 
 ### Unit Tests
+
 - Template rendering (`spec new` creates valid spec file)
 - Spec detection (audit finds `.spec.md` files)
 - Status parsing (parse metadata from spec files)
 - Coverage calculation (count specs by status)
 
 ### Integration Tests
+
 - Full workflow: create spec → audit → review
 - CLI JSON output validation
 - Subdirectory organization (flat vs. nested)
 
 ### Manual Testing (Dogfooding)
+
 - Create specs for docent's own commands (analyze, audit, review)
 - Validate format is clear and useful
 - Test agent consumption (can agents understand and use specs?)
 - Iterate on template based on real usage
 
 ### Success Criteria
+
 - ✅ `docent spec new` creates valid spec from template
 - ✅ `docent audit --include-specs` counts specs correctly
 - ✅ Agents can read specs and understand behavior
@@ -797,12 +842,14 @@ These additions are negligible compared to existing docent operations.
 ### Migration Path
 
 **For existing docent users:**
+
 - No breaking changes to existing commands
 - `specs/` directory is new, doesn't affect existing docs
 - `--include-specs` flag is optional on audit
 - Existing workflows continue unchanged
 
 **Adoption is opt-in:**
+
 - Projects can use specs or not
 - Start with one spec, add more over time
 - No requirement to spec everything
@@ -810,12 +857,14 @@ These additions are negligible compared to existing docent operations.
 ### Rollout Plan
 
 **Phase 1: Foundation (2-3 days)**
+
 - Create spec template in `templates/spec-template.md`
 - Implement `docent spec new` command
 - Add `specs/` to init directory structure
 - Basic documentation in README
 
 **Phase 2: Dogfooding (1 week)**
+
 - Create specs for docent's core commands:
   - `specs/analyze-command.spec.md`
   - `specs/audit-command.spec.md`
@@ -825,12 +874,14 @@ These additions are negligible compared to existing docent operations.
 - Test agent consumption (can Claude/Cursor/Aider use them?)
 
 **Phase 3: Integration (2-3 days)**
+
 - Implement `--include-specs` flag in audit command
 - Add spec detection to review command
 - Update `docs/README.md` to explain specs
 - Create example specs in documentation
 
 **Phase 4: Publish (when ready)**
+
 - Include in next npm release
 - Announce feature to users
 - Create blog post or guide on spec-driven development
@@ -838,6 +889,7 @@ These additions are negligible compared to existing docent operations.
 ### Backward Compatibility
 
 **No breaking changes:**
+
 - All existing commands work unchanged
 - New functionality is additive only
 - Optional flags don't affect default behavior
@@ -845,16 +897,19 @@ These additions are negligible compared to existing docent operations.
 ## Documentation Plan
 
 ### User-Facing Documentation
+
 - README: Add "Behavioral Specifications" section
 - Guide: "Writing Specifications for Agent-Driven Development"
 - Examples: Show 2-3 real specs from docent itself
 
 ### Internal Documentation
+
 - ADR documenting decision to add specs (after RFC accepted)
 - Architecture overview: Update with specs in documentation types
 - Agent protocol guide: Reference specs as behavior contracts
 
 ### Template Documentation
+
 - Inline comments in spec template explaining each section
 - Examples within template showing concrete usage
 
@@ -906,18 +961,20 @@ This RFC focuses on basic behavioral specification support, but future work coul
 ## References
 
 ### Related Docent Documentation
+
 - [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md) - Why JSON output and protocol matter
 - [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Future richer agent integration
 - [Research: Behavioral Specifications Investigation](/Users/tnez/Code/tnez/docent/docs/research/behavioral-specifications-investigation.md) - Comprehensive format analysis
 
 ### External Resources
+
 - [Gherkin Reference](https://cucumber.io/docs/gherkin/) - Given/When/Then syntax
 - [AGENTS.md Standard](https://github.com/openai/agents.md) - 2025 agent context standard
 - [Specification by Example](https://gojkoadzic.com/books/specification-by-example/) - Book on behavior specifications
 - [BDD in Action](https://www.manning.com/books/bdd-in-action-second-edition) - Behavior-driven development practices
 
 ### Community Examples
+
 - [Cucumber Project Documentation](https://cucumber.io/docs/bdd/) - BDD best practices
 - [RSpec Documentation](https://rspec.info/) - Describe-it pattern examples
 - [OpenAPI Specification](https://swagger.io/specification/) - API contract standard
-

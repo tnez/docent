@@ -163,6 +163,7 @@ MIT © Travis Nez
 Docent is infrastructure for AI agents, not a direct tool for humans.
 
 Think of it like a database:
+
 - Humans don't query databases directly
 - Applications (agents) query databases
 - Makes applications smarter

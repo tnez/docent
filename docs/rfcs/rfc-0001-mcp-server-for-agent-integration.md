@@ -18,6 +18,7 @@ Add a Model Context Protocol (MCP) server interface to docent alongside the exis
 Docent currently exposes functionality through CLI commands with JSON output (e.g., `docent analyze --output json`). While this works, it has limitations:
 
 **Current limitations:**
+
 - Requires agents to execute shell commands and parse stdout
 - No native tool calling support
 - Limited to environments with shell access
@@ -28,18 +29,21 @@ Docent currently exposes functionality through CLI commands with JSON output (e.
 
 **Prototype validation:**
 We built `docent audit --agent` to test agent-driven analysis. Results:
+
 - **Heuristic analysis**: 21/100 score, 87% false positive rate (flagged 13/15 substantial docs as "empty")
 - **Agent analysis**: 73/100 score, contextual understanding, actionable recommendations
 - **3.5x improvement** - Agents can do what heuristics cannot
 - **Manual workflow works** but requires copy/paste (MCP would make it seamless)
 
 **Who is affected:**
+
 - AI coding agents wanting richer integration
 - Web-based agent environments without shell access
 - Sandboxed execution environments
 - Agent developers building integrations
 
 **Consequences of not solving:**
+
 - Docent remains harder to integrate than tools with MCP support
 - Limited adoption in non-shell environments
 - Manual JSON parsing remains agent's responsibility
@@ -67,6 +71,7 @@ We built `docent audit --agent` to test agent-driven analysis. Results:
 Implement MCP server in `/src/mcp/` within the main docent repository (monorepo approach). The MCP server shares core libraries (`detector`, `auditor`, `reviewer`, `installer`) and prompt templates (`/templates/prompts/`) with the CLI, providing identical functionality through a different interface.
 
 **Monorepo rationale:**
+
 - MCP is integral to product (not optional plugin)
 - Shared code: detector, auditor, prompt templates
 - Coordinated releases: CLI and MCP changes together
@@ -111,6 +116,7 @@ Implement MCP server in `/src/mcp/` within the main docent repository (monorepo 
 ```
 
 **Monorepo approach:**
+
 - Single `@tnezdev/docent` package with dual interfaces
 - MCP server in `/src/mcp/` alongside CLI in `/src/commands/`
 - Shared core libraries in `/src/lib/`
@@ -121,12 +127,14 @@ Implement MCP server in `/src/mcp/` within the main docent repository (monorepo 
 **MCP Tools Exposed:**
 
 1. **`analyze`** - Analyze project structure
+
    ```typescript
    Input: { path: string }
    Output: AnalysisResult (same as CLI JSON)
    ```
 
 2. **`audit`** - Agent-driven documentation quality assessment
+
    ```typescript
    Input: { path: string, docsDir?: string }
    Output: {
@@ -137,18 +145,21 @@ Implement MCP server in `/src/mcp/` within the main docent repository (monorepo 
    ```
 
 3. **`audit`** - Heuristic documentation audit (legacy/fast)
+
    ```typescript
    Input: { path: string, docsDir?: string }
    Output: AuditResult
    ```
 
 4. **`review`** - Review documentation health
+
    ```typescript
    Input: { path: string, docsDir?: string }
    Output: ReviewResult
    ```
 
-4. **`init`** - Initialize documentation
+5. **`init`** - Initialize documentation
+
    ```typescript
    Input: {
      path: string,
@@ -159,7 +170,8 @@ Implement MCP server in `/src/mcp/` within the main docent repository (monorepo 
    Output: InitResult
    ```
 
-5. **`new`** - Create new document
+6. **`new`** - Create new document
+
    ```typescript
    Input: {
      path: string,
@@ -339,6 +351,7 @@ const analysis = JSON.parse(result.stdout)
 Two integration options:
 
 1. **MCP (recommended if supported):**
+
    ```bash
    # Add to MCP configuration (e.g., Claude Desktop)
    {
@@ -362,6 +375,7 @@ Two integration options:
    ```
 
 2. **CLI (works everywhere):**
+
    ```bash
    docent analyze --output json
    ```
@@ -381,6 +395,7 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 ### Trade-offs
 
 **Advantages of MCP approach:**
+
 - Native tool calling (no shell needed)
 - Works in web/sandboxed environments
 - Built-in tool discovery
@@ -389,6 +404,7 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 - Richer integration capabilities
 
 **Disadvantages of MCP approach:**
+
 - Additional package to maintain
 - MCP adoption is still early/uncertain
 - Requires agent to support MCP
@@ -400,11 +416,13 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 **Description:** Replace CLI with MCP server, force all interactions through MCP
 
 **Pros:**
+
 - Single interface to maintain
 - Cleaner architecture
 - Push agents to adopt MCP
 
 **Cons:**
+
 - Breaking change for all users
 - Doesn't work for humans (MCP is agent-only)
 - Excludes agents without MCP support
@@ -417,11 +435,13 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 **Description:** Keep current approach, don't add MCP
 
 **Pros:**
+
 - No additional maintenance
 - Shell commands work everywhere
 - Simple architecture
 
 **Cons:**
+
 - Less rich integration for agents
 - Doesn't work in sandboxed environments
 - Agent must parse JSON manually
@@ -434,11 +454,13 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 **Description:** Build generic plugin system, MCP is just one plugin
 
 **Pros:**
+
 - Maximum flexibility
 - Could support multiple protocols
 - Extensible architecture
 
 **Cons:**
+
 - Much more complex
 - Over-engineering for current needs
 - Maintenance burden
@@ -449,23 +471,27 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 ## Security Considerations
 
 **File System Access:**
+
 - MCP server has same file access as CLI (local file system)
 - No network access required
 - Respects file system permissions
 - Same security model as existing CLI
 
 **Input Validation:**
+
 - Validate all MCP tool inputs
 - Sanitize file paths (prevent directory traversal)
 - Limit to reasonable path depths
 - Same validation as CLI commands
 
 **No Authentication Required:**
+
 - Local-only tool (like CLI)
 - No remote access
 - Agent already has system access
 
 **Mitigations:**
+
 - Input validation on all parameters
 - Path sanitization for file operations
 - Rate limiting if needed (future)
@@ -473,16 +499,19 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 ## Performance Considerations
 
 **Startup Time:**
+
 - MCP server runs as long-lived process (better than CLI)
 - CLI: ~100ms startup per command
 - MCP: ~500ms startup once, then instant tool calls
 
 **Memory Usage:**
+
 - MCP server holds process in memory
 - Small footprint (~50MB for Node.js + dependencies)
 - CLI releases memory after each command
 
 **Overall Impact:**
+
 - **Better for agents** - No startup penalty per command
 - **Same for one-off** - Similar to single CLI command
 - **Better for batch** - Significant improvement for multiple operations
@@ -490,21 +519,25 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 ## Testing Strategy
 
 **Unit Tests:**
+
 - Test core libraries (shared between CLI and MCP)
 - Test MCP tool handlers individually
 - Mock file system operations
 
 **Integration Tests:**
+
 - Test MCP server end-to-end
 - Validate against MCP protocol spec
 - Test with real MCP client
 
 **Cross-Interface Tests:**
+
 - Ensure CLI and MCP return same results
 - Test feature parity
 - Validate JSON schemas match
 
 **Manual Testing:**
+
 - Test with Claude Desktop (MCP client)
 - Test with other MCP-compatible agents
 - Verify tool discovery works
@@ -522,35 +555,41 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 ### Rollout Plan
 
 **Phase 0: Validation (Complete ✅)**
+
 - Built `docent audit --agent` prototype with manual workflow
 - Validated agent-driven analysis (73/100) vs heuristics (21/100)
 - Confirmed prompt template system works
 - Demonstrated 3.5x quality improvement with agent reasoning
 
 **Phase 1: Core Infrastructure (1-2 weeks)**
+
 - Implement MCP server in `/src/mcp/`
 - Create tool handlers for analyze, audit, audit
 - Test with Claude Desktop MCP integration
 - Update package.json to export MCP server
 
 **Phase 2: Agent Integration (1-2 weeks)**
+
 - Wire CLI commands to use MCP when available
 - Implement review-staleness tool (agent-driven review)
 - Add prompt templates for review
 - Write integration tests
 
 **Phase 3: Full Feature Parity (1 week)**
+
 - Implement init, new tools for MCP
 - Document all tools in MCP schema
 - Add examples to `.docent-protocol/agent-guide.md`
 
 **Phase 4: Release & Dogfooding (1 week)**
+
 - Use docent MCP while developing docent
 - Update documentation with MCP setup
 - Publish npm package with MCP support
 - Announce to community
 
 **Phase 5: Iteration**
+
 - Gather feedback from agent developers
 - Improve prompt templates based on usage
 - Add streaming support for long operations
@@ -566,17 +605,20 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 ## Documentation Plan
 
 **User-Facing Documentation:**
+
 - Update README with MCP installation instructions
 - Add MCP section to `.docent-protocol/agent-guide.md`
 - Create `packages/docent-mcp/README.md` with usage examples
 
 **Agent Developer Documentation:**
+
 - MCP configuration examples
 - Tool schemas and examples
 - Comparison: when to use CLI vs MCP
 - Migration guide for shell-based integrations
 
 **Examples:**
+
 - Sample MCP client code
 - Integration with Claude Desktop
 - Integration with other MCP agents

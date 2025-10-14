@@ -10,6 +10,7 @@
 <!-- What is the issue we're seeing that motivates this decision or change? -->
 
 Describe the context and problem statement:
+
 - What forces are at play?
 - What are the technical, business, or organizational factors?
 - What constraints exist?
@@ -19,6 +20,7 @@ Describe the context and problem statement:
 <!-- What is the change we're proposing/making? -->
 
 State the decision clearly and concisely:
+
 - What are we doing?
 - Why this approach over alternatives?
 
@@ -50,10 +52,12 @@ State the decision clearly and concisely:
 **Description:** Brief description of this alternative
 
 **Pros:**
+
 - Pro 1
 - Pro 2
 
 **Cons:**
+
 - Con 1
 - Con 2
 
@@ -64,10 +68,12 @@ State the decision clearly and concisely:
 **Description:** Brief description of this alternative
 
 **Pros:**
+
 - Pro 1
 - Pro 2
 
 **Cons:**
+
 - Con 1
 - Con 2
 
@@ -97,6 +103,7 @@ State the decision clearly and concisely:
 ### When to Create an ADR
 
 Create an ADR when making decisions about:
+
 - Architecture and system design
 - Technology choices (languages, frameworks, databases)
 - Development processes and workflows

@@ -59,6 +59,7 @@ In Claude Desktop, ask:
 > "What MCP tools do you have available from docent?"
 
 You should see:
+
 - `analyze` - Project structure analysis
 - `audit` - Agent-driven documentation quality assessment
 - `audit` - Heuristic documentation audit (fast, for CI/CD)
@@ -70,6 +71,7 @@ You should see:
 Analyzes project structure, languages, frameworks, and build tools.
 
 **Input:**
+
 ```json
 {
   "path": "/path/to/project"
@@ -77,6 +79,7 @@ Analyzes project structure, languages, frameworks, and build tools.
 ```
 
 **Output:**
+
 ```json
 {
   "languages": [{"name": "TypeScript", "fileCount": 42, ...}],
@@ -92,6 +95,7 @@ Analyzes project structure, languages, frameworks, and build tools.
 Generates an agent-driven documentation quality assessment prompt with full project context.
 
 **Input:**
+
 ```json
 {
   "path": "/path/to/project",
@@ -101,6 +105,7 @@ Generates an agent-driven documentation quality assessment prompt with full proj
 
 **Output:**
 A comprehensive prompt (13,000+ characters) including:
+
 - Project context (languages, frameworks, tests, APIs)
 - Documentation metadata (files, sizes, headings, timestamps)
 - Heuristic baseline (for comparison)
@@ -109,12 +114,14 @@ A comprehensive prompt (13,000+ characters) including:
 
 **Usage:**
 When an agent receives this prompt, it analyzes the documentation semantically and returns a structured assessment with:
+
 - Overall quality score (0-100) with rationale
 - Critical gaps with actionable suggestions
 - Prioritized recommendations (high/medium/low)
 - Strengths to acknowledge
 
 **Performance:**
+
 - Agent analysis: ~73/100 (contextual, semantic understanding)
 - Heuristic baseline: ~21/100 (pattern matching, 87% false positive rate)
 - **3.5x improvement** with agent reasoning
@@ -124,6 +131,7 @@ When an agent receives this prompt, it analyzes the documentation semantically a
 Performs fast heuristic-based documentation audit (legacy, for CI/CD).
 
 **Input:**
+
 ```json
 {
   "path": "/path/to/project",
@@ -132,6 +140,7 @@ Performs fast heuristic-based documentation audit (legacy, for CI/CD).
 ```
 
 **Output:**
+
 ```json
 {
   "score": 21,
@@ -157,6 +166,7 @@ Agent calls `analyze` and gets project structure.
 > "Use audit to assess the documentation in /Users/me/my-project"
 
 Agent:
+
 1. Calls `audit` to get the prompt
 2. Reads the context (project type, doc files, heuristic baseline)
 3. Analyzes semantically (not just pattern matching)
@@ -197,16 +207,19 @@ Agent calls `audit` and gets fast heuristic results.
    - Linux: `~/.config/Claude/claude_desktop_config.json`
 
 2. Verify absolute paths (not relative):
+
    ```json
    "args": ["/absolute/path/to/docent/lib/mcp/server.js"]
    ```
 
 3. Check build succeeded:
+
    ```bash
    ls /path/to/docent/lib/mcp/server.js  # Should exist
    ```
 
 4. Test manually:
+
    ```bash
    node /path/to/docent/test-mcp.js
    ```
@@ -214,6 +227,7 @@ Agent calls `audit` and gets fast heuristic results.
 ### Tools Not Working
 
 Check for errors in Claude Desktop logs:
+
 - macOS: `~/Library/Logs/Claude/mcp*.log`
 - Look for docent-related errors
 
@@ -235,6 +249,7 @@ const audit = await mcp.callTool('audit', {path: '.'})
 ```
 
 **Why MCP-only:**
+
 - Native tool calling (no shell execution)
 - Structured data built for agents
 - Works in sandboxed environments
@@ -250,13 +265,16 @@ const audit = await mcp.callTool('audit', {path: '.'})
 ## Performance
 
 ### Startup Time
+
 - MCP: ~500ms once, then instant tool calls
 - CLI: ~100ms per command invocation
 
 ### Memory
+
 - MCP: ~50MB (persistent Node.js process)
 - CLI: Released after each command
 
 ### Best For
+
 - MCP: Multiple operations, agent integration, sandboxed environments
 - CLI: One-off commands, CI/CD, human use

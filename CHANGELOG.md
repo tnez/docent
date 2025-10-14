@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0] - 2025-10-13
 
 ### Changed
+
 - **BREAKING**: Project renamed from "docket" to "docent"
   - Package name: `@tnezdev/docket` → `@tnezdev/docent`
   - All documentation updated to reflect new branding
@@ -15,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated all documentation references from "docket" to "docent"
 
 ### Added
+
 - MCP Resources support for accessing project artifacts
   - Journal resource (`docent://journal`)
   - Templates resource (`docent://templates/*`)
@@ -29,23 +31,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced resume-work prompt with git status, commits, and TODO scanning
 
 ### Fixed
+
 - Test script removed from package.json (no tests currently implemented)
 
 ## [0.2.0] - 2025-10-11
 
 ### Added
+
 - MCP server implementation for agent integration
 - Tools: `analyze`, `audit`, `list-templates`, `get-template`, `capture-work`
 - Agent-driven documentation quality assessment (73/100 vs 21/100 heuristic baseline)
 - Template library: ADR, RFC, PRD, API docs, architecture, onboarding, patterns, runbook, spec, standards, testing, troubleshooting, writing-software
 
 ### Changed
+
 - Architecture decision: MCP-only (removed CLI commands per ADR-0004)
 - Agent-agnostic design for compatibility with any MCP-compatible AI agent
 
 ## [0.1.0] - 2025-10-10
 
 ### Added
+
 - Initial release
 - Documentation templates
 - Basic project structure

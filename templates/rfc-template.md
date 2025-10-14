@@ -19,6 +19,7 @@ Brief summary of what this RFC proposes. What problem does it solve? What is the
 ### Problem Statement
 
 Describe the problem this RFC addresses:
+
 - What pain points exist today?
 - Who is affected?
 - What are the consequences of not solving this?
@@ -26,6 +27,7 @@ Describe the problem this RFC addresses:
 ### Goals
 
 What we want to achieve:
+
 - Goal 1
 - Goal 2
 - Goal 3
@@ -33,6 +35,7 @@ What we want to achieve:
 ### Non-Goals
 
 What we explicitly do NOT intend to address:
+
 - Non-goal 1
 - Non-goal 2
 
@@ -47,6 +50,7 @@ High-level description of the proposed solution.
 ### Architecture
 
 Describe the system architecture or design:
+
 - Components and their responsibilities
 - How components interact
 - Data flow
@@ -55,6 +59,7 @@ Describe the system architecture or design:
 ### Implementation Details
 
 Specific technical details:
+
 - APIs or interfaces
 - Data structures
 - Algorithms
@@ -73,6 +78,7 @@ function example() {
 ### User Experience
 
 How will users interact with this feature?
+
 - What workflows change?
 - What new capabilities are enabled?
 - What documentation is needed?
@@ -84,10 +90,12 @@ How will users interact with this feature?
 ### Trade-offs
 
 **Advantages of this approach:**
+
 - Advantage 1
 - Advantage 2
 
 **Disadvantages of this approach:**
+
 - Disadvantage 1
 - Disadvantage 2
 
@@ -96,10 +104,12 @@ How will users interact with this feature?
 **Description:** Brief description
 
 **Pros:**
+
 - Pro 1
 - Pro 2
 
 **Cons:**
+
 - Con 1
 - Con 2
 
@@ -110,10 +120,12 @@ How will users interact with this feature?
 **Description:** Brief description
 
 **Pros:**
+
 - Pro 1
 - Pro 2
 
 **Cons:**
+
 - Con 1
 - Con 2
 
@@ -151,6 +163,7 @@ How will users interact with this feature?
 ### Migration Path
 
 For existing users/systems:
+
 - Step 1
 - Step 2
 - Step 3
@@ -158,6 +171,7 @@ For existing users/systems:
 ### Rollout Plan
 
 How we'll deploy this feature:
+
 - Phase 1: [Description]
 - Phase 2: [Description]
 - Phase 3: [Description]
@@ -190,6 +204,7 @@ How we'll deploy this feature:
 <!-- What future work could build on this? -->
 
 This RFC focuses on [core functionality], but future work could include:
+
 - Future possibility 1
 - Future possibility 2
 - Future possibility 3
@@ -210,6 +225,7 @@ This RFC focuses on [core functionality], but future work could include:
 ### When to Write an RFC
 
 Write an RFC for:
+
 - New features requiring design discussion
 - Breaking changes to APIs or interfaces
 - Significant refactoring efforts

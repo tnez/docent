@@ -10,6 +10,7 @@
 After deciding to build a CLI platform (ADR-0001), we needed to choose a CLI framework. The requirements were:
 
 **Must Have:**
+
 - Rich, first-class CLI user experience (colors, formatting, progress indicators)
 - TypeScript support with good type safety
 - Support for both human-readable and JSON output modes
@@ -18,6 +19,7 @@ After deciding to build a CLI platform (ADR-0001), we needed to choose a CLI fra
 - Help generation and command discovery
 
 **Nice to Have:**
+
 - Plugin system for extensibility
 - Built-in testing utilities
 - Command auto-completion
@@ -25,6 +27,7 @@ After deciding to build a CLI platform (ADR-0001), we needed to choose a CLI fra
 - Multi-command support (analyze, init, audit, review)
 
 **Constraints:**
+
 - Must work on macOS, Linux, and Windows
 - Should be installable via npm/npx
 - Cannot have large dependency footprint (affects install time)
@@ -37,6 +40,7 @@ Use **oclif** (https://oclif.io/) as the CLI framework.
 Oclif is built by Salesforce/Heroku specifically for building production CLIs. It's the framework behind the Heroku CLI, Salesforce CLI, and many other enterprise CLIs.
 
 **Key features we're using:**
+
 - Rich output formatting with chalk integration
 - Command class structure for each command (analyze, init, audit, review)
 - Flag parsing with type validation
@@ -80,6 +84,7 @@ Oclif is built by Salesforce/Heroku specifically for building production CLIs. I
 **Description:** The most popular Node.js CLI framework, used by npm, yarn, etc.
 
 **Pros:**
+
 - Very lightweight (~50 dependencies)
 - Extremely popular (28k+ GitHub stars)
 - Simple API, easy to learn
@@ -87,6 +92,7 @@ Oclif is built by Salesforce/Heroku specifically for building production CLIs. I
 - Good TypeScript support
 
 **Cons:**
+
 - No built-in theming or rich output
 - Must manually implement JSON output mode
 - No plugin system
@@ -101,6 +107,7 @@ Oclif is built by Salesforce/Heroku specifically for building production CLIs. I
 **Description:** Another popular CLI parser with good community support.
 
 **Pros:**
+
 - Very flexible and powerful
 - Good TypeScript support
 - Smaller than oclif (~300 dependencies)
@@ -108,6 +115,7 @@ Oclif is built by Salesforce/Heroku specifically for building production CLIs. I
 - Good documentation
 
 **Cons:**
+
 - API can be verbose
 - Less opinionated than oclif
 - No built-in rich output
@@ -122,6 +130,7 @@ Oclif is built by Salesforce/Heroku specifically for building production CLIs. I
 **Description:** Build CLIs using React components, created by Sindre Sorhus.
 
 **Pros:**
+
 - React component model
 - Very rich UI capabilities
 - Excellent for interactive CLIs
@@ -129,6 +138,7 @@ Oclif is built by Salesforce/Heroku specifically for building production CLIs. I
 - Great for complex UIs
 
 **Cons:**
+
 - Overkill for our use case
 - Higher complexity
 - Larger bundle size
@@ -143,6 +153,7 @@ Oclif is built by Salesforce/Heroku specifically for building production CLIs. I
 **Description:** Use minimal parser (minimist) and build everything ourselves.
 
 **Pros:**
+
 - Complete control
 - Minimal dependencies
 - No framework abstractions
@@ -150,6 +161,7 @@ Oclif is built by Salesforce/Heroku specifically for building production CLIs. I
 - Easy to understand
 
 **Cons:**
+
 - Must build everything (help, output, validation)
 - Time-consuming to implement properly
 - Reinventing the wheel
@@ -196,6 +208,7 @@ export default class Analyze extends Command {
 ### Output Modes
 
 All commands support dual output:
+
 - **Human mode** (default): Rich formatting with chalk
 - **JSON mode** (`--output json`): Structured JSON for agents
 
@@ -223,6 +236,7 @@ npm test
 ### Future Enhancements
 
 Oclif supports features we may use later:
+
 - Plugins for extensibility
 - Topics for command grouping
 - Hooks for lifecycle events

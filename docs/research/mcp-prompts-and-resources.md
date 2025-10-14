@@ -9,12 +9,14 @@
 The Model Context Protocol (MCP) provides three core capabilities for servers: **tools**, **resources**, and **prompts**. This research documents how to implement resources and prompts in TypeScript using the official MCP SDK.
 
 **Key Findings:**
+
 - Resources provide URI-based content discovery and caching for efficient context management
 - Prompts enable pre-defined workflow templates with parameterized arguments
 - Both use standard request handlers (`server.setRequestHandler`) with schema validation
 - Caching via resource URIs is critical for token efficiency in RAG scenarios
 
 **Relevance to docent:**
+
 - Resources expose runbooks, templates, standards, docs, journal as discoverable URIs
 - Prompts standardize workflows (Review RFC, Resume Work, etc.) with context gathering
 - Both align with docent's "context provider" principle (documentation as agent configuration)
@@ -41,6 +43,7 @@ The Model Context Protocol (MCP) provides three core capabilities for servers: *
 Resources allow MCP servers to expose data that provides context to language models, such as files, database schemas, or application-specific information. Each resource is uniquely identified by a URI.
 
 **Purpose:**
+
 - Provide discoverable content to agents
 - Enable efficient caching via URI-based deduplication
 - Reduce token consumption in multi-call scenarios (RAG)
@@ -75,6 +78,7 @@ const server = new Server(
 **Request Schema:** `ListResourcesRequestSchema`
 
 **Response Structure:**
+
 ```typescript
 {
   resources: [
@@ -89,6 +93,7 @@ const server = new Server(
 ```
 
 **Implementation Example:**
+
 ```typescript
 import { ListResourcesRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
@@ -125,6 +130,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
 **Request Schema:** `ReadResourceRequestSchema`
 
 **Request Parameters:**
+
 ```typescript
 {
   uri: string  // Resource URI to read
@@ -132,6 +138,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
 ```
 
 **Response Structure:**
+
 ```typescript
 {
   contents: [
@@ -146,6 +153,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
 ```
 
 **Implementation Example:**
+
 ```typescript
 import { ReadResourceRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import fs from 'fs/promises';
@@ -211,10 +219,12 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 MCP defines standard URI schemes, but implementations can use custom schemes:
 
 **Standard Schemes:**
+
 - `http://` / `https://` - Web resources (client fetches directly)
 - `file://` - Filesystem-like resources (may be virtual)
 
 **Custom Schemes (for docent):**
+
 - `docent://runbook/{name}` - Operational runbooks
 - `docent://template/{type}` - Documentation templates
 - `docent://standard/{type}` - Project standards/conventions
@@ -226,6 +236,7 @@ MCP defines standard URI schemes, but implementations can use custom schemes:
 ### Security Considerations
 
 **Path Traversal Prevention:**
+
 ```typescript
 server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const { uri } = request.params;
@@ -253,6 +264,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 Prompts are pre-defined templates that servers expose to clients, allowing users to explicitly select and invoke structured workflows. Prompts are **user-controlled** (unlike tools which are model-controlled).
 
 **Purpose:**
+
 - Standardize common workflows with reusable templates
 - Provide context-aware instructions to agents
 - Accept parameterized arguments for customization
@@ -285,6 +297,7 @@ const server = new Server(
 **Request Schema:** `ListPromptsRequestSchema`
 
 **Response Structure:**
+
 ```typescript
 {
   prompts: [
@@ -304,6 +317,7 @@ const server = new Server(
 ```
 
 **Implementation Example:**
+
 ```typescript
 import { ListPromptsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
@@ -358,6 +372,7 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => {
 **Request Schema:** `GetPromptRequestSchema`
 
 **Request Parameters:**
+
 ```typescript
 {
   name: string,              // Prompt name
@@ -368,6 +383,7 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => {
 ```
 
 **Response Structure:**
+
 ```typescript
 {
   description?: string,      // Optional prompt description
@@ -391,6 +407,7 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => {
 ```
 
 **Implementation Example:**
+
 ```typescript
 import { GetPromptRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { analyzeProject } from '../lib/detector.js';
@@ -552,6 +569,7 @@ function getReviewCriteria(perspective: string): string {
 ### Argument Handling
 
 **Validation Pattern:**
+
 ```typescript
 server.setRequestHandler(GetPromptRequestSchema, async (request) => {
   const { name, arguments: args = {} } = request.params;
@@ -573,6 +591,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
 ```
 
 **Type-Safe Arguments (using Zod):**
+
 ```typescript
 import { z } from 'zod';
 
@@ -743,6 +762,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
 **Solution:** Use resource URIs as cache keys to deduplicate content.
 
 **Pattern:**
+
 ```typescript
 // Tool returns resource references, not full content
 {
@@ -909,11 +929,13 @@ While MCP spec doesn't mandate caching headers, servers can include metadata:
 ### Tutorial Series
 
 **Building MCP Servers (Christopher Strolia-Davis, Medium):**
+
 - Part 1: Resources (Feb 2025)
 - Part 2: Resource Templates (Feb 2025)
 - Part 3: Prompts (Feb 2025)
 
 **Understanding MCP (Matthew MacFarquhar, Medium):**
+
 - Part 3: Adding Prompts to MCP Servers (2025)
 
 ---
@@ -923,11 +945,13 @@ While MCP spec doesn't mandate caching headers, servers can include metadata:
 ### Phase 1: Resources Implementation
 
 **Priority 1 Resources:**
+
 1. `docent://journal/current` - Session context
 2. `docent://template/{type}` - Documentation templates
 3. `docent://runbook/{name}` - Operational procedures
 
 **Implementation:**
+
 ```typescript
 // Start simple, expand iteratively
 const resources = {
@@ -938,6 +962,7 @@ const resources = {
 ```
 
 **File Structure:**
+
 ```
 src/mcp/
   resources/
@@ -951,11 +976,13 @@ src/mcp/
 ### Phase 2: Prompts Implementation
 
 **Priority 1 Prompts:**
+
 1. `resume-work` - Session recovery (highest value, uses journal resource)
 2. `review-rfc` - RFC review workflow (validates architecture)
 3. `create-adr` - ADR creation (encodes process)
 
 **Implementation:**
+
 ```typescript
 // Context gathering utilities
 class ContextGatherer {
@@ -970,6 +997,7 @@ class ContextGatherer {
 ```
 
 **File Structure:**
+
 ```
 src/mcp/
   prompts/
@@ -986,6 +1014,7 @@ src/mcp/
 ### Testing Strategy
 
 **Resources:**
+
 ```typescript
 describe('ResourceHandler', () => {
   it('lists all resources by type', async () => {
@@ -1015,6 +1044,7 @@ describe('ResourceHandler', () => {
 ```
 
 **Prompts:**
+
 ```typescript
 describe('PromptBuilder', () => {
   it('builds resume-work prompt with context', async () => {
@@ -1049,6 +1079,7 @@ describe('PromptBuilder', () => {
 ### Integration with Existing Code
 
 **Leverage existing tools:**
+
 ```typescript
 // Prompts can call existing docent tools
 import { analyzeProject } from '../lib/detector.js';
@@ -1069,6 +1100,7 @@ async function buildReviewRfcPrompt(args: ReviewRfcArgs): Promise<PromptMessages
 ```
 
 **Resource handlers read from existing directories:**
+
 ```typescript
 async readTemplate(type: string): Promise<ResourceContent> {
   // Existing templates directory
@@ -1081,29 +1113,34 @@ async readTemplate(type: string): Promise<ResourceContent> {
 ### Phased Rollout
 
 **Phase 1: Resources (Week 1)**
+
 - Implement ResourceHandler class
 - Add journal, template, runbook resource types
 - Wire into MCP server
 - Test with MCP client (Claude Desktop)
 
 **Phase 2: Prompts - Basic (Week 2)**
+
 - Implement PromptBuilder class
 - Add "resume-work" prompt (simplest, highest value)
 - Test end-to-end workflow
 - Gather feedback
 
 **Phase 3: Prompts - Advanced (Week 3)**
+
 - Add "review-rfc" prompt with context gathering
 - Add "create-adr" prompt
 - Test complex workflows
 - Refine based on usage
 
 **Phase 4: Additional Resources (Week 4)**
+
 - Add standard, doc resource types
 - Expand runbook coverage
 - Add resource metadata (tags, related)
 
 **Phase 5: Dogfooding (Ongoing)**
+
 - Use docent via MCP daily
 - Iterate on prompts based on real usage
 - Add new prompts as needs emerge
@@ -1264,11 +1301,13 @@ console.error('Docent MCP server running');
 ```
 
 **Run:**
+
 ```bash
 node server.ts
 ```
 
 **Test with MCP client (Claude Desktop):**
+
 ```json
 {
   "mcpServers": {

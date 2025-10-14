@@ -12,6 +12,7 @@
 Brief description of the system and its purpose. What does it do? Who uses it? Why does it exist?
 
 **Key Points:**
+
 - Key point 1
 - Key point 2
 - Key point 3
@@ -27,6 +28,7 @@ What problem does this system solve?
 ### Users
 
 Who are the primary users?
+
 - User type 1 (e.g., End users)
 - User type 2 (e.g., Internal teams)
 - User type 3 (e.g., External partners)
@@ -34,6 +36,7 @@ Who are the primary users?
 ### Dependencies
 
 What does this system depend on?
+
 - External service 1
 - External service 2
 - Internal system 1
@@ -42,6 +45,7 @@ What does this system depend on?
 ### Dependents
 
 What depends on this system?
+
 - System 1
 - System 2
 - System 3
@@ -107,20 +111,24 @@ graph TD
 **Technology:** Technology/framework used
 
 **Responsibilities:**
+
 - Responsibility 1
 - Responsibility 2
 - Responsibility 3
 
 **Interactions:**
+
 - Calls: Component X, Component Y
 - Called by: Component Z
 - Events: Publishes event A, Subscribes to event B
 
 **Key Interfaces:**
+
 - Interface 1: Description
 - Interface 2: Description
 
 **Deployment:**
+
 - Where it runs (e.g., AWS ECS, Kubernetes)
 - Scaling strategy
 - High availability setup
@@ -134,17 +142,21 @@ graph TD
 **Technology:** Technology/framework used
 
 **Responsibilities:**
+
 - Responsibility 1
 - Responsibility 2
 
 **Interactions:**
+
 - Calls: Component X
 - Called by: Component A
 
 **Key Interfaces:**
+
 - Interface 1: Description
 
 **Deployment:**
+
 - Deployment details
 
 ---
@@ -156,13 +168,16 @@ graph TD
 **Technology:** Technology/framework used
 
 **Responsibilities:**
+
 - Responsibility 1
 - Responsibility 2
 
 **Interactions:**
+
 - Interactions
 
 **Deployment:**
+
 - Deployment details
 
 ## Data Flow
@@ -180,6 +195,7 @@ graph TD
 7. **Response:** Returns result to user
 
 **Diagram:**
+
 ```mermaid
 sequenceDiagram
     User->>Load Balancer: HTTP Request
@@ -203,30 +219,35 @@ Description of another important data flow.
 <!-- Technologies used across the system -->
 
 ### Frontend
+
 - Framework: React 18.x
 - State Management: Redux
 - Build Tool: Vite
 - UI Library: Material-UI
 
 ### Backend
+
 - Language: Node.js 20.x
 - Framework: Express 4.x
 - API: REST
 - Authentication: JWT
 
 ### Data Stores
+
 - Primary Database: PostgreSQL 15.x
 - Cache: Redis 7.x
 - Search: Elasticsearch 8.x
 - Object Storage: AWS S3
 
 ### Infrastructure
+
 - Cloud Provider: AWS
 - Container Orchestration: Kubernetes
 - CI/CD: GitHub Actions
 - Monitoring: Datadog
 
 ### Third-Party Services
+
 - Payment Processing: Stripe
 - Email: SendGrid
 - Analytics: Mixpanel
@@ -236,6 +257,7 @@ Description of another important data flow.
 <!-- How the system scales -->
 
 ### Current Scale
+
 - Requests per second: ~1,000
 - Data size: ~500 GB
 - Active users: ~100,000
@@ -244,13 +266,16 @@ Description of another important data flow.
 ### Scaling Strategy
 
 **Horizontal Scaling:**
+
 - Web servers: Auto-scale based on CPU (2-10 instances)
 - API servers: Auto-scale based on request queue (3-15 instances)
 
 **Vertical Scaling:**
+
 - Database: Currently db.r5.2xlarge, can scale to db.r5.8xlarge
 
 **Data Scaling:**
+
 - Database: Read replicas for read-heavy workloads
 - Cache: Redis cluster with automatic sharding
 - Files: S3 with CloudFront CDN
@@ -258,6 +283,7 @@ Description of another important data flow.
 ### Bottlenecks
 
 Known bottlenecks and mitigation plans:
+
 - Bottleneck 1: Database writes → Solution: Write-through caching
 - Bottleneck 2: API rate limiting → Solution: Queue-based processing
 
@@ -266,22 +292,26 @@ Known bottlenecks and mitigation plans:
 <!-- Security architecture overview -->
 
 ### Authentication & Authorization
+
 - Method: OAuth 2.0 + JWT tokens
 - Session management: Redis-backed sessions
 - MFA: TOTP-based 2FA available
 
 ### Network Security
+
 - All traffic over HTTPS (TLS 1.3)
 - WAF: AWS WAF with custom rules
 - DDoS Protection: CloudFlare
 
 ### Data Security
+
 - Encryption at rest: AES-256
 - Encryption in transit: TLS 1.3
 - PII handling: Encrypted fields in database
 - Secrets management: AWS Secrets Manager
 
 ### Compliance
+
 - Standards: SOC 2 Type II, GDPR
 - Audit logging: All data access logged
 - Data retention: 90 days
@@ -291,23 +321,27 @@ Known bottlenecks and mitigation plans:
 <!-- How the system handles failures -->
 
 ### High Availability
+
 - Multi-AZ deployment for all components
 - Database: Primary + 2 read replicas
 - Load balancers: Active-active configuration
 - Auto-healing: Kubernetes restarts failed pods
 
 ### Disaster Recovery
+
 - RTO: 4 hours
 - RPO: 15 minutes
 - Backup strategy: Daily full, hourly incremental
 - DR region: Warm standby in us-west-2
 
 ### Error Handling
+
 - Circuit breakers: Hystrix for external service calls
 - Retries: Exponential backoff with jitter
 - Graceful degradation: Core features work even if auxiliary services fail
 
 ### Monitoring & Alerting
+
 - APM: Datadog
 - Logging: ELK Stack
 - Metrics: Prometheus + Grafana
@@ -318,17 +352,20 @@ Known bottlenecks and mitigation plans:
 <!-- Performance characteristics -->
 
 ### SLAs
+
 - Availability: 99.9% uptime
 - Response time: p95 < 200ms, p99 < 500ms
 - Error rate: < 0.1%
 
 ### Optimization Strategies
+
 - Database query optimization and indexing
 - Redis caching for frequently accessed data
 - CDN for static assets
 - Lazy loading and code splitting in frontend
 
 ### Performance Bottlenecks
+
 - Known bottleneck 1 and mitigation
 - Known bottleneck 2 and mitigation
 
@@ -337,17 +374,20 @@ Known bottlenecks and mitigation plans:
 <!-- How the system is deployed -->
 
 ### Environments
+
 - **Development:** Local development
 - **Staging:** Pre-production testing
 - **Production:** Live system
 
 ### Deployment Strategy
+
 - Method: Blue-green deployment
 - Frequency: Multiple times per day
 - Rollback time: < 5 minutes
 - Canary deployments: 10% → 50% → 100%
 
 ### Infrastructure as Code
+
 - Tool: Terraform
 - Repository: [Link to IaC repo]
 - Change process: PR review + automated validation
@@ -357,6 +397,7 @@ Known bottlenecks and mitigation plans:
 <!-- Cost overview -->
 
 ### Monthly Operating Costs
+
 - Compute: $X,XXX
 - Data storage: $XXX
 - Data transfer: $XXX
@@ -364,6 +405,7 @@ Known bottlenecks and mitigation plans:
 - **Total:** $X,XXX per month
 
 ### Cost Optimization
+
 - Reserved instances for predictable workloads
 - S3 lifecycle policies for old data
 - Auto-scaling to match demand
@@ -373,11 +415,13 @@ Known bottlenecks and mitigation plans:
 <!-- Planned architectural changes -->
 
 ### Near Term (3-6 months)
+
 - Migration 1: Move to microservices architecture
 - Upgrade 1: Upgrade to PostgreSQL 16
 - Feature 1: Add GraphQL API layer
 
 ### Long Term (6-12 months)
+
 - Migration 2: Multi-region active-active
 - Feature 2: Real-time event streaming
 - Optimization 1: Implement service mesh
@@ -387,6 +431,7 @@ Known bottlenecks and mitigation plans:
 <!-- Links to relevant ADRs -->
 
 Key architectural decisions:
+
 - [ADR-0001: Choice of PostgreSQL](../adr/0001-postgresql.md)
 - [ADR-0002: Microservices vs Monolith](../adr/0002-microservices.md)
 - [ADR-0003: AWS vs GCP](../adr/0003-aws.md)
@@ -418,6 +463,7 @@ Key architectural decisions:
 ### When to Create Architecture Documentation
 
 Create architecture documentation:
+
 - At project start (initial architecture)
 - After major architectural changes
 - When onboarding new team members
@@ -437,6 +483,7 @@ Create architecture documentation:
 ### Diagram Tools
 
 Recommended tools:
+
 - **Mermaid:** Markdown-based, version-controlled
 - **PlantUML:** Code-based diagrams
 - **draw.io:** Visual editor

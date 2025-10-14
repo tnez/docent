@@ -7,6 +7,7 @@
 ## 2025-10-13 Session: MCP Architecture Documentation Update
 
 ### Decision - Completed ✅
+
 **ID:** dec-20251013-1
 **Type:** Decision
 **Status:** Completed
@@ -16,18 +17,21 @@
 **What:** Chose MCP-only architecture over maintaining dual CLI+MCP interfaces
 
 **Why:**
+
 - Agent-driven audit prototype proved agents required (73/100 vs 21/100 = 3.5x improvement)
 - All target users have agents (solo devs using AI as coding partners)
 - CI/CD is not docket's lane (docs aren't build gates)
 - CLI was scaffolding to validate approach - now commit fully
 
 **Impact:**
+
 - Supersedes ADR-0001 (CLI Platform), ADR-0002 (Oclif Framework)
 - Removes 706 packages (72% reduction: 977 → 272)
 - Simpler architecture (one interface vs two)
 - Clearer value proposition ("invisible infrastructure")
 
 **Artifacts Created:**
+
 - docs/adr/adr-0004-mcp-only-architecture.md (created)
 - docs/adr/adr-0001-cli-platform-over-templates-only.md (updated status)
 - docs/adr/adr-0002-oclif-for-cli-framework.md (updated status)
@@ -35,6 +39,7 @@
 ---
 
 ### Task - In-Progress ⏳
+
 **ID:** task-20251013-2
 **Type:** Task
 **Status:** In-Progress (~40% complete)
@@ -45,6 +50,7 @@
 **What:** Update architecture overview from CLI-first to MCP-only design
 
 **Progress:**
+
 - ✅ Executive summary (lines 3-19)
 - ✅ Purpose section (lines 23-34)
 - ✅ Users section (lines 36-48)
@@ -73,6 +79,7 @@ Made good progress on intro sections, but components section is substantial.
 ---
 
 ### Task - Pending 📋
+
 **ID:** task-20251013-3
 **Type:** Task
 **Status:** Pending
@@ -82,21 +89,25 @@ Made good progress on intro sections, but components section is substantial.
 **What:** Handle CLI command spec files (4 files referencing deleted commands)
 
 **Files Affected:**
+
 - docs/specs/analyze-command.md
 - docs/specs/audit-command.md
 - docs/specs/review-command.md
 - docs/specs/analyze-command-behavior.md
 
 **Options:**
+
 1. **Archive** to `docs/archive/cli-specs/` (preserve history)
 2. **Convert** to MCP tool behavior specs (reuse scenarios for MCP tools)
 
 **Recommendation:** Option 2 (convert)
+
 - Behavioral scenarios still valuable (what docket should do)
 - Just need to update interface from CLI to MCP tool calls
 - Preserves work that went into defining behaviors
 
 **Next Steps:**
+
 1. Create docs/specs/mcp-tools/ directory
 2. For each spec, convert:
    - CLI command → MCP tool name
@@ -109,6 +120,7 @@ Made good progress on intro sections, but components section is substantial.
 ---
 
 ### Task - Pending 📋
+
 **ID:** task-20251013-4
 **Type:** Task
 **Status:** Pending
@@ -119,6 +131,7 @@ Made good progress on intro sections, but components section is substantial.
 
 **Known Locations (from audit):**
 16 files contain CLI references (from grep output earlier):
+
 - docs/guides/mcp-setup.md
 - docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md
 - docs/rfcs/rfc-0003-workflow-orchestration-for-multi-agent-tasks.md
@@ -130,6 +143,7 @@ Made good progress on intro sections, but components section is substantial.
 - docs/architecture/overview.md (covered by task-20251013-2)
 
 **Search Commands:**
+
 ```bash
 grep -r "docket audit" docs/
 grep -r "docket analyze" docs/
@@ -141,6 +155,7 @@ grep -r "oclif" docs/
 ```
 
 **Strategy:**
+
 1. Run comprehensive search to find all references
 2. Categorize by file type (guides, RFCs, specs, etc.)
 3. Update based on context:
@@ -154,6 +169,7 @@ grep -r "oclif" docs/
 ---
 
 ### Discovery - Captured 💡
+
 **ID:** disc-20251013-5
 **Type:** Discovery (Meta)
 **Status:** Captured → RFC Created
@@ -166,6 +182,7 @@ User quote: "This actually illustrates a point of friction that I want docket to
 
 **Context:**
 Experienced in real-time during documentation update:
+
 - Started with 4 clear todos
 - Discovered scope explosion (30+ edits needed)
 - No good way to safely pause/resume with full context
@@ -176,12 +193,14 @@ This could be docket's killer feature - solving documentation *workflow*, not ju
 
 **Action Taken:**
 Created RFC-0004: Work Artifact Capture and Surfacing
+
 - Proposes work journal (.docket/journal.md)
 - MCP tools: capture-work, surface-work, promote-work
 - Smart surfacing based on context
 - Promotion to formal docs (RFC, ADR, etc.)
 
 **Next Steps:**
+
 1. Dogfood this journal format during remaining doc updates
 2. Refine based on what works/doesn't
 3. Build MCP tools for capture/surface if validated
@@ -191,6 +210,7 @@ Created RFC-0004: Work Artifact Capture and Surfacing
 ---
 
 ### Question - Open ❓
+
 **ID:** q-20251013-6
 **Type:** Question
 **Status:** Open
@@ -207,6 +227,7 @@ A. **Finish now** (~20 min) - Complete one thing fully
 B. **Switch tasks** - Tackle specs conversion, return later
 
 **Trade-offs:**
+
 - Option A: Maintains flow, completes one doc fully, but tedious
 - Option B: Variety, spreads progress, but context switch
 
@@ -215,6 +236,7 @@ B. **Switch tasks** - Tackle specs conversion, return later
 ---
 
 ### Task - Completed ✅
+
 **ID:** task-20251013-2
 **Type:** Task
 **Status:** Completed
@@ -224,6 +246,7 @@ B. **Switch tasks** - Tackle specs conversion, return later
 **What:** Updated architecture overview from CLI-first to MCP-only design
 
 **Final State:** 100% complete (was 40%)
+
 - ✅ Executive summary
 - ✅ Purpose section
 - ✅ Users section
@@ -256,6 +279,7 @@ B. **Switch tasks** - Tackle specs conversion, return later
 **Tokens remaining:** 47K (24% of budget)
 
 **What Got Done:**
+
 1. ✅ ADR-0004: MCP-only architecture decision (3.1K lines)
 2. ✅ ADR-0001/0002: Updated to superseded status
 3. ✅ RFC-0004: Work capture and surfacing (5.3K lines)
@@ -263,6 +287,7 @@ B. **Switch tasks** - Tackle specs conversion, return later
 5. ✅ Architecture overview: Complete MCP-only rewrite (532 lines)
 
 **Git Status:**
+
 ```
 Modified files (5):
 - docs/adr/adr-0001-cli-platform-over-templates-only.md
@@ -277,6 +302,7 @@ New files (3):
 
 **Commit Strategy:**
 Suggest 2 logical commits:
+
 1. **feat: add ADR-0004 and RFC-0004**
    - docs/adr/adr-0004-mcp-only-architecture.md (new)
    - docs/rfcs/rfc-0004-work-artifact-capture-and-surfacing.md (new)
@@ -294,22 +320,27 @@ Suggest 2 logical commits:
 **Remaining Work (from original plan):**
 
 ### Task 6: Convert CLI Command Specs ⏳
+
 **Files:** docs/specs/ (4 files)
+
 - analyze-command.md (11KB)
 - audit-command.md (16KB)
 - review-command.md (17KB)
 - analyze-command-behavior.md (1KB)
 
 **Options:**
+
 1. **Archive** to docs/archive/cli-specs/ (preserve history)
 2. **Convert** to MCP tool specs (reuse behavioral scenarios)
 
 **Recommendation:** Convert (Option 2)
+
 - Scenarios are valuable (what docket should do)
 - Just update interface: CLI → MCP tools
 - Preserves behavioral documentation work
 
 **Steps:**
+
 1. Create docs/specs/mcp-tools/ directory
 2. For each spec:
    - Rename to match tool (analyze-tool.md, audit-quality-tool.md, etc.)
@@ -321,9 +352,11 @@ Suggest 2 logical commits:
 **Estimated:** 45-60 minutes
 
 ### Task 7: Update Remaining CLI References ⏳
+
 **Scope:** docs/** (16 files had references)
 
 **Search commands to run:**
+
 ```bash
 grep -r "docket audit" docs/
 grep -r "docket analyze" docs/
@@ -332,6 +365,7 @@ grep -r "oclif" docs/
 ```
 
 **Known locations:**
+
 - docs/guides/mcp-setup.md (may have CLI examples)
 - docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md (intentional CLI/MCP comparison)
 - docs/rfcs/rfc-0003-workflow-orchestration-for-multi-agent-tasks.md (may reference CLI)
@@ -340,6 +374,7 @@ grep -r "oclif" docs/
 - docs/README.md (may have CLI references)
 
 **Strategy:**
+
 1. Run comprehensive grep search
 2. Categorize by update need (some references may be historical/intentional)
 3. Update forward-looking references
@@ -353,6 +388,7 @@ grep -r "oclif" docs/
 
 **The Problem We Solved:**
 At 16:00, we hit "low context" warning with:
+
 - 5 completed tasks
 - 2 pending tasks
 - 8 modified/new files
@@ -361,6 +397,7 @@ At 16:00, we hit "low context" warning with:
 
 **The Solution (RFC-0004 in action):**
 This journal provides:
+
 1. ✅ Complete record of what was accomplished
 2. ✅ Clear resume points for pending work
 3. ✅ Commit strategy with logical grouping
@@ -369,6 +406,7 @@ This journal provides:
 6. ✅ No work lost or forgotten
 
 **Next session starts with:**
+
 - Read this journal
 - Run git status to verify state
 - Execute commit strategy
@@ -387,6 +425,7 @@ This journal provides:
 ## 2025-10-13 Session (Continued): Remaining Tasks + MCP Architecture Discovery
 
 ### Task - Completed ✅
+
 **ID:** task-20251013-3
 **Type:** Task
 **Status:** Completed
@@ -396,6 +435,7 @@ This journal provides:
 **What:** Converted CLI command specs to MCP tool specs
 
 **Work Done:**
+
 - Created 3 new MCP tool specs:
   - docs/specs/mcp-tools/analyze-tool.md
   - docs/specs/mcp-tools/audit-quality-tool.md
@@ -409,6 +449,7 @@ This journal provides:
 ---
 
 ### Task - Completed ✅
+
 **ID:** task-20251013-4
 **Type:** Task
 **Status:** Completed
@@ -418,6 +459,7 @@ This journal provides:
 **What:** Updated all remaining CLI references across documentation
 
 **Work Done:**
+
 - docs/README.md - Updated for MCP-only product
 - docs/adr/adr-0003-agent-agnostic-architecture.md - Added evolution note
 - docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md - Added superseded notice
@@ -429,6 +471,7 @@ This journal provides:
 ---
 
 ### Task - Completed ✅
+
 **ID:** task-20251013-impl
 **Type:** Task
 **Status:** Completed
@@ -439,11 +482,13 @@ This journal provides:
 
 **Work Done:**
 Three logical commits created:
+
 1. `refactor: remove CLI commands and oclif framework` - Deleted CLI, removed 706 packages
 2. `feat: add MCP server implementation` - New MCP server + tools + templates
 3. `docs: update documentation for MCP-only product` - Root README + .gitignore
 
 **Impact:**
+
 - Clean working tree
 - 9 commits total documenting complete MCP-only transition
 - Ready to push to origin
@@ -451,6 +496,7 @@ Three logical commits created:
 ---
 
 ### Discovery - Captured 💡
+
 **ID:** disc-20251013-7
 **Type:** Discovery (Architecture)
 **Status:** Captured - Needs Research/RFC
@@ -476,12 +522,14 @@ MCP servers expose three capabilities, each with distinct purposes:
    - Pattern: User says "review RFC" → agent invokes prompt → gets full context
 
 **Why This Matters:**
+
 - Solves workflow orchestration more elegantly than CLI commands (RFC-0003)
 - `/review-rfc` (CLI) = `Review RFC` prompt (MCP)
 - Resources make documentation discoverable and cacheable
 - Prompts pre-package intelligence agents can invoke
 
 **Example - The Beautiful Pattern:**
+
 ```
 User: "Can you create a preview db branch?"
   ↓
@@ -503,6 +551,7 @@ Agent: [Report] "Done! Branch created, .env updated"
 ---
 
 ### Discovery - Captured 💡
+
 **ID:** disc-20251013-8
 **Type:** Discovery (Use Cases)
 **Status:** Captured - Needs Validation
@@ -513,6 +562,7 @@ Agent: [Report] "Done! Branch created, .env updated"
 **Scenarios Explored:**
 
 **✅ Docket CAN Help (Core):**
+
 1. Session recovery: "Haven't looked at this in a while - summary + overview?"
 2. Resume work: "Can you resume work plz?" (planned/unplanned interruption)
 3. Documentation health: "Is our documentation up-to-date?"
@@ -526,6 +576,7 @@ Agent: [Report] "Done! Branch created, .env updated"
 9. Security: "Scan for PHI" (policy docs define what to check)
 
 **❌ Docket Does NOT Execute:**
+
 - Infrastructure operations (database branching, deployment)
 - Security scanning (agent does this using docket's policy docs)
 - Code modification (agent does this using docket's standards docs)
@@ -535,11 +586,13 @@ Docket provides **context** (discovery + instructions), not **execution**.
 Documentation becomes **configuration for AI agents**.
 
 **Pattern:**
+
 ```
 Docket provides documentation → Agent reads documentation → Agent acts intelligently
 ```
 
 **Examples:**
+
 - Code standards docs → Agent enforces standards
 - Design system docs → Agent checks consistency
 - Runbook docs → Agent follows procedures
@@ -548,30 +601,35 @@ Docket provides documentation → Agent reads documentation → Agent acts intel
 ---
 
 ### Next Steps - Captured 📋
+
 **ID:** next-20251013-9
 **Type:** Next Steps
 **Status:** Pending
 **Created:** 2025-10-13 ~18:15
 
 **Immediate (This Week):**
+
 1. Research MCP SDK capabilities (resources and prompts in depth)
 2. Create `docs/research/mcp-prompts-and-resources.md` exploration doc
 3. Design prompt structure for common workflows
 4. Prototype one prompt (e.g., "Review RFC") and one resource (e.g., `runbook://`)
 
 **Short-term (Next Sprint):**
+
 1. Draft RFC-0005: Enhanced MCP Architecture (tools + resources + prompts)
 2. Implement resources for runbooks, templates, standards
 3. Implement 3-5 core prompts (Resume Work, Review RFC, Plan Feature, Create ADR, Onboard Developer)
 4. Update ADR-0004 with lessons learned
 
 **Medium-term:**
+
 1. Consider `docs/explorations/` as permanent doc type (space for fuzzy thinking)
 2. Create exploration template
 3. Workflow: exploration → research → RFC → implementation
 
 **Key Question:**
 How do we surface this journal when resuming work?
+
 - Answer documented below in "How to Resume" section
 
 ---
@@ -581,6 +639,7 @@ How do we surface this journal when resuming work?
 **When you come back to docket in a few hours (or days), do this:**
 
 ### Step 1: Read the Journal
+
 ```bash
 # In your terminal or ask your agent:
 cat .docket/journal.md
@@ -590,18 +649,21 @@ cat .docket/journal.md
 ```
 
 ### Step 2: Look for These Markers
+
 - **Discoveries 💡** - New insights that might lead to RFCs/ADRs
 - **Next Steps 📋** - Concrete actions ready to start
 - **Open Questions ❓** - Decisions that need your input
 - **In-Progress ⏳** - Unfinished work with resume points
 
 ### Step 3: Check Git Status
+
 ```bash
 git status
 git log --oneline -5
 ```
 
 ### Step 4: Ask Your Agent to Surface Context
+
 ```
 "I'm resuming work on docket. Read .docket/journal.md and tell me:
 - What did we accomplish last session?
@@ -610,11 +672,13 @@ git log --oneline -5
 ```
 
 **Agent will synthesize:**
+
 - Last session's work (commits created, tasks completed)
 - Discoveries that need action (MCP resources/prompts exploration)
 - Clear next steps (research MCP capabilities, draft RFC-0005)
 
 ### Future: When docket has `surface-work` tool
+
 ```
 Agent: "Use docket surface-work tool"
 Returns: {
@@ -637,6 +701,7 @@ Returns: {
 **Tokens remaining:** ~82K (41% of budget)
 
 **What Got Done Today (Continuation Session):**
+
 1. ✅ Spec conversion (4 files → 3 MCP specs + archive)
 2. ✅ Doc updates (5 files with MCP-only references)
 3. ✅ Implementation commits (3 commits for MCP server)
@@ -645,6 +710,7 @@ Returns: {
 6. 💡 "Beautiful Pattern" confirmed (discovery → runbook → execute → report)
 
 **Major Discoveries:**
+
 - MCP resources for documentation (not just tools)
 - MCP prompts for workflows (slash-commands via MCP)
 - Clear scope boundary (context not execution)
@@ -655,20 +721,24 @@ Returns: {
 *Session ended: 2025-10-13 ~18:30*
 *Resume: Read this journal, pick from "Next Steps", or ask agent to surface context*
 *Key discovery: MCP prompts/resources architecture needs RFC-0005*
+
 ## 2025-10-13T20:06:05.225Z
 
 **Summary:** Enhanced resume-work prompt and added capture-work tool
 
 **Key Discoveries:**
+
 - Resource descriptions can nudge agent behavior
 - Easy capture tool + opinionated descriptions = better journaling
 
 **Next Steps:**
+
 - Test capture-work integration
 - Update documentation
 - Update journal with findings
 
 **Open Questions:**
+
 - Should we add capture-work to other MCP workflow prompts?
 
 ---
@@ -678,6 +748,7 @@ Returns: {
 **Summary:** Phase 4 of RFC-0005: Enhanced resume-work prompt architecture and implemented capture-work tool to solve the journal-writing incentive problem.
 
 **Key Discoveries:**
+
 - Critical gap identified: /generate-next-prompt has full conversation history, resume-work only has written artifacts
 - Solution pattern: Opinionated resource descriptions + frictionless capture tool = better journaling
 - Resource descriptions can shape agent behavior through well-crafted guidance text
@@ -686,6 +757,7 @@ Returns: {
 - This completes the feedback loop: easy capture → rich journal → effective resume → incentive to capture more
 
 **Next Steps:**
+
 - Test resources end-to-end (verify journal resource, template discovery, URI security)
 - Consider: Should other MCP prompts also encourage capture-work usage?
 - Update README with resources/prompts examples
@@ -694,6 +766,7 @@ Returns: {
 - Dogfood: Use capture-work during remaining RFC-0005 work to validate UX
 
 **Open Questions:**
+
 - Should capture-work be mentioned in other prompt outputs to build habit?
 - Does resume-work need examples of good vs bad journal entries?
 - Should we create a start-session prompt that reminds agents about journaling?
@@ -705,6 +778,7 @@ Returns: {
 **Summary:** Completed end-to-end testing of MCP resources and prompts - all systems working
 
 **Key Discoveries:**
+
 - Resources: 14 discovered (1 journal + 13 templates), all read correctly
 - Security: Path traversal protection working perfectly (blocked .., ~)
 - Resume-work generates 63KB prompts including full journal context
@@ -713,6 +787,7 @@ Returns: {
 - capture-work + resume-work pattern works seamlessly
 
 **Next Steps:**
+
 - Consider: Should resume-work tail journal instead of including full content for large journals?
 - Update README with resources/prompts examples
 - Write "Using Docket Workflows" guide showing the patterns
@@ -720,6 +795,7 @@ Returns: {
 - RFC-0005 Phase 4 nearly complete - just documentation remaining
 
 **Open Questions:**
+
 - Journal size management: When to summarize vs include full content?
 - Should we add journal size to resource metadata?
 
@@ -730,6 +806,7 @@ Returns: {
 **Summary:** Implemented research-topic MCP prompt for structured research workflows
 
 **Key Discoveries:**
+
 - Research workflow is perfect use case for MCP prompts (user-invoked, structured guidance)
 - Prompt provides 3-phase process: Discovery (WebSearch/WebFetch) → Synthesis → Documentation
 - Auto-generates filename from topic (effective-documentation-patterns-for-ai-agents.md)
@@ -739,12 +816,14 @@ Returns: {
 - This replaces need for custom research-analyst agent - uses MCP-native pattern
 
 **Next Steps:**
+
 - Test research-topic prompt with real research task
 - Consider: Should other prompts (review-rfc, plan-feature) also mention capture-work?
 - Commit research-topic implementation
 - Update README/docs with research workflow examples
 
 **Open Questions:**
+
 - Should research prompts automatically use capture-work at the end?
 - Do we need a follow-up prompt for refining research docs?
 
@@ -755,6 +834,7 @@ Returns: {
 **Summary:** Completed first real-world test of research-topic prompt - researched project naming
 
 **Key Discoveries:**
+
 - research-topic prompt worked end-to-end! Guided through 3 phases successfully
 - Docket name has moderate concerns: NPM available but legal associations dominate
 - Top alternative: "docent" (9.0/10 score vs docket 4.2/10)
@@ -763,6 +843,7 @@ Returns: {
 - Quality: Comprehensive analysis with comparison matrix, recommendations, decision framework
 
 **Next Steps:**
+
 - Review research findings - decide on name change or mitigation
 - If changing to docent: run validation, refactor code, update brand
 - Commit research document
@@ -770,6 +851,7 @@ Returns: {
 - Test other MCP prompts (review-rfc, plan-feature)
 
 **Open Questions:**
+
 - Should we change to "docent" given the 5/5 score on decision framework?
 - Cost of rebranding now vs later?
 
@@ -780,6 +862,7 @@ Returns: {
 **Summary:** Completed project rebrand from docket to docent
 
 **Key Discoveries:**
+
 - Rebrand executed smoothly - 12 files updated in one atomic commit
 - New branding: "Docent - Your guide through the codebase"
 - All URI schemes updated: docket:// → docent://
@@ -788,6 +871,7 @@ Returns: {
 - Research-driven decision: docent 9.0/10 vs docket 4.2/10
 
 **Next Steps:**
+
 - Push changes to GitHub
 - Update GitHub repository name from tnez/docket to tnez/docent
 - Consider: Publish @tnezdev/docent to NPM
@@ -801,21 +885,43 @@ Returns: {
 **Summary:** Implemented resume-work prompt with project health check guidance
 
 **Key Discoveries:**
+
 - resume-work prompt was already fully implemented with journal, git status, commits, and TODO scanning
 - Key architectural insight: docent provides generic intelligence ("check CI"), projects provide specifics ("run gh run list")
 - Health checks should reference project runbooks via docent://runbook/* resources
 - Pattern: Discovery (docent suggests) → Context (runbook details) → Execution (agent acts)
 
 **Next Steps:**
+
 - Commit the resume-work enhancement
 - Create example runbook for docent project (check-ci-health.md)
 - Test resume-work prompt in real session recovery scenario
 - Consider adding RFC-0005 CI status integration as optional enhancement
 
 **Open Questions:**
+
 - Should we create a default health check runbook template?
 - Do we need a project-health resource (docent://health/current)?
 - Should health checks be part of audit tool output?
 
 ---
 
+## 2025-10-14T12:20:58.759Z
+
+**Summary:** Enhanced MCP resource discovery to dynamically list all doc types with contextual descriptions
+
+**Key Discoveries:**
+
+- Resource URIs had typo: docket:// instead of docent:// in parser
+- Agents need contextual descriptions to choose runbooks/guides without reading full docs
+- When to Use sections provide perfect guidance for resource listings
+- Dynamic discovery scales better than hard-coded resource lists
+
+**Next Steps:**
+
+- Test reading specific resources (ADR, RFC, guide)
+- Create example runbook with When to Use section
+- Update RFC-0005 documentation with new resource types
+- Consider adding metadata tags for better resource filtering
+
+---

@@ -17,6 +17,7 @@ During the manual review of RFC-0002, we documented every step required to condu
 ### 1. Manual Context Gathering (15 minutes)
 
 **What we did manually:**
+
 - Identified 5+ related documents to provide as context
   - ADR-0003 (agent-agnostic architecture)
   - Architecture overview
@@ -27,12 +28,14 @@ During the manual review of RFC-0002, we documented every step required to condu
 - Decided which docs to include in review prompt
 
 **Pain:**
+
 - No automated way to find related docs
 - Had to manually remember what exists
 - Uncertain if we included everything relevant
 - Time-consuming and error-prone
 
 **What `docent review rfc-0002` should do:**
+
 ```bash
 # Automated context gathering
 docent review docs/rfcs/rfc-0002-... --perspective architecture
@@ -52,6 +55,7 @@ docent review docs/rfcs/rfc-0002-... --perspective architecture
 ### 2. Review Prompt Construction (10 minutes)
 
 **What we did manually:**
+
 - Wrote detailed prompt specifying:
   - Review objectives
   - Focus areas (6 categories)
@@ -61,12 +65,14 @@ docent review docs/rfcs/rfc-0002-... --perspective architecture
 - Structured output requirements
 
 **Pain:**
+
 - Generic "review this" produces generic feedback
 - Need domain knowledge to ask right questions
 - Prompt quality determines review quality
 - Recreating wheel each time
 
 **What `docent review` should provide:**
+
 - Pre-built review templates for document types:
   - RFC architectural review
   - RFC implementation feasibility review
@@ -76,6 +82,7 @@ docent review docs/rfcs/rfc-0002-... --perspective architecture
 - Consistent output format across reviews
 
 **Example:**
+
 ```bash
 docent review rfc-0002 --perspective architecture
 # Uses: templates/review-prompts/rfc-architecture.md
@@ -89,6 +96,7 @@ docent review rfc-0002 --perspective architecture
 ### 3. Agent Launching and Management (5 minutes)
 
 **What we did manually:**
+
 - Launched architecture-reviewer agent
 - Discovered it wasn't suited for document review
 - Created custom general-purpose agent with RFC-specific prompt
@@ -96,6 +104,7 @@ docent review rfc-0002 --perspective architecture
 - Couldn't access first agent's results
 
 **Pain:**
+
 - No visibility into agent progress
 - No way to check agent status
 - Can't see partial results
@@ -103,6 +112,7 @@ docent review rfc-0002 --perspective architecture
 - Visibility mismatch (user sees completion, agent doesn't have results)
 
 **What workflow orchestration should provide:**
+
 ```bash
 # Launch with status tracking
 docent workflow start rfc-review --target rfc-0002
@@ -129,6 +139,7 @@ docent workflow results rfc-review-abc123
 ### 4. Feedback Processing (10 minutes)
 
 **What we did manually:**
+
 - Read through comprehensive review output
 - Categorized issues (critical, major, minor)
 - Prioritized which to address
@@ -136,12 +147,14 @@ docent workflow results rfc-review-abc123
 - Manually edited RFC to address each issue
 
 **Pain:**
+
 - All manual editing
 - Easy to miss issues
 - No tracking of which issues addressed
 - No verification fixes are complete
 
 **What should be automated:**
+
 ```bash
 # Review produces structured feedback
 docent workflow results rfc-review-abc123 --format json
@@ -172,16 +185,19 @@ docent review-issue resolve BLOCK-001
 ### 5. Status Management (2 minutes)
 
 **What we did manually:**
+
 - Updated RFC status from "Draft" to "In Review"
 - Added "Reviewed" date
 - Added review notes
 
 **Pain:**
+
 - Easy to forget
 - Inconsistent metadata updates
 - No audit trail of review iterations
 
 **What should be automated:**
+
 ```bash
 # Automatic status transitions
 docent workflow complete rfc-review-abc123
@@ -200,12 +216,14 @@ docent workflow complete rfc-review-abc123
 ### 6. Missing: Result Preservation
 
 **Pain discovered:**
+
 - Review agent output only visible in UI temporarily
 - No permanent record of review findings
 - Can't reference review later
 - Can't track if issues were addressed
 
 **What should exist:**
+
 ```bash
 # Review workflow stores results
 docs/rfcs/rfc-0002-add-behavioral-specification-support.md
@@ -223,6 +241,7 @@ docs/rfcs/.reviews/rfc-0002-2025-10-13-architecture.md
 ## Desired Workflow (Ideal State)
 
 ### Manual Review Process (Current - 45 min)
+
 ```bash
 1. Identify related docs (15 min)
 2. Craft review prompt (10 min)
@@ -233,6 +252,7 @@ docs/rfcs/.reviews/rfc-0002-2025-10-13-architecture.md
 ```
 
 ### Automated Review Process (Future - 30 sec + editing)
+
 ```bash
 # Single command
 docent review docs/rfcs/rfc-0002-... --perspective architecture
@@ -297,11 +317,13 @@ docent review docs/rfcs/rfc-0002-... --perspective architecture
 ### User Experience Goals
 
 **Single command invocation:**
+
 ```bash
 docent review <document> [--perspective <type>]
 ```
 
 **Clear progress indication:**
+
 ```
 ⏳ Gathering context... (5 related documents found)
 ⏳ Launching architecture review...
@@ -310,6 +332,7 @@ docent review <document> [--perspective <type>]
 ```
 
 **Actionable output:**
+
 ```
 Review Results: docs/rfcs/.reviews/rfc-0002-2025-10-13-architecture.md
 

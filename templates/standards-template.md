@@ -941,6 +941,7 @@ test('creates user with valid input', async () => {
 **Tests should not depend on each other.**
 
 Each test should:
+
 - Set up its own data
 - Clean up after itself
 - Run in any order
@@ -959,6 +960,7 @@ Each test should:
 Configuration: `{{PATH_TO_LINTER_CONFIG}}`
 
 Run manually:
+
 ```bash
 {{LINT_COMMAND}}
 ```
@@ -970,6 +972,7 @@ Run manually:
 Configuration: `{{PATH_TO_FORMATTER_CONFIG}}`
 
 Run manually:
+
 ```bash
 {{FORMAT_COMMAND}}
 ```
@@ -983,6 +986,7 @@ Auto-format on save: [TODO: Document editor setup]
 **We use {{TYPE_CHECKER}} for type checking.**
 
 Run manually:
+
 ```bash
 {{TYPE_CHECK_COMMAND}}
 ```
@@ -994,11 +998,13 @@ Run manually:
 **Git pre-commit hooks enforce standards automatically.**
 
 Setup:
+
 ```bash
 {{HOOK_INSTALL_COMMAND}}
 ```
 
 What runs on commit:
+
 - [ ] Linting
 - [ ] Formatting
 - [ ] Type checking
@@ -1009,6 +1015,7 @@ What runs on commit:
 **CI/CD pipeline enforces all standards.**
 
 Every PR must pass:
+
 - [ ] Linting
 - [ ] Formatting check
 - [ ] Type checking
@@ -1024,6 +1031,7 @@ Every PR must pass:
 Use this checklist when reviewing code:
 
 ### General
+
 - [ ] Code follows single responsibility principle
 - [ ] Functions are focused and reasonably short
 - [ ] Nesting depth is reasonable
@@ -1031,35 +1039,41 @@ Use this checklist when reviewing code:
 - [ ] Changes include tests
 
 ### Naming
+
 - [ ] Variables and functions have clear, descriptive names
 - [ ] Names follow project conventions
 - [ ] No abbreviations (except standard ones)
 - [ ] Boolean names are affirmative
 
 ### Structure
+
 - [ ] Code is organized logically
 - [ ] Imports are organized correctly
 - [ ] Early returns reduce nesting
 - [ ] Guard clauses validate inputs
 
 ### Error Handling
+
 - [ ] Errors are handled explicitly
 - [ ] Error messages are actionable
 - [ ] Error types are appropriate
 
 ### Comments
+
 - [ ] Comments explain WHY, not WHAT
 - [ ] No obvious or outdated comments
 - [ ] Public APIs have documentation
 - [ ] Complex logic is explained
 
 ### Testing
+
 - [ ] Tests cover business requirements
 - [ ] Test names are descriptive
 - [ ] Tests are independent
 - [ ] Edge cases are tested
 
 ### Standards Compliance
+
 - [ ] Code passes linting
 - [ ] Code is formatted correctly
 - [ ] Types are used correctly (if applicable)

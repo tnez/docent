@@ -1,6 +1,7 @@
 # Spec: Review Command
 
 ## Metadata
+
 - **Status:** draft
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
@@ -20,9 +21,11 @@ This command helps maintain documentation quality over time by catching docs tha
 ## Behaviors
 
 ### Scenario: Healthy Documentation
+
 **Given:** A project with recently updated documentation aligned with current code
 **When:** User runs `docent review`
 **Then:**
+
 - Command analyzes project and checks documentation freshness
 - Displays health score of 80-100 (green)
 - Reports "All documentation is relatively fresh"
@@ -31,6 +34,7 @@ This command helps maintain documentation quality over time by catching docs tha
 - Exit code 0
 
 #### Example:
+
 ```bash
 docent review
 ```
@@ -54,9 +58,11 @@ Review completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: Stale Documentation Detected
+
 **Given:** A project with documentation that hasn't been updated in months
 **When:** User runs `docent review`
 **Then:**
+
 - Detects documents not updated recently (using git commit dates or filesystem mtime)
 - Groups stale docs by severity:
   - High (🔴): 180+ days (6+ months)
@@ -68,6 +74,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 - Provides recommendations to review and update old docs
 
 #### Example:
+
 ```bash
 docent review
 ```
@@ -102,9 +109,11 @@ Review completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: Framework Drift Detected
+
 **Given:** A project using React and Express, but architecture docs only mention an old framework (Angular)
 **When:** User runs `docent review`
 **Then:**
+
 - Analyzes project to detect current frameworks (React, Express)
 - Scans architecture/overview docs for mentions of these frameworks
 - If frameworks aren't mentioned, reports medium-severity drift issue
@@ -113,6 +122,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 - Recommends updating architecture docs
 
 #### Example output snippet:
+
 ```
 ⚠️  Drift Issues
 
@@ -123,9 +133,11 @@ Review completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: Recent Code Changes Without Doc Updates
+
 **Given:** A git repository where 15 source files changed in last 30 days, but 0 documentation files changed
 **When:** User runs `docent review`
 **Then:**
+
 - Uses git to find files changed in last 30 days
 - Filters to source code files (.ts, .js, .py, .rs, .go, .java)
 - Excludes docs/, test files, .md files, package.json
@@ -134,6 +146,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 - Suggests reviewing recent changes and updating relevant docs
 
 #### Example output snippet:
+
 ```
 ⚠️  Drift Issues
 
@@ -144,15 +157,18 @@ Review completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: Testing Framework Not Documented
+
 **Given:** A project using Jest and Vitest, but testing docs don't mention them
 **When:** User runs `docent review`
 **Then:**
+
 - Detects testing frameworks from analysis
 - Checks if testing documentation mentions these frameworks
 - Reports low-severity drift if frameworks not mentioned
 - Lists affected testing documentation files
 
 #### Example output snippet:
+
 ```
 ⚠️  Drift Issues
 
@@ -163,9 +179,11 @@ Review completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: No Documentation Directory
+
 **Given:** A project that has never run `docent init`
 **When:** User runs `docent review`
 **Then:**
+
 - Detects docs/ directory doesn't exist
 - Returns health score of 0
 - Reports high-severity drift issue: "No documentation directory found"
@@ -173,6 +191,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 - Suggests running `docent init`
 
 #### Example:
+
 ```bash
 docent review
 ```
@@ -198,9 +217,11 @@ Review completed at 10/13/2025, 3:45:00 PM
 ```
 
 ### Scenario: Git Repository with Accurate Staleness Detection
+
 **Given:** A git repository where docs were updated 200 days ago
 **When:** User runs `docent review`
 **Then:**
+
 - Detects .git directory exists
 - For each doc file, runs `git log -1 --format=%ct "filepath"` to get last commit timestamp
 - Uses commit date (more accurate than filesystem mtime)
@@ -208,9 +229,11 @@ Review completed at 10/13/2025, 3:45:00 PM
 - Reports staleness with correct timeframe
 
 ### Scenario: Non-Git Project with Filesystem Fallback
+
 **Given:** A project without git (no .git directory)
 **When:** User runs `docent review`
 **Then:**
+
 - Detects no .git directory
 - Falls back to filesystem mtime for staleness detection
 - Reads file stats with `fs.statSync()`
@@ -218,18 +241,22 @@ Review completed at 10/13/2025, 3:45:00 PM
 - Reports staleness (may be less accurate if files copied/moved)
 
 ### Scenario: Git Command Fails (Graceful Fallback)
+
 **Given:** A git repository where git command fails (permissions, corrupted repo)
 **When:** User runs `docent review` and git command throws error
 **Then:**
+
 - Catches error from `execSync('git log ...')`
 - Falls back to filesystem mtime for that file
 - Continues processing remaining files
 - Completes review successfully (no crash)
 
 ### Scenario: JSON Output for Agent Integration
+
 **Given:** Any project
 **When:** User runs `docent review --output json`
 **Then:**
+
 - Outputs valid JSON to stdout (no progress messages, no colors)
 - JSON structure matches `ReviewResult` interface:
   - `staleDocuments[]`: Array with file, lastModified, daysSinceUpdate, severity, relatedCode (optional)
@@ -241,6 +268,7 @@ Review completed at 10/13/2025, 3:45:00 PM
 - Exit code 0
 
 #### Example:
+
 ```bash
 docent review --output json
 ```
@@ -281,39 +309,48 @@ docent review --output json
 ```
 
 ### Scenario: Custom Documentation Directory
+
 **Given:** A project using a non-standard docs directory (e.g., "documentation")
 **When:** User runs `docent review --docs-dir documentation`
 **Then:**
+
 - Scans "documentation/" instead of "docs/"
 - All other behavior remains the same
 
 #### Example:
+
 ```bash
 docent review --docs-dir documentation --output json
 ```
 
 ### Scenario: Analyze Non-Current Directory
+
 **Given:** User wants to review a different project
 **When:** User runs `docent review --path /path/to/other/project`
 **Then:**
+
 - Reviews specified directory instead of current directory
 - Git commands run in specified directory context
 
 #### Example:
+
 ```bash
 docent review --path ~/projects/my-app
 ```
 
 ### Scenario: Many Stale Documents with Truncation
+
 **Given:** A project with 10 high-severity stale documents
 **When:** User runs `docent review`
 **Then:**
+
 - Shows first 5 stale documents in that severity level
 - Appends "... and 5 more" to indicate truncation
 - Prevents overwhelming output
 - Full list available in JSON output
 
 #### Example output snippet:
+
 ```
   🔴 Not updated in 6+ months:
     • doc1.md (7 months ago)
@@ -325,16 +362,20 @@ docent review --path ~/projects/my-app
 ```
 
 ### Scenario: Time Formatting
+
 **Given:** Documents with various ages
 **When:** Displayed in human output
 **Then:**
+
 - Days < 30: "X days ago" (e.g., "15 days ago")
 - Days 30-59: "1 month ago"
 - Days 60-364: "X months ago" (e.g., "3 months ago")
 - Days 365+: "X year(s) ago" (e.g., "1 year ago", "2 years ago")
 
 ### Scenario: Health Score Calculation Example
+
 **Given:** A project with:
+
 - 2 high-severity stale docs (lose 10 points each = 20)
 - 3 medium-severity stale docs (lose 5 points each = 15)
 - 1 medium-severity drift issue (lose 10 points = 10)
@@ -342,6 +383,7 @@ docent review --path ~/projects/my-app
 
 **When:** Score is calculated
 **Then:**
+
 - Base: 100
 - Stale deductions: 20 + 15 = 35
 - Drift deductions: 10 + 5 = 15
@@ -349,6 +391,7 @@ docent review --path ~/projects/my-app
 - Score: 50/100 (yellow, needs attention)
 
 ## Acceptance Criteria
+
 - [ ] Command runs without errors on typical projects
 - [ ] Both human and JSON output modes work correctly
 - [ ] Health score calculated correctly (0-100, properly weighted)
@@ -375,6 +418,7 @@ docent review --path ~/projects/my-app
 ## Technical Notes
 
 **Staleness Detection Algorithm:**
+
 - **Git repos:** Uses `git log -1 --format=%ct "filepath"` to get last commit Unix timestamp
   - Converts to Date object: `new Date(parseInt(timestamp) * 1000)`
   - Falls back to filesystem mtime if git command fails or file not in git
@@ -386,18 +430,21 @@ docent review --path ~/projects/my-app
   - Low: >= 30 days
 
 **Framework Drift Detection:**
+
 - Gets frameworks from `analysis.frameworks`
 - Searches for architecture/overview files
 - Reads file content and checks if framework names mentioned (case-insensitive)
 - If 0 frameworks mentioned but frameworks detected: medium severity
 
 **Testing Drift Detection:**
+
 - Filters frameworks to `type === 'testing'`
 - Searches for files containing "test" in name
 - Checks if testing framework names mentioned in content
 - Low severity (less critical than framework drift)
 
 **Recent Change Drift Detection (Git Only):**
+
 - Command: `git log --since="30 days ago" --name-only --pretty=format: | sort -u`
 - Filters to code files: `.ts`, `.js`, `.py`, `.rs`, `.go`, `.java`
 - Excludes: `docs/`, files with "test", `.md`, `package.json`
@@ -405,6 +452,7 @@ docent review --path ~/projects/my-app
 - If 10+ code changes and 0 doc changes: medium severity
 
 **Health Score Weights:**
+
 - **Stale documents:**
   - High: -10 points per doc
   - Medium: -5 points per doc
@@ -416,11 +464,13 @@ docent review --path ~/projects/my-app
 - Clamped to 0-100 range
 
 **Git Command Error Handling:**
+
 - All `execSync` calls wrapped in try-catch
 - Silent fallback to filesystem or skip check
 - Ensures review completes even if git fails
 
 **Time Formatting Logic:**
+
 ```
 < 30 days: "X days ago"
 30-59 days: "1 month ago"
@@ -429,18 +479,21 @@ docent review --path ~/projects/my-app
 ```
 
 **Performance Considerations:**
+
 - Git commands run per-file for staleness (can be slow on large repos)
 - Framework drift only scans architecture files (not all docs)
 - Recent change drift runs single git log command (fast)
 - Content scanning for drift uses simple string matching (fast)
 
 **Integration with Other Commands:**
+
 - Uses `analyzeProject()` from analyze command
 - Complements `audit` command (audit = what's missing, review = what's stale/wrong)
 
 ## Test Hints
 
 **Unit Tests:**
+
 - Test staleness calculation with known timestamps
 - Test severity thresholds (30, 90, 180 days)
 - Test time formatting for various day ranges
@@ -451,6 +504,7 @@ docent review --path ~/projects/my-app
 - Mock git commands for predictable testing
 
 **Integration Tests:**
+
 - Test against real git repository with known commit history
 - Test against non-git project (filesystem mtime fallback)
 - Verify JSON output matches schema
@@ -459,6 +513,7 @@ docent review --path ~/projects/my-app
 - Test git command failure handling (corrupted repo, no git installed)
 
 **Edge Cases:**
+
 - Empty docs directory (no markdown files)
 - Git repository with no commit history for docs
 - Very recently created files (0 days since update)

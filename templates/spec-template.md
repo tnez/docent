@@ -1,6 +1,7 @@
 # Spec: [SPEC_TITLE]
 
 ## Metadata
+
 - **Status:** draft
 - **Created:** [CREATED_DATE]
 - **Updated:** [CREATED_DATE]
@@ -13,11 +14,13 @@
 ## Behaviors
 
 ### Scenario: [Primary Happy Path]
+
 **Given:** [Initial state or preconditions]
 **When:** [Action or event that triggers behavior]
 **Then:** [Expected outcomes and postconditions]
 
 #### Example:
+
 ```bash
 # Add example command or code showing the scenario
 ```
@@ -29,11 +32,13 @@
 ```
 
 ### Scenario: [Error or Edge Case]
+
 **Given:** [Different initial conditions]
 **When:** [Action that might fail or behave differently]
 **Then:** [Expected error handling or alternative behavior]
 
 ## Acceptance Criteria
+
 - [ ] [Criterion describing what must be true when feature is complete]
 - [ ] [Another criterion]
 - [ ] [Another criterion]

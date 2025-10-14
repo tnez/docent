@@ -29,6 +29,7 @@ During RFC-0002 architectural review, we documented the manual process required:
 | **Total overhead** | **32 min** | **Should be 30 seconds** |
 
 **The core problem:** Every multi-agent workflow requires:
+
 1. Gathering context from multiple sources
 2. Launching agents with proper prompts and context
 3. Tracking execution status and results
@@ -36,6 +37,7 @@ During RFC-0002 architectural review, we documented the manual process required:
 5. Updating document metadata automatically
 
 **Without orchestration:**
+
 - Developers repeat this manual work every time
 - Quality varies based on orchestrator's domain knowledge
 - No audit trail of what was reviewed when
@@ -43,11 +45,13 @@ During RFC-0002 architectural review, we documented the manual process required:
 - Easy to miss steps or forget status updates
 
 **Who is affected:**
+
 - Solo developers running reviews, generating docs, validating designs
 - Teams coordinating agent-assisted workflows
 - Anyone using docent for agent-driven development
 
 **Consequences of not solving:**
+
 - Time wasted on workflow mechanics instead of content
 - Inconsistent process quality across team members
 - Lost institutional knowledge (no review records)
@@ -111,6 +115,7 @@ Workflow orchestration adds three new capabilities to docent:
 **Architecture Principle:**
 
 Following ADR-0003 (agent-agnostic), workflows are:
+
 - **CLI-orchestrated** - Work with any agent through shell commands
 - **JSON-communicative** - Input/output via structured JSON
 - **Human-resumable** - Workflows can pause for human decision, then continue
@@ -485,6 +490,7 @@ docent workflow results <workflow-id> [--format json|markdown]
 **CLI Command Structure:**
 
 Add to `src/commands/workflow/`:
+
 - `src/commands/workflow/index.ts` - Base workflow command
 - `src/commands/workflow/start.ts` - Start workflow
 - `src/commands/workflow/status.ts` - Check status
@@ -622,11 +628,13 @@ Next Steps:
 **Description:** Use bash scripts to coordinate multi-agent workflows instead of workflow engine.
 
 **Pros:**
+
 - Simpler implementation
 - Familiar to developers
 - No new abstractions to learn
 
 **Cons:**
+
 - No state management (can't resume)
 - No audit trail
 - No structured results
@@ -640,11 +648,13 @@ Next Steps:
 **Description:** Integrate with existing workflow engines like Temporal or Apache Airflow.
 
 **Pros:**
+
 - Battle-tested workflow engine
 - Rich features (retries, distributed execution, etc.)
 - Mature ecosystem
 
 **Cons:**
+
 - Heavy dependency (separate service required)
 - Over-engineered for docent's needs
 - Complex setup for users
@@ -657,11 +667,13 @@ Next Steps:
 **Description:** Guided CLI prompts that walk users through each step.
 
 **Pros:**
+
 - User-friendly for humans
 - No YAML configuration needed
 - Step-by-step guidance
 
 **Cons:**
+
 - Not agent-consumable (interactive prompts break automation)
 - Can't resume or audit
 - Doesn't scale to complex workflows
@@ -674,11 +686,13 @@ Next Steps:
 **Description:** Add workflow features to existing review command instead of new workflow subsystem.
 
 **Pros:**
+
 - No new command namespace
 - Simpler for simple use cases
 - Less to learn
 
 **Cons:**
+
 - Doesn't generalize to non-review workflows
 - State management awkward to add retroactively
 - Can't compose multi-stage workflows
@@ -707,6 +721,7 @@ Workflow orchestration has minimal new security concerns:
    - **Mitigation:** Workflows run with user's file permissions, no privilege escalation
 
 **Best practices:**
+
 - Don't store secrets in workflow definitions
 - Review workflow YAML before running untrusted workflows
 - Use `.gitignore` to exclude `.docent/workflows/state/` from version control
@@ -731,12 +746,14 @@ Workflow orchestration adds minimal performance overhead:
    - Cached if context unchanged
 
 **Estimated workflow overhead:**
+
 - Start workflow: 1-2 seconds
 - Per stage transition: 100-500ms
 - Status check: <100ms
 - Total: <5 seconds for 4-stage workflow
 
 **Time savings:**
+
 - Manual orchestration: 30+ minutes
 - Automated orchestration: 30 seconds + agent time
 - **Net savings: 29+ minutes per workflow**
@@ -817,6 +834,7 @@ Workflow orchestration adds minimal performance overhead:
 No migration needed - this is a new feature. Existing docent functionality unchanged.
 
 **For existing docent users:**
+
 - No breaking changes
 - Workflow commands are additive
 - Can continue using `docent review`, `docent audit` as before
@@ -835,6 +853,7 @@ Goal: Basic workflow engine and RFC review workflow
 - **Agent integration:** Manual (user launches agent, pastes prompt)
 
 **Phase 1 Success:** Can run `docent workflow start rfc-review`, which:
+
 1. Gathers context automatically
 2. Outputs prompt for user to paste into Claude Code
 3. User manually launches agent
@@ -876,6 +895,7 @@ Goal: Generalize to other workflow types
 ### Backward Compatibility
 
 **No breaking changes:**
+
 - All existing commands work unchanged
 - Workflow subsystem is additive
 - Existing `docent review` continues to work (workflow is enhancement)

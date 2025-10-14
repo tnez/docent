@@ -146,6 +146,7 @@ cp .env.example .env
 ```
 
 Required environment variables:
+
 - `{{ENV_VAR_1}}` - {{DESCRIPTION}}
 - `{{ENV_VAR_2}}` - {{DESCRIPTION}}
 
@@ -164,6 +165,7 @@ Required environment variables:
 ```
 
 You should see:
+
 ```
 {{EXPECTED_OUTPUT}}
 ```
@@ -206,6 +208,7 @@ Start with these files to understand the codebase:
 ```
 
 **Key Files to Read**:
+
 - `{{KEY_FILE_1}}` - {{DESCRIPTION}}
 - `{{KEY_FILE_2}}` - {{DESCRIPTION}}
 - `{{KEY_FILE_3}}` - {{DESCRIPTION}}
@@ -254,11 +257,13 @@ This gets you familiar with the contribution workflow.
 [TODO: Link to good first issues]
 
 Look for issues tagged with:
+
 - `good first issue`
 - `beginner-friendly`
 - `documentation`
 
 **Recommended First Issues**:
+
 - {{ISSUE_TYPE_1}}: {{DESCRIPTION}}
 - {{ISSUE_TYPE_2}}: {{DESCRIPTION}}
 
@@ -285,16 +290,19 @@ Ask your onboarding buddy to recommend an issue.
 Spend time exploring:
 
 **Day 3**: {{AREA_1}}
+
 - Read: {{DOCS_TO_READ}}
 - Explore: {{CODE_TO_EXPLORE}}
 - Exercise: {{HANDS_ON_TASK}}
 
 **Day 4**: {{AREA_2}}
+
 - Read: {{DOCS_TO_READ}}
 - Explore: {{CODE_TO_EXPLORE}}
 - Exercise: {{HANDS_ON_TASK}}
 
 **Day 5**: {{AREA_3}}
+
 - Read: {{DOCS_TO_READ}}
 - Explore: {{CODE_TO_EXPLORE}}
 - Exercise: {{HANDS_ON_TASK}}
@@ -325,6 +333,7 @@ By end of week 1, you should have:
 [TODO: Describe typical Week 2 tasks]
 
 Work with your onboarding buddy to:
+
 - Pick a feature-level issue
 - Design the approach
 - Implement with tests and docs
@@ -382,6 +391,7 @@ By end of month 1, you should have:
 [TODO: Link to essential documentation]
 
 **Must Read** (if you haven't already):
+
 1. [How We Write Software](./writing-software.md)
 2. [Code Standards](./standards.md)
 3. [High-Level Patterns](./patterns.md)
@@ -389,11 +399,13 @@ By end of month 1, you should have:
 5. [Code Review Practices](./code-review.md)
 
 **Architecture**:
+
 1. [Architecture Overview](./concepts/architecture.md)
 2. [Design Decisions](./concepts/design-decisions.md)
 3. [API Reference](./reference/api/)
 
 **Workflows**:
+
 1. [Development Process](./contributing/development.md)
 2. [Deployment Guide](./guides/deployment.md)
 3. [Troubleshooting](./guides/troubleshooting.md)
@@ -403,14 +415,17 @@ By end of month 1, you should have:
 [TODO: Link to external learning resources]
 
 **{{LANGUAGE}} Resources**:
+
 - [{{RESOURCE_NAME}}]({{URL}}) - {{DESCRIPTION}}
 - [{{RESOURCE_NAME}}]({{URL}}) - {{DESCRIPTION}}
 
 **{{FRAMEWORK}} Resources**:
+
 - [{{RESOURCE_NAME}}]({{URL}}) - {{DESCRIPTION}}
 - [{{RESOURCE_NAME}}]({{URL}}) - {{DESCRIPTION}}
 
 **General Software Development**:
+
 - [{{RESOURCE_NAME}}]({{URL}}) - {{DESCRIPTION}}
 - [{{RESOURCE_NAME}}]({{URL}}) - {{DESCRIPTION}}
 
@@ -439,6 +454,7 @@ By end of month 1, you should have:
 **Your buddy**: {{BUDDY_NAME}} ({{BUDDY_CONTACT}})
 
 Your onboarding buddy is your primary point of contact for:
+
 - Questions about the codebase
 - Help getting unstuck
 - Guidance on good first issues
@@ -467,18 +483,21 @@ For specific areas, ask these people:
 [TODO: Describe communication channels]
 
 **Channels**:
+
 - `#{{GENERAL_CHANNEL}}` - General team discussion
 - `#{{DEV_CHANNEL}}` - Development questions
 - `#{{HELP_CHANNEL}}` - Ask for help
 - `#{{RANDOM_CHANNEL}}` - Non-work chat
 
 **When to Use What**:
+
 - **Quick questions**: Post in relevant channel
 - **Detailed help**: DM your buddy or domain expert
 - **Blocked on issue**: Post in `#{{HELP_CHANNEL}}`
 - **Discussion needed**: Schedule a call or meeting
 
 **Response Times**:
+
 - Not everyone is online all the time
 - If no response in {{RESPONSE_TIME}}, follow up
 - For urgent issues, {{ESCALATION_PROCESS}}
@@ -540,6 +559,7 @@ After your first month, please:
 3. **Update this document**: Fix anything confusing, add missing info
 
 Questions to consider:
+
 - What was confusing or unclear?
 - What would have helped you get up to speed faster?
 - What resources did you wish you had?
@@ -558,23 +578,27 @@ If you're serving as an onboarding buddy:
 ### Your Responsibilities
 
 **Before Their First Day**:
+
 - [ ] Ensure they have all required access
 - [ ] Send welcome message with logistics
 - [ ] Schedule first day check-in
 
 **Day 1**:
+
 - [ ] Welcome them to the team
 - [ ] Help with environment setup issues
 - [ ] Give codebase tour
 - [ ] Answer questions
 
 **Week 1**:
+
 - [ ] Daily check-ins
 - [ ] Help choose first issues
 - [ ] Review their first PRs
 - [ ] Introduce them to team members
 
 **Week 2-4**:
+
 - [ ] Check in 2-3 times per week
 - [ ] Review progress
 - [ ] Provide feedback
@@ -583,21 +607,25 @@ If you're serving as an onboarding buddy:
 ### Tips for Buddies
 
 **Be Proactive**:
+
 - Check in regularly, don't wait for them to ask
 - Share resources before they need them
 - Introduce them to people they should know
 
 **Be Patient**:
+
 - Everyone learns at different speeds
 - Expect lots of questions - that's good!
 - Repeat yourself - information overload is real
 
 **Be Encouraging**:
+
 - Celebrate small wins
 - Provide positive feedback
 - Share your own onboarding struggles
 
 **Be Honest**:
+
 - If you don't know, say so and find someone who does
 - Share challenges honestly
 - Give constructive feedback early

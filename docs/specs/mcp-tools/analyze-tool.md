@@ -1,6 +1,7 @@
 # Spec: Analyze Tool (MCP)
 
 ## Metadata
+
 - **Status:** draft
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
@@ -17,9 +18,11 @@ This tool is designed for AI agents to quickly understand a project's technology
 ## Behaviors
 
 ### Scenario: Basic Project Analysis
+
 **Given:** A TypeScript project with standard structure (src/, tests/, docs/ directories)
 **When:** Agent calls `analyze` tool with project path
 **Then:**
+
 - Tool scans the specified directory
 - Returns structured JSON with:
   - Languages detected (with file counts, extensions, confidence levels)
@@ -31,6 +34,7 @@ This tool is designed for AI agents to quickly understand a project's technology
 - Confidence levels: "high" (>30% of files), "medium" (10-30%), "low" (<10%)
 
 #### Example:
+
 ```typescript
 // Agent calls tool
 const result = await tools.analyze({
@@ -90,15 +94,18 @@ const result = await tools.analyze({
 ```
 
 ### Scenario: Analyze Specific Directory
+
 **Given:** Agent wants to analyze a specific project directory
 **When:** Agent calls `analyze` with `path` parameter
 **Then:**
+
 - Tool analyzes the specified directory instead of current directory
 - All detection logic remains the same
 - Returns structured analysis result
 - If path doesn't exist, returns error
 
 #### Example:
+
 ```typescript
 const result = await tools.analyze({
   path: "/Users/dev/projects/my-app"
@@ -106,9 +113,11 @@ const result = await tools.analyze({
 ```
 
 ### Scenario: Empty or Minimal Project
+
 **Given:** A directory with no recognized languages or frameworks
 **When:** Agent calls `analyze` tool
 **Then:**
+
 - Tool completes successfully
 - Returns empty arrays for languages and frameworks
 - Structure section shows false for missing directories
@@ -116,6 +125,7 @@ const result = await tools.analyze({
 - Primary language shows "Unknown"
 
 #### Example:
+
 ```json
 {
   "languages": [],
@@ -136,15 +146,18 @@ const result = await tools.analyze({
 ```
 
 ### Scenario: Multi-Language Polyglot Project
+
 **Given:** A project with multiple languages (e.g., TypeScript frontend, Python backend)
 **When:** Agent calls `analyze` tool
 **Then:**
+
 - All detected languages listed in descending order by file count
 - Confidence calculated independently for each language based on percentage of total files
 - Primary language is the one with most files
 - Frameworks from all languages detected (React + FastAPI)
 
 #### Example:
+
 ```json
 {
   "languages": [
@@ -197,17 +210,21 @@ const result = await tools.analyze({
 ```
 
 ### Scenario: Language Confidence Levels
+
 **Given:** A project with varying amounts of different languages
 **When:** Tool analyzes file counts
 **Then:**
+
 - Confidence "high" when language represents >30% of total files
 - Confidence "medium" when language represents 10-30% of total files
 - Confidence "low" when language represents <10% of total files
 
 ### Scenario: Framework Detection via Package Manifests
+
 **Given:** A Node.js project with package.json containing dependencies
 **When:** Tool reads package.json
 **Then:**
+
 - Detects frameworks from both `dependencies` and `devDependencies`
 - Categorizes by type: web, backend, testing, mobile, desktop, other
 - Shows detection source: `package.json`, `requirements.txt`, etc.
@@ -215,6 +232,7 @@ const result = await tools.analyze({
 - Gracefully handles JSON parse errors (ignores malformed files)
 
 #### Supported ecosystems:
+
 - **JavaScript/TypeScript:** package.json, deno.json, bun.lockb
 - **Python:** requirements.txt, pyproject.toml, setup.py, Pipfile, poetry.lock
 - **Rust:** Cargo.toml
@@ -222,20 +240,24 @@ const result = await tools.analyze({
 - **Ruby:** Gemfile
 - **PHP:** composer.json
 - **Java/Kotlin:** pom.xml, build.gradle, build.gradle.kts
-- **.NET:** *.csproj, *.fsproj
+- **.NET:** *.csproj,*.fsproj
 
 ### Scenario: Excluded Directories
+
 **Given:** A project with node_modules/, dist/, build/, .git/, coverage/ directories
 **When:** Tool scans for language files
 **Then:**
+
 - These directories are automatically excluded from analysis
 - File counts only reflect actual source/test/doc files
 - Analysis completes faster due to exclusions
 
 ### Scenario: Project Structure Detection
+
 **Given:** A project with various directory names
 **When:** Tool analyzes structure
 **Then:**
+
 - Source directories: Matches `src/`, `lib/`, `app/`, `source/`, `pkg/`
 - Test directories: Matches `test/`, `tests/`, `__tests__/`, `spec/`, `specs/`
 - Docs directories: Matches `docs/`, `doc/`, `documentation/`
@@ -243,6 +265,7 @@ const result = await tools.analyze({
 - Strips trailing slashes in output
 
 ## Acceptance Criteria
+
 - [ ] Tool executes without errors on typical projects
 - [ ] Returns structured JSON matching AnalysisResult interface
 - [ ] Language detection covers 40+ languages via extension mapping
@@ -262,6 +285,7 @@ const result = await tools.analyze({
 ## Technical Notes
 
 **Language Detection Algorithm:**
+
 - Uses `glob` library to find all files recursively
 - Maps file extensions to languages via `LANGUAGE_EXTENSIONS` dictionary
 - Excludes: `node_modules/`, `vendor/`, `dist/`, `build/`, `.git/`, `coverage/`
@@ -269,6 +293,7 @@ const result = await tools.analyze({
 - Sorted by file count descending
 
 **Framework Detection Strategy:**
+
 - Pattern-based: Searches for indicator files (package.json, Cargo.toml, etc.)
 - Each indicator has custom detector function
 - Detectors parse file contents and look for known dependency names
@@ -276,11 +301,13 @@ const result = await tools.analyze({
 - All file I/O wrapped in try-catch (ignore errors)
 
 **Performance Considerations:**
+
 - All detection routines run in parallel via Promise.all
 - Glob operations can be slow on large projects (mitigated by ignore patterns)
 - No network calls, no code execution (pure filesystem analysis)
 
 **Agent-Friendly Design:**
+
 - JSON output contains structured data suitable for programmatic use
 - Non-interactive tool (no user interaction required)
 - Deterministic output for same inputs
@@ -289,6 +316,7 @@ const result = await tools.analyze({
 ## Test Hints
 
 **Unit Tests:**
+
 - Test language detection with fixture directories containing known file sets
 - Test framework detection by creating mock package.json files
 - Test confidence calculation with various file count distributions
@@ -296,12 +324,14 @@ const result = await tools.analyze({
 - Test exclusion patterns (ensure node_modules ignored)
 
 **Integration Tests:**
+
 - Test against real-world projects (docent itself, example repos)
 - Verify JSON output is valid and matches schema
 - Test path parameter with absolute and relative paths
 - Test error handling (non-existent paths, permission errors)
 
 **Edge Cases:**
+
 - Empty directories
 - Projects with no recognized languages
 - Symlinks in project structure

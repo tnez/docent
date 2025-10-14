@@ -38,6 +38,7 @@ Documentation tasks are agentic, but coupling to any specific agent creates lock
 Transform docent from "template collection" to a **complete documentation platform** with three components:
 
 ### 1. Smart CLI
+
 Build command-line tools that intelligently analyze projects and documentation:
 
 - **`docent analyze`** - Detect languages, frameworks, project structure
@@ -46,6 +47,7 @@ Build command-line tools that intelligently analyze projects and documentation:
 - **`docent review`** - Detect staleness and code/documentation drift
 
 ### 2. Agent-Agnostic Protocol
+
 Create a protocol that any AI agent can use:
 
 - All commands support `--output json` for structured data
@@ -54,6 +56,7 @@ Create a protocol that any AI agent can use:
 - No agent-specific features or integrations
 
 ### 3. Production Templates
+
 Keep the 11 existing templates as the foundation, but make them smarter:
 
 - Templates customized based on project analysis
@@ -97,12 +100,14 @@ Keep the 11 existing templates as the foundation, but make them smarter:
 **Description:** Build docent as a Claude Code plugin/extension with deep integration.
 
 **Pros:**
+
 - Fastest to build
 - Richest integration possible
 - Can use Claude Code APIs directly
 - Immediate value for Claude Code users
 
 **Cons:**
+
 - Vendor lock-in - only works with Claude Code
 - Smaller addressable market
 - Risk if Claude Code changes or shuts down
@@ -116,12 +121,14 @@ Keep the 11 existing templates as the foundation, but make them smarter:
 **Description:** Keep templates static but build a separate documentation generator that analyzes projects and generates docs.
 
 **Pros:**
+
 - Clear separation of concerns
 - Templates remain simple
 - Generator can be sophisticated
 - Can still output JSON for agents
 
 **Cons:**
+
 - Two separate products to maintain
 - Confusing user experience (which to use?)
 - Generator would need its own templates anyway
@@ -135,12 +142,14 @@ Keep the 11 existing templates as the foundation, but make them smarter:
 **Description:** Keep templates simple, provide GitHub Actions for automation (audit/review as CI).
 
 **Pros:**
+
 - Leverages existing CI/CD infrastructure
 - Automatic documentation checks
 - No local tooling required
 - Works in any workflow
 
 **Cons:**
+
 - Only useful for GitHub users
 - No local development value
 - CI-only means no interactive experience
@@ -192,6 +201,7 @@ docent/
 ### Rollback Plan
 
 If CLI adoption is poor:
+
 - Templates and shell scripts remain functional
 - Can deprecate CLI in future major version
 - Minimal risk since templates are the foundation

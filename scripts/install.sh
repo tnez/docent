@@ -50,6 +50,7 @@ SELECTED_TEMPLATES=()
 TRANSACTION_LOG=$(mktemp)
 
 # Platform detection
+# shellcheck disable=SC2034  # OS reserved for future platform-specific features
 case "$(uname -s)" in
   Darwin*)  OS="macos" ;;
   Linux*)   OS="linux" ;;
@@ -127,10 +128,10 @@ prompt_yes_no() {
 
   while true; do
     if [ "$default" = "y" ]; then
-      read -p "${prompt} (Y/n): " yn
+      read -r -p "${prompt} (Y/n): " yn
       yn="${yn:-y}"
     else
-      read -p "${prompt} (y/N): " yn
+      read -r -p "${prompt} (y/N): " yn
       yn="${yn:-n}"
     fi
 
@@ -160,7 +161,7 @@ rollback() {
     return
   fi
 
-  tac "$TRANSACTION_LOG" 2>/dev/null | while IFS=' ' read -r timestamp action target _; do
+  tac "$TRANSACTION_LOG" 2>/dev/null | while IFS=' ' read -r _ action target _; do
     case "$action" in
       CREATE_DIR)
         [ -d "$target" ] && rm -rf "$target" && echo "  Removed: $target"
@@ -207,7 +208,8 @@ preflight_checks() {
 
   # Check if target directory exists
   if [ -d "$TARGET_DIR" ]; then
-    local file_count=$(find "$TARGET_DIR" -type f -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+    local file_count
+    file_count=$(find "$TARGET_DIR" -type f -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
     if [ "$file_count" -gt 0 ]; then
       warning "Target directory exists: $TARGET_DIR/ ($file_count files)"
       if [ "$FORCE" = false ] && [ "$BACKUP" = false ] && [ "$INTERACTIVE" = true ]; then
@@ -257,7 +259,7 @@ select_templates() {
   echo "  a) All templates"
   echo ""
 
-  read -p "Select templates (comma-separated numbers, or 'a' for all): " selection
+  read -r -p "Select templates (comma-separated numbers, or 'a' for all): " selection
 
   if [ "$selection" = "a" ] || [ "$selection" = "A" ]; then
     SELECTED_TEMPLATES=("${AVAILABLE_TEMPLATES[@]}")
@@ -354,7 +356,7 @@ handle_existing_files() {
   echo "  4) Abort installation"
   echo ""
 
-  read -p "Choose option (1-4): " choice
+  read -r -p "Choose option (1-4): " choice
 
   case "$choice" in
     1) BACKUP=true ;;

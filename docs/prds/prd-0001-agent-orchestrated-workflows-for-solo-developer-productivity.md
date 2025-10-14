@@ -14,6 +14,7 @@ Transform solo developer productivity by orchestrating AI agents through structu
 ### User Pain Points
 
 **Solo developers today face a productivity ceiling:**
+
 - Creating an RFC traditionally takes 1-2 weeks (research, writing, review cycles)
 - Lack of team means no diverse perspectives on design decisions
 - Architecture reviews require external consultants or go undone
@@ -21,6 +22,7 @@ Transform solo developer productivity by orchestrating AI agents through structu
 - Quality suffers without the structure and processes larger teams have
 
 **Even with AI agents available:**
+
 - Developers must manually orchestrate agent interactions
 - No structured process for complex workflows
 - Each task requires starting from scratch
@@ -30,6 +32,7 @@ Transform solo developer productivity by orchestrating AI agents through structu
 ### Current State
 
 How developers work today:
+
 1. **Manual research:** Spend days googling, reading docs, comparing options
 2. **Solo writing:** Draft RFCs alone, often incomplete or one-sided
 3. **No review:** Ship without architecture review or skip RFCs entirely
@@ -37,6 +40,7 @@ How developers work today:
 5. **Lost context:** Each interaction with agents starts from zero
 
 **Limitations:**
+
 - Time-intensive: Multi-day processes for decisions that should take hours
 - Quality gaps: Missing perspectives and overlooked considerations
 - Inconsistent: No repeatable process for complex tasks
@@ -45,6 +49,7 @@ How developers work today:
 ### Impact
 
 **Consequences of not solving this:**
+
 - **Productivity:** Solo devs move slower than necessary (50-100x slower than potential)
 - **Quality:** Decisions made without adequate research or review
 - **Burnout:** Context switching and manual orchestration exhausts developers
@@ -52,6 +57,7 @@ How developers work today:
 - **Competitive disadvantage:** Solo devs can't compete with well-resourced teams
 
 **Market opportunity:**
+
 - Millions of solo developers and small teams globally
 - Growing AI agent ecosystem (Claude Code, Cursor, Aider, etc.)
 - Shift toward "AI-first" development workflows
@@ -62,12 +68,14 @@ How developers work today:
 ### Persona 1: Solo Founder / Independent Developer
 
 **Who they are:**
+
 - Building product alone or with 1-2 others
 - Technical expertise but limited time
 - Wear multiple hats (dev, product, ops)
 - Need to move fast without sacrificing quality
 
 **Their needs:**
+
 - Make architectural decisions in hours, not days
 - Get multiple perspectives without hiring consultants
 - Maintain quality documentation without manual overhead
@@ -75,6 +83,7 @@ How developers work today:
 - Track progress on complex multi-step tasks
 
 **Pain points:**
+
 - "I know I should research options, but I don't have time"
 - "I write RFCs but never get them reviewed"
 - "I use Claude Code but still spend hours orchestrating agents manually"
@@ -83,12 +92,14 @@ How developers work today:
 ### Persona 2: Small Team Technical Lead
 
 **Who they are:**
+
 - Leading team of 2-5 developers
 - Responsible for architecture and quality
 - Need structured decision-making process
 - Want team members to be productive independently
 
 **Their needs:**
+
 - Standardize how the team makes decisions
 - Enable team members to do thorough research independently
 - Get architecture reviews without hiring external experts
@@ -96,6 +107,7 @@ How developers work today:
 - Scale team productivity without adding headcount
 
 **Pain points:**
+
 - "Team members skip research because it's time-consuming"
 - "I'm the bottleneck for all architecture reviews"
 - "We lack consistent process for RFC creation"
@@ -108,6 +120,7 @@ How developers work today:
 **Docent becomes an agent orchestration platform** that guides developers through structured workflows, automatically coordinating multiple AI agents to achieve complex goals.
 
 **Core concept:**
+
 ```bash
 # Describe problem, get complete RFC in 1 hour
 docent workflow rfc "Should we add behavioral specs?"
@@ -121,6 +134,7 @@ docent workflow rfc "Should we add behavioral specs?"
 ```
 
 **Key differentiators:**
+
 1. **Agent-agnostic:** CLI works with ANY agent (Claude Code, Cursor, Aider, shell scripts)
 2. **MCP-enhanced:** Rich interactive UX in user's agent of choice when MCP available
 3. **Structured workflows:** Multi-agent orchestration with human checkpoints
@@ -139,12 +153,14 @@ docent workflow rfc "Should we add behavioral specs?"
 5. **Documentation debt:** Teams recognize documentation matters but lack tools to make it efficient
 
 **Technology enablers:**
+
 - 200K token context windows (agents can hold entire workflows in memory)
 - Streaming APIs (real-time progress updates)
 - MCP protocol (standardized tool calling)
 - Subprocess orchestration (CLI can spawn and monitor agents)
 
 **User readiness:**
+
 - Developers already use AI agents daily
 - Frustrated by manual orchestration
 - Want structure without complexity
@@ -155,6 +171,7 @@ docent workflow rfc "Should we add behavioral specs?"
 ### Primary Metrics
 
 **Time savings (the core value):**
+
 - **RFC creation:** Weeks → 1 hour (50-100x improvement)
   - Current: 1-2 weeks (research + writing + review)
   - Target: <1 hour with workflow orchestration
@@ -163,6 +180,7 @@ docent workflow rfc "Should we add behavioral specs?"
   - Target: <4 hours with full-cycle workflow
 
 **Adoption:**
+
 - **Weekly active workflows:** 1000+ workflows executed/week within 6 months of launch
 - **Workflow completion rate:** >80% of started workflows reach completion
 - **User retention:** 60%+ of users run 2+ workflows per week
@@ -170,11 +188,13 @@ docent workflow rfc "Should we add behavioral specs?"
 ### Secondary Metrics
 
 **Quality indicators:**
+
 - Documentation completeness: Average docent audit score >80 for projects using workflows
 - Architecture review adoption: 70%+ of RFCs get automated architecture review
 - Multi-agent usage: Average 2.5 agents per workflow
 
 **Efficiency:**
+
 - Time to first artifact: <5 minutes (research starts immediately)
 - Checkpoint response time: <30 seconds (workflows don't block on user input)
 - Context retention: Users resume 40%+ of interrupted workflows
@@ -182,6 +202,7 @@ docent workflow rfc "Should we add behavioral specs?"
 ### Success Criteria
 
 **What "done" and "successful" looks like:**
+
 - [x] Solo developer creates complete, reviewed RFC in <1 hour
 - [ ] RFC quality matches or exceeds manual multi-week process (validated by blind review)
 - [ ] Works with multiple AI agents (Claude Code, Cursor, Aider tested)
@@ -299,6 +320,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Scenario:** Developer needs to decide whether to add a new feature (behavioral specifications). They want to research options and create a complete RFC in their lunch break.
 
 **Steps:**
+
 1. Developer runs: `docent workflow rfc "Should we add behavioral specs?"`
 2. System launches research-analyst, shows progress: "Researching specification formats..."
 3. After 10 minutes, system presents findings: "Found 6 formats. Key insight: Gherkin works well for agents"
@@ -319,6 +341,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Scenario:** Developer needs to implement semantic search. They want spec, implementation, tests, and documentation - all coordinated through agents.
 
 **Steps:**
+
 1. Developer runs: `docent workflow feature "semantic search" --full-cycle`
 2. System: "Phase 1: Creating behavioral spec..."
 3. Interactive: Developer fills in Given/When/Then scenarios
@@ -338,9 +361,11 @@ docent workflow rfc "Should we add behavioral specs?"
 **Scenario:** Developer using Claude Code with MCP wants rich interactive workflow experience.
 
 **Steps:**
+
 1. Developer in Claude Code chat: "Help me create an RFC for adding specs"
 2. Claude: "I'll orchestrate an RFC workflow. Launching research..."
 3. Research streams in chat with formatting:
+
    ```
    📊 Research Phase (2 min elapsed)
    ✅ Analyzed 6 specification formats
@@ -352,6 +377,7 @@ docent workflow rfc "Should we add behavioral specs?"
    - AGENTS.md: Simple but doesn't scale
    - Hybrid approach recommended
    ```
+
 4. Claude: "🤔 Decision Point: How should we name specs?"
    - Shows options with pros/cons inline
    - Developer clicks choice in UI
@@ -371,6 +397,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Scenario:** Developer worked on docent for 3 hours yesterday, now returning after a break. They need to quickly remember what was accomplished and what's next, without manually digging through git logs and documentation.
 
 **Steps:**
+
 1. Developer runs: `docent session start`
 2. System analyzes recent activity:
    - Reads last 5 commits from git log
@@ -378,6 +405,7 @@ docent workflow rfc "Should we add behavioral specs?"
    - Checks RFC/PRD/ADR status (draft vs completed)
    - Runs quick audit/review for project health
 3. System displays comprehensive summary:
+
    ```
    ┌─────────────────────────────────────────────────────
    │ Session Summary - Last: 2025-10-12 (3 hours ago)
@@ -410,6 +438,7 @@ docent workflow rfc "Should we add behavioral specs?"
    │
    └─────────────────────────────────────────────────────
    ```
+
 4. Developer immediately understands full context
 5. Picks up work with zero mental overhead
 
@@ -420,6 +449,7 @@ docent workflow rfc "Should we add behavioral specs?"
 ### User Stories
 
 **As a solo developer:**
+
 - I want to create RFCs in 1 hour instead of 1 week, so that I can make faster architectural decisions
 - I want multiple AI agents to collaborate automatically, so that I get diverse perspectives without manual orchestration
 - I want to resume interrupted workflows, so that I can spread complex work across multiple sessions
@@ -427,11 +457,13 @@ docent workflow rfc "Should we add behavioral specs?"
 - I want to instantly recover context when returning to a project, so that I don't waste 15-30 minutes reconstructing where I left off
 
 **As a small team lead:**
+
 - I want standardized workflows, so that team members follow consistent processes
 - I want visibility into workflow progress, so that I can help when team members are stuck
 - I want workflow history, so that I can review past decisions and learn from them
 
 **As an AI agent (Claude Code, Cursor):**
+
 - I want to discover available workflows via MCP, so that I can suggest them to users
 - I want structured checkpoint format, so that I can present decisions clearly
 - I want to monitor workflow progress, so that I can show status to users
@@ -442,6 +474,7 @@ docent workflow rfc "Should we add behavioral specs?"
 ### Constraints
 
 **Technical requirements and limitations:**
+
 - Must work without MCP (CLI-first, MCP-enhanced)
 - Workflows must be resumable (serialize state to disk)
 - Must handle agent failures gracefully (timeout, crash, network issues)
@@ -451,6 +484,7 @@ docent workflow rfc "Should we add behavioral specs?"
 ### Dependencies
 
 **What needs to exist first:**
+
 - ✅ RFC-0002: Behavioral specifications (workflows will create these)
 - ⏳ MCP server (RFC-0001) - Optional enhancement, not blocker
 - ✅ Existing CLI commands (analyze, audit, review)
@@ -459,6 +493,7 @@ docent workflow rfc "Should we add behavioral specs?"
 ### Integration Points
 
 **How workflows fit with existing systems:**
+
 1. **Docent CLI:** Workflows extend CLI as new command namespace
 2. **Templates:** Workflows use existing templates (RFC, ADR, spec)
 3. **Audit/Review:** Workflows trigger audit/review automatically
@@ -472,6 +507,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Goal:** Prove workflows work via CLI (agent-agnostic)
 
 **Deliverables:**
+
 - Workflow engine implementation (`src/lib/workflow-engine.ts`)
 - `docent workflow rfc` command working end-to-end
 - Interactive checkpoints with user input
@@ -481,6 +517,7 @@ docent workflow rfc "Should we add behavioral specs?"
 - Dogfooding: Create RFC-0003 using workflow
 
 **Success criteria:**
+
 - Create RFC-0002 in <1 hour using workflow
 - Works from any terminal (tested in bash, zsh)
 - Handles interruption/resume gracefully
@@ -490,6 +527,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Goal:** Validate workflow system with more use cases
 
 **Deliverables:**
+
 - `docent workflow feature` - Feature development workflow
 - `docent workflow decide` - Decision/ADR workflow
 - Workflow management commands (list, status, resume, cancel)
@@ -497,6 +535,7 @@ docent workflow rfc "Should we add behavioral specs?"
 - Dogfooding: Use workflows for docent development
 
 **Success criteria:**
+
 - 3 different workflow types working
 - Users report 10x time savings in surveys
 - 80%+ workflow completion rate
@@ -506,6 +545,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Goal:** Rich interactive UX in agent environments
 
 **Deliverables:**
+
 - MCP server exposing workflows as tools (builds on RFC-0001)
 - Streaming progress updates via MCP
 - Interactive checkpoints in agent chat
@@ -513,6 +553,7 @@ docent workflow rfc "Should we add behavioral specs?"
 - Tested with Claude Code, Cursor
 
 **Success criteria:**
+
 - MCP workflows feel significantly better than CLI
 - Works in 2+ agent environments
 - Users prefer MCP over CLI when available
@@ -522,12 +563,14 @@ docent workflow rfc "Should we add behavioral specs?"
 **Goal:** Scale and optimize based on usage
 
 **Deliverables:**
+
 - Custom workflow definitions
 - Workflow analytics and optimization
 - Team collaboration features
 - AI-powered checkpoint suggestions
 
 **Success criteria:**
+
 - Users create custom workflows
 - Average time savings increases with usage
 - Team adoption grows
@@ -542,6 +585,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Description:** Coordinating multiple agents (research-analyst, architecture-reviewer) via subprocesses may be fragile. Agents can timeout, crash, or produce unexpected output.
 
 **Mitigation:**
+
 - Robust error handling with retries
 - Timeouts and fallback strategies
 - Clear error messages guide user intervention
@@ -556,6 +600,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Description:** MCP is new standard. If agents don't adopt MCP quickly, rich interactive UX may not be available to users.
 
 **Mitigation:**
+
 - ✅ CLI-first architecture (works without MCP)
 - MCP is enhancement, not requirement
 - Focus on CLI experience quality
@@ -570,6 +615,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Description:** If workflows take 1+ hour and don't resume cleanly, users will abandon them when interrupted (phone call, meeting, etc.).
 
 **Mitigation:**
+
 - State serialization from day one
 - Auto-save at every checkpoint
 - Clear resume instructions
@@ -584,6 +630,7 @@ docent workflow rfc "Should we add behavioral specs?"
 **Description:** Hard-coded workflows may not fit everyone's process. Users may want to customize phases, skip steps, or add their own.
 
 **Mitigation:**
+
 - Start with opinionated workflows (better to have one good way)
 - Gather feedback on what users want to customize
 - Phase 4 adds custom workflow support
@@ -601,11 +648,13 @@ docent workflow rfc "Should we add behavioral specs?"
 ## Related Documentation
 
 **Directly supports this vision:**
+
 - [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Technical foundation for MCP workflows
 - [RFC-0002: Behavioral Specifications](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Workflows create specs
 - [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md) - Why CLI-first matters
 
 **Will reference this PRD:**
+
 - RFC-0003: Workflow Orchestration System (to be created)
 - Future workflow-related RFCs and ADRs
 

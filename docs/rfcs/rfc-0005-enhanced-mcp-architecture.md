@@ -17,6 +17,7 @@ Extend docent's MCP server from tools-only to full MCP capabilities by adding **
 **Current Limitation: Tools-Only MCP Server**
 
 Following ADR-0004 (MCP-only architecture), docent currently exposes only "tools" via MCP:
+
 - `analyze` - Project structure analysis
 - `audit` - Agent-driven documentation assessment
 - `audit` - Heuristic documentation audit
@@ -60,6 +61,7 @@ With prompts/resources:
 **User validation:** "That 'Beautiful Pattern' is exactly what I want ✅"
 
 **The Beautiful Pattern:**
+
 ```
 Discovery → Context → Execution
    ↓           ↓          ↓
@@ -69,12 +71,14 @@ analyze()   resource()  (agent acts)
 Docent provides **documentation as configuration for agents**, not execution.
 
 **Who is affected:**
+
 - Solo developers using docent with AI agents
 - Teams establishing operational procedures
 - Anyone building agent-driven workflows
 - Projects needing documentation-driven development
 
 **Consequences of not solving:**
+
 - Docent remains "tools only" (1/3 of MCP capabilities)
 - Workflows require custom agent code (not standardized)
 - Knowledge buried in docs (not discoverable by agents)
@@ -85,26 +89,31 @@ Docent provides **documentation as configuration for agents**, not execution.
 MCP provides three complementary capabilities:
 
 #### 1. Tools (Current: ✅)
+
 **Purpose:** Actions requiring computation
 
 **Examples:**
+
 - `analyze(path)` → AnalysisResult
 - `audit(path)` → QualityAssessment
 
 **When to use:** Active operations that transform or analyze data
 
 #### 2. Resources (Not Using: ❌)
+
 **Purpose:** URI-based content discovery and retrieval
 
 **Pattern:** `docent://{type}/{identifier}`
 
 **Examples:**
+
 - `docent://runbook/preview-branch` → Step-by-step DB branch creation
 - `docent://template/adr` → ADR template markdown
 - `docent://standard/testing` → Team testing standards
 - `docent://journal/current` → Active work journal
 
 **Benefits:**
+
 - **Discoverable**: Agents list available resources
 - **Cacheable**: MCP clients cache content
 - **Feels native**: Documentation as first-class content
@@ -113,21 +122,25 @@ MCP provides three complementary capabilities:
 **Why this matters:** Runbooks become instructions agents can follow, not just markdown files they search for.
 
 #### 3. Prompts (Not Using: ❌)
+
 **Purpose:** Pre-defined workflow templates agents invoke
 
 **Examples:**
+
 - "Review RFC" → Multi-perspective RFC review with context gathering
 - "Resume Work" → Session recovery using journal + git + todos
 - "Create ADR" → Guided ADR creation with template + standards
 - "Plan Feature" → Research → Design → Spec generation
 
 **Benefits:**
+
 - **Workflow as code**: Procedures become invocable
 - **Standardized**: Same process every time
 - **Discoverable**: Agents see available workflows
 - **Parameterized**: Pass arguments (rfc_path, perspective, etc.)
 
 **Why this is huge:**
+
 - RFC-0003 proposed `docent workflow start review-rfc` (CLI orchestration)
 - **Better approach:** MCP prompt "Review RFC" (native workflow)
 - Simpler, more elegant, MCP-native
@@ -1020,11 +1033,13 @@ Agent:
 **Description:** Keep MCP server as tools-only, don't add resources/prompts
 
 **Pros:**
+
 - Simpler to maintain
 - Already works
 - No new concepts to learn
 
 **Cons:**
+
 - Missing 2/3 of MCP capabilities
 - No standardized workflows
 - Documentation not discoverable
@@ -1038,11 +1053,13 @@ Agent:
 **Description:** Implement workflow orchestration via CLI commands
 
 **Pros:**
+
 - Works without MCP
 - More control over execution
 - Familiar CLI pattern
 
 **Cons:**
+
 - More complex architecture (workflow engine, state management)
 - Not MCP-native (feels bolted on)
 - Requires more code than prompts
@@ -1056,11 +1073,13 @@ Agent:
 **Description:** Add prompts but skip resources, keep file system access for docs
 
 **Pros:**
+
 - Simpler than full implementation
 - Prompts solve main workflow problem
 - Fewer URI patterns to maintain
 
 **Cons:**
+
 - Documentation not discoverable via MCP
 - Agents use file system instead of resources
 - Inconsistent (prompts are MCP, docs are not)
@@ -1073,11 +1092,13 @@ Agent:
 **Description:** Add resources but skip prompts, let agents build workflows
 
 **Pros:**
+
 - Simpler prompt maintenance
 - Agents retain full flexibility
 - Resources enable discovery
 
 **Cons:**
+
 - No standardized workflows
 - Every agent invents process from scratch
 - Misses opportunity to encode best practices
@@ -1090,11 +1111,13 @@ Agent:
 **Description:** Integrate with Temporal, Airflow, or similar
 
 **Pros:**
+
 - Battle-tested workflow orchestration
 - Rich features (retries, distributed execution)
 - Mature ecosystem
 
 **Cons:**
+
 - Heavy dependency (separate service)
 - Over-engineered for docent's needs
 - Not MCP-native
@@ -1296,6 +1319,7 @@ Enhanced MCP has minimal performance overhead:
 4. Tools-only agents still work
 
 **For existing docent users:**
+
 - No changes to current usage
 - Enhanced capabilities available when agents support them
 - Backward compatible
@@ -1303,6 +1327,7 @@ Enhanced MCP has minimal performance overhead:
 ### Rollout Plan
 
 **Phase 0: Preparation (Completed ✅)**
+
 - Validated MCP-only architecture (ADR-0004)
 - Discovered MCP resources/prompts capabilities
 - Identified "Beautiful Pattern" (context provider)
@@ -1313,6 +1338,7 @@ Enhanced MCP has minimal performance overhead:
 Goal: Understand MCP resources and prompts implementation
 
 Tasks:
+
 - Study MCP TypeScript SDK documentation
 - Review resources API (URI patterns, caching, discovery)
 - Review prompts API (structure, arguments, invocation)
@@ -1326,6 +1352,7 @@ Deliverable: Research notes in `docs/research/mcp-prompts-and-resources.md`
 Goal: Add resource discovery and reading
 
 Tasks:
+
 - Implement ResourceHandler class
 - Add URI parsing and validation
 - Implement runbook, template, standard, doc, journal handlers
@@ -1340,6 +1367,7 @@ Deliverable: Resources working for all types
 Goal: Add workflow prompts
 
 Tasks:
+
 - Implement PromptBuilder class
 - Create "Review RFC" prompt (architecture, security, implementation)
 - Create "Resume Work" prompt
@@ -1356,6 +1384,7 @@ Deliverable: Core prompts working with context gathering
 Goal: Document new capabilities and refine
 
 Tasks:
+
 - Update README with resources/prompts examples
 - Write guide: "Using Docent Workflows"
 - Create runbook examples (preview-branch, deploy, etc.)
@@ -1371,6 +1400,7 @@ Deliverable: Complete documentation, polished implementation
 Goal: Use docent via MCP while developing docent
 
 Tasks:
+
 - Use "Review RFC" prompt on new RFCs
 - Use "Resume Work" prompt daily
 - Follow runbooks via resources
@@ -1382,12 +1412,14 @@ Deliverable: Validated workflows, real-world feedback
 ### Backward Compatibility
 
 **No breaking changes:**
+
 - All existing tools work unchanged
 - MCP capabilities advertised to clients
 - Agents without resource/prompt support still use tools
 - Additive enhancement only
 
 **Upgrade path:**
+
 - Users update to docent 0.4.0
 - MCP clients detect new capabilities automatically
 - Agents opt-in to resources/prompts

@@ -12,6 +12,7 @@
 This API provides [brief description of functionality].
 
 **Key Features:**
+
 - Feature 1
 - Feature 2
 - Feature 3
@@ -23,6 +24,7 @@ This API provides [brief description of functionality].
 ### Method
 
 This API uses [authentication method]:
+
 - Bearer tokens
 - API keys
 - OAuth 2.0
@@ -38,11 +40,13 @@ This API uses [authentication method]:
 ### Usage
 
 **Header:**
+
 ```http
 Authorization: Bearer YOUR_ACCESS_TOKEN
 ```
 
 **Example:**
+
 ```bash
 curl -H "Authorization: Bearer abc123..." \
   https://api.example.com/v1/resource
@@ -53,11 +57,13 @@ curl -H "Authorization: Bearer abc123..." \
 <!-- Rate limit information -->
 
 **Limits:**
+
 - Requests per minute: 60
 - Requests per hour: 1000
 - Requests per day: 10000
 
 **Headers:**
+
 ```http
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 58
@@ -66,6 +72,7 @@ X-RateLimit-Reset: 1640000000
 
 **Exceeding Limits:**
 When rate limit is exceeded, you'll receive:
+
 ```json
 {
   "error": "rate_limit_exceeded",
@@ -95,6 +102,7 @@ Get a list of all resources.
 | `filter` | string | No | Filter by status: active, inactive, all |
 
 **Request Example:**
+
 ```bash
 curl -X GET \
   "https://api.example.com/v1/resources?page=1&per_page=20" \
@@ -102,6 +110,7 @@ curl -X GET \
 ```
 
 **Response:** `200 OK`
+
 ```json
 {
   "data": [
@@ -125,6 +134,7 @@ curl -X GET \
 **Error Responses:**
 
 - `401 Unauthorized` - Invalid or missing authentication
+
   ```json
   {
     "error": "unauthorized",
@@ -133,6 +143,7 @@ curl -X GET \
   ```
 
 - `429 Too Many Requests` - Rate limit exceeded
+
   ```json
   {
     "error": "rate_limit_exceeded",
@@ -155,6 +166,7 @@ Get a specific resource by ID.
 | `id` | string | Yes | Resource ID |
 
 **Request Example:**
+
 ```bash
 curl -X GET \
   "https://api.example.com/v1/resources/res_123" \
@@ -162,6 +174,7 @@ curl -X GET \
 ```
 
 **Response:** `200 OK`
+
 ```json
 {
   "id": "res_123",
@@ -179,6 +192,7 @@ curl -X GET \
 **Error Responses:**
 
 - `404 Not Found` - Resource doesn't exist
+
   ```json
   {
     "error": "not_found",
@@ -203,6 +217,7 @@ Create a new resource.
 | `metadata` | object | No | Additional metadata |
 
 **Request Example:**
+
 ```bash
 curl -X POST \
   "https://api.example.com/v1/resources" \
@@ -218,6 +233,7 @@ curl -X POST \
 ```
 
 **Response:** `201 Created`
+
 ```json
 {
   "id": "res_456",
@@ -234,6 +250,7 @@ curl -X POST \
 **Error Responses:**
 
 - `400 Bad Request` - Invalid input
+
   ```json
   {
     "error": "validation_error",
@@ -248,6 +265,7 @@ curl -X POST \
   ```
 
 - `409 Conflict` - Resource already exists
+
   ```json
   {
     "error": "conflict",
@@ -278,6 +296,7 @@ Update an existing resource.
 | `metadata` | object | No | Additional metadata |
 
 **Request Example:**
+
 ```bash
 curl -X PATCH \
   "https://api.example.com/v1/resources/res_123" \
@@ -289,6 +308,7 @@ curl -X PATCH \
 ```
 
 **Response:** `200 OK`
+
 ```json
 {
   "id": "res_123",
@@ -315,6 +335,7 @@ Delete a resource.
 | `id` | string | Yes | Resource ID |
 
 **Request Example:**
+
 ```bash
 curl -X DELETE \
   "https://api.example.com/v1/resources/res_123" \
@@ -346,6 +367,7 @@ curl -X DELETE \
 | `updated_at` | string | ISO 8601 timestamp (read-only) |
 
 **Example:**
+
 ```json
 {
   "id": "res_123",
@@ -364,6 +386,7 @@ curl -X DELETE \
 ### Error Response Format
 
 All errors follow this format:
+
 ```json
 {
   "error": "error_code",
@@ -391,11 +414,13 @@ All errors follow this format:
 List endpoints support pagination:
 
 **Request:**
+
 ```bash
 GET /resources?page=2&per_page=20
 ```
 
 **Response:**
+
 ```json
 {
   "data": [...],
@@ -417,6 +442,7 @@ GET /resources?page=2&per_page=20
 ### Events
 
 This API can send webhook notifications for:
+
 - `resource.created`
 - `resource.updated`
 - `resource.deleted`
@@ -443,6 +469,7 @@ Configure webhooks at: `POST /webhooks`
 <!-- Links to official SDKs -->
 
 Official SDKs available:
+
 - [JavaScript/TypeScript](https://github.com/example/sdk-js)
 - [Python](https://github.com/example/sdk-python)
 - [Ruby](https://github.com/example/sdk-ruby)
@@ -451,10 +478,12 @@ Official SDKs available:
 ## Changelog
 
 ### v1.1.0 (2025-01-15)
+
 - Added filter parameter to list endpoint
 - Improved error messages
 
 ### v1.0.0 (2025-01-01)
+
 - Initial release
 
 ## Support
@@ -470,6 +499,7 @@ Official SDKs available:
 ### When to Create API Documentation
 
 Document APIs for:
+
 - REST APIs
 - GraphQL APIs
 - WebSocket APIs

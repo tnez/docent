@@ -23,22 +23,26 @@ The following documentation files exist in the project:
 Assess the documentation quality and completeness with these principles:
 
 ### 1. Semantic Analysis
+
 - Don't just check if files exist - consider whether they contain meaningful, complete content
 - Read file headings to understand what topics are covered
 - Consider file size and line count as indicators of depth (but not the only factor)
 
 ### 2. Context-Aware Assessment
+
 - A CLI tool doesn't need API endpoint documentation, but a backend service does
 - A solo project may not need onboarding docs, but should still document setup and usage
 - Testing frameworks suggest the project cares about quality - is this reflected in the docs?
 - Multiple languages/frameworks suggest complexity - is architecture documented?
 
 ### 3. Quality Over Coverage
+
 - Having a file called "architecture.md" isn't enough if it's empty or shallow
 - Well-documented code can partially compensate for missing docs
 - Recent modifications suggest active development - are docs keeping pace?
 
 ### 4. Gap Identification
+
 - Identify what's truly missing vs. what exists but is poor quality
 - Consider severity based on project type and complexity
 - Prioritize gaps that would block new contributors or future maintainers

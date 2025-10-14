@@ -10,6 +10,7 @@
 <!-- Brief description of this operational procedure -->
 
 What this runbook covers:
+
 - What is being done
 - When it should be performed
 - Why it's necessary
@@ -38,6 +39,7 @@ What this runbook covers:
 ### Pre-Flight Checklist
 
 Before starting, ensure:
+
 - [ ] You have reviewed the procedure completely
 - [ ] Required access has been verified
 - [ ] Tools are installed and working
@@ -52,6 +54,7 @@ Before starting, ensure:
 **Purpose:** Brief explanation of what this step does
 
 **Commands:**
+
 ```bash
 # Example command with explanation
 command --option value
@@ -61,10 +64,12 @@ command --option value
 ```
 
 **Validation:**
+
 - How to verify this step succeeded
 - What to check
 
 **If step fails:**
+
 - What to do
 - Where to look for help
 
@@ -75,16 +80,19 @@ command --option value
 **Purpose:** Brief explanation of what this step does
 
 **Commands:**
+
 ```bash
 # Example command
 command --option value
 ```
 
 **Validation:**
+
 - How to verify this step succeeded
 - What to check
 
 **If step fails:**
+
 - What to do
 - Where to look for help
 
@@ -95,16 +103,19 @@ command --option value
 **Purpose:** Brief explanation of what this step does
 
 **Commands:**
+
 ```bash
 # Example command
 command --option value
 ```
 
 **Validation:**
+
 - How to verify this step succeeded
 - What to check
 
 **If step fails:**
+
 - What to do
 - Where to look for help
 
@@ -119,17 +130,21 @@ command --option value
 After completing all steps, verify:
 
 1. **Check 1:** [Description]
+
    ```bash
    # Command to verify
    verification-command
    ```
+
    Expected result: [What you should see]
 
 2. **Check 2:** [Description]
+
    ```bash
    # Command to verify
    verification-command
    ```
+
    Expected result: [What you should see]
 
 3. **Check 3:** [Description]
@@ -143,18 +158,21 @@ After completing all steps, verify:
 If you need to rollback:
 
 ### Step 1: [Rollback Action]
+
 ```bash
 # Rollback command
 rollback-command
 ```
 
 ### Step 2: [Rollback Action]
+
 ```bash
 # Rollback command
 rollback-command
 ```
 
 ### Step 3: Verification
+
 - Verify system is back to original state
 - Check that no data was lost
 - Confirm services are healthy
@@ -166,10 +184,12 @@ rollback-command
 #### Issue 1: [Problem Description]
 
 **Symptoms:**
+
 - Symptom 1
 - Symptom 2
 
 **Resolution:**
+
 ```bash
 # Commands to fix
 fix-command
@@ -180,10 +200,12 @@ fix-command
 #### Issue 2: [Problem Description]
 
 **Symptoms:**
+
 - Symptom 1
 - Symptom 2
 
 **Resolution:**
+
 ```bash
 # Commands to fix
 fix-command
@@ -194,12 +216,14 @@ fix-command
 ### When to Escalate
 
 Escalate to [team/person] if:
+
 - Condition 1
 - Condition 2
 - Any unexpected behavior
 - Procedure has failed multiple times
 
 **Escalation Contact:**
+
 - Primary: [Contact info]
 - Secondary: [Contact info]
 - On-call: [How to find current on-call]
@@ -209,6 +233,7 @@ Escalate to [team/person] if:
 <!-- Actions to take after completing the procedure -->
 
 After completion:
+
 - [ ] Update monitoring dashboards
 - [ ] Notify stakeholders of completion
 - [ ] Document any issues encountered
@@ -220,15 +245,18 @@ After completion:
 <!-- Additional context, warnings, gotchas -->
 
 **Important Notes:**
+
 - Important note 1
 - Important note 2
 - Important note 3
 
 **Gotchas:**
+
 - Gotcha 1
 - Gotcha 2
 
 **Related Procedures:**
+
 - [Link to related runbook 1](runbook-1.md)
 - [Link to related runbook 2](runbook-2.md)
 
@@ -246,6 +274,7 @@ After completion:
 ### When to Create a Runbook
 
 Create a runbook for:
+
 - Deployment procedures
 - Backup and restore operations
 - Incident response procedures
@@ -269,6 +298,7 @@ Create a runbook for:
 ### Naming Convention
 
 Use descriptive names:
+
 - `production-deployment.md`
 - `database-backup.md`
 - `incident-response.md`

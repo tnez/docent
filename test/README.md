@@ -15,6 +15,7 @@ This directory contains the test suite for docent's installation scripts.
 The test suite includes:
 
 **Installer Tests:**
+
 - Help and version commands
 - Installing all templates
 - Installing specific templates only
@@ -25,11 +26,13 @@ The test suite includes:
 - Backup creation
 
 **Uninstaller Tests:**
+
 - Template removal
 - Dry-run mode
 - Preserving non-template files
 
 **Edge Cases:**
+
 - Missing templates
 - Write permission checks
 
@@ -38,18 +41,21 @@ The test suite includes:
 For comprehensive testing, also perform manual tests:
 
 1. **Fresh Installation**
+
    ```bash
    cd /tmp/test-project
    docent/scripts/install.sh
    ```
 
 2. **Update Existing Installation**
+
    ```bash
    # After initial install
    docent/scripts/install.sh --force
    ```
 
 3. **Selective Installation**
+
    ```bash
    docent/scripts/install.sh --templates=adr,rfc
    ```
@@ -62,6 +68,7 @@ For comprehensive testing, also perform manual tests:
 ## CI/CD
 
 Tests run automatically on:
+
 - Push to main branch
 - Pull requests
 
@@ -72,6 +79,7 @@ See `.github/workflows/test.yml` for CI configuration.
 To add a new test:
 
 1. Create a test function in `test-install.sh`:
+
    ```bash
    test_my_feature() {
      test_start "Description of test"
@@ -96,12 +104,14 @@ To add a new test:
 ## Test Output
 
 Successful test output:
+
 ```
 ━━━ Test: Description of test
 ✓ PASS
 ```
 
 Failed test output:
+
 ```
 ━━━ Test: Description of test
 ✗ FAIL: Reason for failure

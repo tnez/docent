@@ -7,11 +7,13 @@ Thank you for considering contributing! This project thrives on community contri
 ### Reporting Bugs
 
 Before submitting a bug report:
+
 1. Check existing issues - your bug may already be reported
 2. Try the latest version - bug might already be fixed
 3. Reproduce consistently - ensure bug is reproducible
 
 When creating a bug report, include:
+
 - Clear title describing the bug
 - Steps to reproduce
 - Expected behavior
@@ -22,11 +24,13 @@ When creating a bug report, include:
 ### Suggesting Features
 
 Before suggesting a feature:
+
 1. Check the roadmap - feature might be planned
 2. Search issues - idea might be discussed already
 3. Consider scope - does it fit the project vision?
 
 When suggesting a feature:
+
 - Explain the problem it solves
 - Describe how it should work
 - Show examples of how users would use it
@@ -35,6 +39,7 @@ When suggesting a feature:
 ### Improving Documentation
 
 Documentation improvements are always welcome:
+
 - Fix typos and grammar
 - Clarify confusing sections
 - Add examples
@@ -45,6 +50,7 @@ Small documentation fixes can be submitted directly as PRs.
 ### Contributing Code
 
 For code contributions:
+
 1. Discuss first - for significant changes, open an issue first
 2. Follow conventions - match existing code style
 3. Test thoroughly - ensure changes work on multiple platforms
@@ -92,6 +98,7 @@ git push origin feature/your-feature-name
 ```
 
 Then open a pull request on GitHub with:
+
 - Clear, descriptive title
 - Explanation of what changed and why
 - Link to related issues
@@ -170,12 +177,14 @@ fix: installer fails on paths with spaces
 ## Testing
 
 Before submitting, test:
+
 - [ ] Installation on fresh directory
 - [ ] Installation on directory with existing docs
 - [ ] Dry-run mode
 - [ ] Rollback functionality
 
 Test on multiple platforms if possible:
+
 - macOS
 - Ubuntu Linux
 - Windows WSL

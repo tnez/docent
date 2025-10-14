@@ -28,12 +28,14 @@ This research investigates various behavioral specification formats suitable for
 **Overview:** Gherkin is a domain-specific language (DSL) for describing software behavior without detailing implementation. It uses structured natural language that is both human-readable and machine-parseable.
 
 **Key Features:**
+
 - Natural language syntax using keywords: Feature, Scenario, Given, When, Then, And, But
 - Language-agnostic (supports 70+ spoken languages)
 - Directly executable through tools like Cucumber
 - Strong separation between specification and implementation
 
 **Structure:**
+
 ```gherkin
 Feature: User Authentication
   As a user
@@ -62,6 +64,7 @@ Feature: User Authentication
 ```
 
 **Strengths:**
+
 - Excellent human readability
 - Strong business stakeholder engagement
 - Executable specifications
@@ -69,6 +72,7 @@ Feature: User Authentication
 - Clear acceptance criteria
 
 **Weaknesses:**
+
 - Can be verbose for simple behaviors
 - Requires mapping layer to implementation
 - Limited expressiveness for complex logic
@@ -79,6 +83,7 @@ Feature: User Authentication
 **Overview:** OpenAPI Specification (OAS) defines a standard, language-agnostic interface to REST APIs, allowing both humans and computers to understand service capabilities.
 
 **Key Features:**
+
 - JSON/YAML format for API description
 - Machine-readable contracts
 - Automatic code generation
@@ -86,6 +91,7 @@ Feature: User Authentication
 - Strong type definitions
 
 **Structure:**
+
 ```yaml
 openapi: 3.1.0
 info:
@@ -126,6 +132,7 @@ paths:
 ```
 
 **Strengths:**
+
 - Industry standard for API documentation
 - Excellent tooling support
 - Strong type safety
@@ -133,6 +140,7 @@ paths:
 - Machine-readable and validatable
 
 **Weaknesses:**
+
 - Limited to API specifications
 - Technical format, less business-friendly
 - Doesn't describe behavior, only interfaces
@@ -143,6 +151,7 @@ paths:
 **Overview:** BDD testing format using nested `describe` and `it` blocks to create readable test specifications that mirror natural language.
 
 **Key Features:**
+
 - Hierarchical test organization
 - Natural language test descriptions
 - Setup/teardown hooks (before/after)
@@ -150,6 +159,7 @@ paths:
 - Direct test execution
 
 **Structure:**
+
 ```javascript
 describe('Docent CLI', () => {
   describe('analyze command', () => {
@@ -185,6 +195,7 @@ describe('Docent CLI', () => {
 ```
 
 **Strengths:**
+
 - Familiar to developers
 - Directly executable
 - Good balance of readability and technical detail
@@ -192,6 +203,7 @@ describe('Docent CLI', () => {
 - Wide language support
 
 **Weaknesses:**
+
 - Test-focused, not specification-focused
 - Can mix implementation with specification
 - Less accessible to non-developers
@@ -202,6 +214,7 @@ describe('Docent CLI', () => {
 **Overview:** JSON Schema is a vocabulary for annotating and validating JSON documents, providing a contract for data structure and validation rules.
 
 **Key Features:**
+
 - Declarative validation rules
 - Type definitions and constraints
 - Composable schemas
@@ -209,6 +222,7 @@ describe('Docent CLI', () => {
 - Documentation generation
 
 **Structure:**
+
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -240,6 +254,7 @@ describe('Docent CLI', () => {
 ```
 
 **Strengths:**
+
 - Excellent for data validation
 - Machine-readable and enforceable
 - Composable and reusable
@@ -247,6 +262,7 @@ describe('Docent CLI', () => {
 - Wide tooling support
 
 **Weaknesses:**
+
 - Only describes data, not behavior
 - Technical format
 - Verbose for complex structures
@@ -257,6 +273,7 @@ describe('Docent CLI', () => {
 **Overview:** Emerging standard (2025) created by Google, OpenAI, Factory, Sourcegraph, and Cursor for providing context and instructions to AI coding agents.
 
 **Key Features:**
+
 - Simple Markdown format
 - No rigid schema required
 - Agent-specific documentation
@@ -264,6 +281,7 @@ describe('Docent CLI', () => {
 - Already adopted by 20,000+ projects
 
 **Structure:**
+
 ```markdown
 # AGENTS.md
 
@@ -305,6 +323,7 @@ Each command should:
 ```
 
 **Strengths:**
+
 - Simple and flexible
 - No tooling required
 - Human and agent readable
@@ -312,6 +331,7 @@ Each command should:
 - Low barrier to adoption
 
 **Weaknesses:**
+
 - No validation or enforcement
 - Lacks formal structure
 - No execution framework
@@ -322,6 +342,7 @@ Each command should:
 **Overview:** Project-specific Markdown formats that combine natural language with structured sections for describing behavior.
 
 **Example Structure:**
+
 ```markdown
 # Specification: User Authentication
 
@@ -362,12 +383,14 @@ Users need secure access to the system with support for multiple authentication 
 ```
 
 **Strengths:**
+
 - Fully customizable
 - Can combine best elements from other formats
 - Tailored to specific needs
 - Easy to read and write
 
 **Weaknesses:**
+
 - No standard tooling
 - Requires custom parsing
 - May lack consistency
@@ -380,18 +403,21 @@ Users need secure access to the system with support for multiple authentication 
 The landscape of AI coding assistants has evolved significantly, with major players adopting different approaches:
 
 #### 1. **Claude Code (Anthropic)**
+
 - Terminal-first approach with deep codebase understanding
 - Uses agentic search to scan entire projects
 - 200K token context window
 - Excels at multi-step workflows and refactoring
 
 #### 2. **Cursor**
+
 - IDE-integrated approach (VS Code fork)
 - Natural language prompts with codebase querying
 - Visual interface for agent interaction
 - 128K-200K token capacity
 
 #### 3. **Aider**
+
 - CLI-focused tool
 - Works with multiple LLM providers
 - Git-aware with automatic commits
@@ -400,13 +426,16 @@ The landscape of AI coding assistants has evolved significantly, with major play
 ### How Agents Use Specifications
 
 #### 1. **Context Understanding**
+
 Agents use specifications to:
+
 - Understand system requirements without implementation details
 - Generate appropriate test cases
 - Validate implementations against expected behavior
 - Reason about edge cases and error conditions
 
 #### 2. **Code Generation Patterns**
+
 - **Spec-first:** Read specification → Generate implementation
 - **Test-first:** Read specification → Generate tests → Generate code
 - **Validation:** Read specification → Check existing code compliance
@@ -414,6 +443,7 @@ Agents use specifications to:
 #### 3. **Agent-Readable Characteristics**
 
 **Most Effective:**
+
 - Structured format with clear sections
 - Explicit input/output examples
 - Concrete scenarios over abstract rules
@@ -421,6 +451,7 @@ Agents use specifications to:
 - Success and error cases
 
 **Less Effective:**
+
 - Ambiguous natural language
 - Implementation details mixed with requirements
 - Missing edge cases
@@ -453,6 +484,7 @@ Agents use specifications to:
 ### 1. **Cucumber in Enterprise (BBC, Spotify)**
 
 BBC uses Cucumber for their iPlayer service:
+
 ```gherkin
 Feature: Programme Availability
   Scenario: UK viewer accessing UK content
@@ -467,6 +499,7 @@ This allows product owners to write specifications that are directly executable.
 ### 2. **OpenAPI at Scale (Stripe, GitHub)**
 
 Stripe's entire API is defined in OpenAPI:
+
 - Generates SDKs in 8+ languages
 - Powers interactive documentation
 - Validates requests/responses
@@ -475,6 +508,7 @@ Stripe's entire API is defined in OpenAPI:
 ### 3. **Jest/RSpec in Open Source**
 
 React uses Jest with behavioral descriptions:
+
 ```javascript
 describe('useState', () => {
   it('should preserve state between renders', () => {
@@ -490,12 +524,14 @@ describe('useState', () => {
 ### 4. **AGENTS.md Adoption**
 
 Projects using AGENTS.md (as of 2025):
+
 - 20,000+ open source projects
 - Major frameworks and libraries
 - Corporate codebases
 - Educational repositories
 
 Example from a real project:
+
 ```markdown
 # AGENTS.md
 
@@ -532,16 +568,19 @@ This is a React component library. Each component:
 #### For Agent-Driven Development
 
 **Most Agent-Friendly:**
+
 1. **OpenAPI** - Structured, validated, tool-supported
 2. **JSON Schema** - Type-safe, machine-readable
 3. **Gherkin** - Clear scenarios, executable
 
 **Most Human-Friendly:**
+
 1. **AGENTS.md** - Simple, flexible, no learning curve
 2. **Custom Markdown** - Fully customizable
 3. **Gherkin** - Natural language, business-readable
 
 **Most Balanced:**
+
 1. **Gherkin** - Good for both humans and machines
 2. **RSpec/Jest pattern** - Familiar to developers, structured
 3. **Hybrid approaches** - Combining multiple formats
@@ -551,6 +590,7 @@ This is a React component library. Each component:
 #### 1. **Standardization vs. Flexibility**
 
 **High Standardization (OpenAPI, Gherkin):**
+
 - ✅ Consistent across projects
 - ✅ Tool support
 - ✅ Validation capabilities
@@ -558,6 +598,7 @@ This is a React component library. Each component:
 - ❌ May not fit all use cases
 
 **High Flexibility (AGENTS.md, Custom Markdown):**
+
 - ✅ Adaptable to any project
 - ✅ Easy to start
 - ✅ No tooling dependencies
@@ -567,12 +608,14 @@ This is a React component library. Each component:
 #### 2. **Human Readability vs. Machine Parseability**
 
 **Human-Optimized:**
+
 - Natural language descriptions
 - Contextual information
 - Examples and narratives
 - Business-friendly terminology
 
 **Machine-Optimized:**
+
 - Structured data formats
 - Type definitions
 - Validation schemas
@@ -581,12 +624,14 @@ This is a React component library. Each component:
 #### 3. **Execution vs. Documentation**
 
 **Executable Specs (Gherkin, RSpec):**
+
 - ✅ Specs stay in sync with code
 - ✅ Automated validation
 - ❌ Requires implementation mapping
 - ❌ More complex setup
 
 **Documentation Specs (Markdown, AGENTS.md):**
+
 - ✅ Easy to write and maintain
 - ✅ No technical dependencies
 - ❌ Can drift from implementation
@@ -617,6 +662,7 @@ Based on the codebase analysis:
 ### Requirements for Behavioral Specs in Docent
 
 #### Must Have:
+
 1. **Agent-readable format** that AI assistants can parse and understand
 2. **Human-friendly syntax** for developers to write specs
 3. **CLI integration** for creating and validating specs
@@ -624,12 +670,14 @@ Based on the codebase analysis:
 5. **Version control friendly** (text-based, diffable)
 
 #### Should Have:
+
 1. **Validation capabilities** to check spec completeness
 2. **Test generation** hints or examples
 3. **Linking to documentation** (ADRs, RFCs)
 4. **Progressive enhancement** (start simple, add detail)
 
 #### Nice to Have:
+
 1. **Execution framework** integration
 2. **Multiple format support** (Gherkin, RSpec-style, etc.)
 3. **Spec coverage analysis**
@@ -708,6 +756,7 @@ Suggested test cases or testing approach.
 ```
 
 This format:
+
 - Uses familiar Gherkin-style scenarios
 - Includes concrete examples (agent-friendly)
 - Maintains human readability
@@ -729,18 +778,21 @@ Implement a flexible specification system that:
 ### Implementation Approach
 
 #### Phase 1: Foundation
+
 1. Add `specs/` directory to project structure
 2. Create base specification template
 3. Implement `docent spec new` command
 4. Add spec detection to `docent analyze`
 
 #### Phase 2: Integration
+
 1. Enhance `docent audit` to check spec coverage
 2. Update `docent review` to detect spec/code drift
 3. Add `--include-specs` flag to existing commands
 4. Create spec validation logic
 
 #### Phase 3: Advanced Features
+
 1. Support multiple spec formats (Gherkin, RSpec-style)
 2. Add spec-to-test generation hints
 3. Implement spec coverage metrics
@@ -1080,6 +1132,7 @@ Add support for behavioral specifications that AI agents can read, understand, a
 The research indicates that implementing behavioral specifications in docent would significantly enhance its value for agent-driven development. The recommended hybrid approach—combining Gherkin's natural language scenarios, concrete examples from RSpec/Jest patterns, and the simplicity of AGENTS.md—provides the optimal balance of human readability and agent parseability.
 
 Key success factors:
+
 1. Start with a simple, flexible format
 2. Support progressive enhancement
 3. Integrate deeply with existing docent commands

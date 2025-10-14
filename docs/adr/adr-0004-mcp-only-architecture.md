@@ -14,6 +14,7 @@ After implementing both CLI and MCP interfaces (per ADR-0001 and RFC-0001), a pr
 Built `docent audit --agent` to test agent-driven documentation assessment:
 
 **Results:**
+
 - **Heuristic analysis:** 21/100 score, 87% false positive rate (flagged 13/15 substantial docs as "empty")
 - **Agent analysis:** 73/100 score, semantic understanding, contextual recommendations
 - **3.5x improvement** - Agents can reason about documentation quality in ways heuristics cannot
@@ -42,6 +43,7 @@ From user feedback:
 > "docent should really just make your agent work better ... not be a separate thing you have to learn. Just configure the MCP ... maybe ask some questions to give it some initial direction, and off you go."
 
 **Analogy:** Docent is like a database
+
 - Humans don't query databases directly
 - Applications (agents) query databases
 - Makes applications smarter, not a separate tool to learn
@@ -51,6 +53,7 @@ From user feedback:
 ### Forces at Play
 
 **In favor of MCP-only:**
+
 - CLI was validated but rarely used directly
 - Dual maintenance increases complexity
 - Agent-driven features require agents (not CLI)
@@ -58,6 +61,7 @@ From user feedback:
 - Users don't want to learn docent commands
 
 **Against MCP-only:**
+
 - Removes human-facing interface
 - Breaks backward compatibility
 - Bold architectural bet
@@ -109,12 +113,14 @@ docent/
 ### User Experience
 
 **Before (Dual Interface):**
+
 1. Learn docent commands: `docent analyze`, `docent audit`, etc.
 2. Configure MCP for agent integration
 3. Remember to run audits manually
 4. Context switch between terminal and agent
 
 **After (MCP-Only):**
+
 1. Configure MCP once: `npx @tnezdev/docent`
 2. Restart agent
 3. Just talk naturally: "How's my documentation?"
@@ -136,6 +142,7 @@ docent/
 ```
 
 **For local development:**
+
 ```json
 {
   "mcpServers": {
@@ -180,16 +187,19 @@ docent/
 ### Mitigations for Negatives
 
 **"What if MCP fails to gain adoption?"**
+
 - MCP is backed by Anthropic (Claude's maker)
 - Protocol is open and simple
 - Can add other interfaces later if needed (CLI as plugin)
 
 **"What about users without MCP-compatible agents?"**
+
 - Target audience is "solo developers using agents" - they have MCP
 - MCP support growing rapidly (Claude Desktop, Claude Code, more coming)
 - Non-agent users weren't our target anyway
 
 **"What about CI/CD use cases?"**
+
 - Not docent's lane (documentation isn't a build gate)
 - If needed, agents can run in CI too
 - Alternative: separate thin CLI wrapper for CI (future consideration)
@@ -201,12 +211,14 @@ docent/
 **Description:** Maintain both CLI and MCP indefinitely (status quo from RFC-0001)
 
 **Pros:**
+
 - Backward compatible
 - Works for all users
 - No breaking changes
 - Fallback if MCP fails
 
 **Cons:**
+
 - Feature drift risk (CLI vs MCP parity)
 - Maintenance burden (two interfaces)
 - Confusing value proposition
@@ -220,11 +232,13 @@ docent/
 **Description:** Position CLI for human developers, MCP for automated agents
 
 **Pros:**
+
 - Clear separation of concerns
 - Serves both audiences
 - CLI could have richer UX
 
 **Cons:**
+
 - Misunderstands the audience (humans *with* agents, not humans *or* agents)
 - CLI still rarely used (agents do the work)
 - Doesn't solve complexity problem
@@ -237,11 +251,13 @@ docent/
 **Description:** Build web interface instead of MCP server
 
 **Pros:**
+
 - Visual, approachable UX
 - Works without agents
 - Broader appeal
 
 **Cons:**
+
 - Different product entirely
 - Requires hosting/deployment
 - Doesn't integrate with coding workflow
@@ -280,12 +296,14 @@ docent/
 **After:** 272 packages, ~25MB node_modules
 
 **Removed dependencies:**
+
 - @oclif/core, @oclif/plugin-*
 - chalk, inquirer (interactive CLI)
 - cli-ux, cli-table3 (CLI formatting)
 - All CLI-specific testing mocks
 
 **Kept dependencies:**
+
 - @modelcontextprotocol/sdk (MCP protocol)
 - glob (file search)
 - TypeScript, Mocha (development)
@@ -297,6 +315,7 @@ docent/
 If anyone was using the CLI directly:
 
 **Before:**
+
 ```bash
 docent analyze
 docent audit
@@ -304,6 +323,7 @@ docent review
 ```
 
 **After:**
+
 ```bash
 # Configure MCP in ~/.claude.json
 {
@@ -342,6 +362,7 @@ docent review
 ## Reflection: The Journey
 
 Docent's evolution:
+
 1. **Templates-only** - Static markdown files
 2. **CLI + Agent Protocol** - Commands with JSON output (ADR-0001)
 3. **CLI + MCP Dual Interface** - Native tool calling (RFC-0001)
@@ -350,6 +371,7 @@ Docent's evolution:
 **The key insight:** We didn't know agents were *required* until we built the audit prototype. Once validated (3.5x improvement), the CLI became unnecessary complexity.
 
 **This is the right decision** because:
+
 - Evidence-based (prototype validation)
 - User-driven (target audience has agents)
 - Simpler (one interface)

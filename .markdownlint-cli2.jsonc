@@ -1,0 +1,29 @@
+{
+  // Markdown linting configuration for markdownlint-cli2
+  // Philosophy: Enable auto-fixable formatting rules, disable stylistic preferences
+  "globs": [
+    "**/*.md"
+  ],
+  "ignores": [
+    "node_modules/**",
+    "_research/**"  // Research/scratch work excluded
+  ],
+  "config": {
+    "default": true,
+
+    // === DISABLED: Stylistic preferences (not auto-fixable or too opinionated) ===
+    "MD013": false,  // Line length - breaks intentional formatting, not always auto-fixable well
+    "MD024": false,  // No duplicate headings - sometimes needed for structure
+    "MD026": false,  // No trailing punctuation - often intentional in headings
+    "MD034": false,  // No bare URLs - not auto-fixable, sometimes needed
+    "MD036": false,  // No emphasis as heading - sometimes used intentionally
+    "MD040": false,  // Fenced code language - creates noise for example blocks
+    "MD041": false,  // First line h1 - doesn't apply to all docs
+    "MD051": false,  // Link fragments - false positives on template placeholders
+
+    // === ENABLED: Auto-fixable formatting rules (for consistency) ===
+    "MD022": true,   // Blank lines around headings - auto-fixable
+    "MD031": true,   // Blank lines around fences - auto-fixable
+    "MD032": true    // Blank lines around lists - auto-fixable
+  }
+}

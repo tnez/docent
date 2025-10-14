@@ -18,6 +18,7 @@ Add docent capability to capture work artifacts (decisions, tasks, questions, im
 **The pain point (experienced in real-time during documentation update):**
 
 While updating architecture docs from CLI to MCP-only:
+
 1. Started with 4 todos: create ADR, update architecture, convert specs, find references
 2. Discovered during work: architecture overview has 30+ sections to update
 3. Realized: "This is too much to finish right now, but I don't want to lose track"
@@ -28,18 +29,21 @@ While updating architecture docs from CLI to MCP-only:
    - Surface them when contextually relevant (e.g., "Hey, you never finished architecture overview section 3-7")
 
 **Who is affected:**
+
 - Solo developers juggling multiple concerns
 - Developers using AI agents who discover work during agent interactions
 - Anyone doing exploratory or investigative work where scope expands
 - Teams doing refactoring where you discover more issues as you go
 
 **Current workarounds (all insufficient):**
+
 - TODO comments in code → scattered, hard to track, often forgotten
 - External task trackers → context switch, lose connection to code/docs
 - Agent todo lists → ephemeral, lost when conversation ends
 - Memory → unreliable, high cognitive load
 
 **Consequences of not solving:**
+
 - Work artifacts get lost in "bottomless pit"
 - Developers hesitate to explore (afraid of losing track)
 - Partial work blocks progress (can't safely pause/resume)
@@ -68,6 +72,7 @@ While updating architecture docs from CLI to MCP-only:
 ### Overview
 
 Docent maintains a **work journal** that captures artifacts discovered during development:
+
 - **Decisions** - "We chose X because Y"
 - **Tasks** - "Need to update section Z"
 - **Questions** - "Does this apply to situation W?"
@@ -75,6 +80,7 @@ Docent maintains a **work journal** that captures artifacts discovered during de
 - **Discoveries** - "Found that component uses old pattern"
 
 **Key principles:**
+
 1. **Capture is frictionless** - Agent command or single docent call
 2. **Context is preserved** - What file, what change, what conversation
 3. **Surfacing is smart** - Show relevant items when working nearby
@@ -366,6 +372,7 @@ Developer (via agent):
 > "While updating the architecture, I realized we need to check all CLI references in docs. Can you capture that for later?"
 
 Agent:
+
 ```typescript
 capture_work({
   type: 'task',
@@ -403,9 +410,11 @@ Agent calls `surface_work({status: ['pending', 'in-progress']})`
 > "You have 3 items:
 >
 > **In-Progress:**
+>
 > - Architecture overview update (4/9 sections)
 >
 > **Pending:**
+>
 > - Convert CLI command specs to MCP tool specs
 > - Search all docs for CLI references
 >
@@ -416,6 +425,7 @@ Agent calls `surface_work({status: ['pending', 'in-progress']})`
 Developer: "That discovery about work capture - can we make it a formal RFC?"
 
 Agent:
+
 ```typescript
 promote_work({
   id: 'disc-20251013-1515',
@@ -430,6 +440,7 @@ promote_work({
 ### Trade-offs
 
 **Advantages:**
+
 - Captures knowledge that would otherwise be lost
 - Preserves context automatically
 - Reduces cognitive load (offload to docent)
@@ -437,6 +448,7 @@ promote_work({
 - Makes agent more helpful (proactive surfacing)
 
 **Disadvantages:**
+
 - Another file to maintain (.docent/journal.md)
 - Requires discipline to capture (though agent can prompt)
 - Could accumulate cruft if not pruned
@@ -447,11 +459,13 @@ promote_work({
 **Description:** Just create issues for discovered work
 
 **Pros:**
+
 - Existing tooling
 - Team visibility
 - Integration with PRs
 
 **Cons:**
+
 - Context switch to browser/GitHub
 - Loses conversational context
 - Not integrated with agent workflow
@@ -465,11 +479,13 @@ promote_work({
 **Description:** Just add TODO comments in files
 
 **Pros:**
+
 - Standard practice
 - No new tools
 - Lives with code
 
 **Cons:**
+
 - Scattered across files (hard to track)
 - Often forgotten
 - No status tracking
@@ -483,10 +499,12 @@ promote_work({
 **Description:** Maintain `WORK.md` or similar manually
 
 **Pros:**
+
 - Simple, no tooling needed
 - Human-readable
 
 **Cons:**
+
 - Requires manual maintenance
 - No structure enforcement
 - No smart surfacing
@@ -511,6 +529,7 @@ promote_work({
 ## Testing Strategy
 
 **Dogfooding scenarios:**
+
 1. Capture decisions during ADR writing
 2. Capture tasks during refactoring
 3. Surface items when editing related files
@@ -519,21 +538,25 @@ promote_work({
 ## Migration and Rollout
 
 ### Phase 1: Manual Dogfooding
+
 - Manually maintain `.docent/journal.md` during docent development
 - Learn what works/doesn't
 - Refine format
 
 ### Phase 2: MCP Tools
+
 - Implement `capture-work` tool
 - Implement `surface-work` tool
 - Basic surfacing (file-based proximity)
 
 ### Phase 3: Smart Surfacing
+
 - Topic/tag-based surfacing
 - Time-based reminders
 - Status-based filtering
 
 ### Phase 4: Promotions
+
 - Implement `promote-work` tool
 - Auto-populate RFC/ADR from captures
 - Integration with templates
@@ -556,6 +579,7 @@ promote_work({
 ## Future Possibilities
 
 Once basic capture/surface works:
+
 - **Team journals** - Shared work context
 - **Sync with GitHub** - Bidirectional issue sync
 - **Analytics** - "What types of work get forgotten most?"
@@ -576,6 +600,7 @@ Once basic capture/surface works:
 **This RFC was created in response to the exact problem it proposes to solve.**
 
 During the MCP documentation update, we discovered:
+
 - Partially completed work (architecture overview 4/9 sections)
 - Discovered tasks (CLI spec conversion)
 - Open questions (how many CLI references?)

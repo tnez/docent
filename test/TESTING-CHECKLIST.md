@@ -14,18 +14,21 @@ Complete this checklist before each release to ensure quality.
 ### Installation Testing
 
 #### Fresh Installation
+
 - [ ] Clean directory installation works
 - [ ] All templates are copied correctly
 - [ ] Directory structure is created properly
 - [ ] File permissions are correct
 
 #### Selective Installation
+
 - [ ] Can install single template (`--templates=adr`)
 - [ ] Can install multiple templates (`--templates=adr,rfc`)
 - [ ] Can install all templates (`--templates=all`)
 - [ ] Invalid template names are handled gracefully
 
 #### Conflict Handling
+
 - [ ] Detects existing templates
 - [ ] Skip mode preserves existing files
 - [ ] Force mode overwrites files
@@ -33,6 +36,7 @@ Complete this checklist before each release to ensure quality.
 - [ ] Interactive mode prompts correctly
 
 #### Advanced Options
+
 - [ ] Custom target directory works (`--target-dir`)
 - [ ] Dry-run shows accurate preview
 - [ ] Non-interactive mode completes without prompts
@@ -50,6 +54,7 @@ Complete this checklist before each release to ensure quality.
 ### Platform Testing
 
 #### macOS
+
 - [ ] Fresh installation
 - [ ] Update installation
 - [ ] Uninstallation
@@ -58,6 +63,7 @@ Complete this checklist before each release to ensure quality.
 - [ ] zsh shell
 
 #### Linux (Ubuntu)
+
 - [ ] Fresh installation
 - [ ] Update installation
 - [ ] Uninstallation
@@ -65,6 +71,7 @@ Complete this checklist before each release to ensure quality.
 - [ ] bash shell
 
 #### Windows WSL (if available)
+
 - [ ] Fresh installation
 - [ ] Update installation
 - [ ] Uninstallation
@@ -96,12 +103,14 @@ Complete this checklist before each release to ensure quality.
 ## Post-Release Monitoring
 
 ### First 24 Hours
+
 - [ ] Monitor GitHub Issues for bug reports
 - [ ] Check GitHub Actions for any failures
 - [ ] Verify installation works from fresh clone
 - [ ] Check for any critical bugs
 
 ### First Week
+
 - [ ] Review any reported issues
 - [ ] Gather user feedback
 - [ ] Document common problems
@@ -118,6 +127,7 @@ Document platforms tested:
 | WSL      |         | ⬜     |      |        |
 
 Legend:
+
 - ⬜ Not tested
 - ✅ Passing
 - ❌ Failing

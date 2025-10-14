@@ -92,10 +92,10 @@ prompt_yes_no() {
 
   while true; do
     if [ "$default" = "y" ]; then
-      read -p "${prompt} (Y/n): " yn
+      read -r -p "${prompt} (Y/n): " yn
       yn="${yn:-y}"
     else
-      read -p "${prompt} (y/N): " yn
+      read -r -p "${prompt} (y/N): " yn
       yn="${yn:-n}"
     fi
 
@@ -185,7 +185,8 @@ uninstall_templates() {
 
   # Check if directory is empty and offer to remove it
   if [ -d "$TARGET_DIR" ]; then
-    local remaining=$(find "$TARGET_DIR" -type f 2>/dev/null | wc -l | tr -d ' ')
+    local remaining
+    remaining=$(find "$TARGET_DIR" -type f 2>/dev/null | wc -l | tr -d ' ')
     if [ "$remaining" -eq 0 ]; then
       if [ "$INTERACTIVE" = true ]; then
         if prompt_yes_no "Directory is empty. Remove $TARGET_DIR/?" "y"; then

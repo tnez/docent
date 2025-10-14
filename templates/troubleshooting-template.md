@@ -16,6 +16,7 @@ Brief description of the problem and its symptoms.
 <!-- What does the user/operator see when this problem occurs? -->
 
 When this problem occurs, you may observe:
+
 - Symptom 1 (e.g., Error message: "Connection timeout")
 - Symptom 2 (e.g., Page load time > 30 seconds)
 - Symptom 3 (e.g., Users unable to login)
@@ -28,18 +29,22 @@ When this problem occurs, you may observe:
 Before diving deep, perform these quick checks:
 
 1. **Check 1:** [Description]
+
    ```bash
    # Command to check
    check-command
    ```
+
    - ✅ If output shows X: Problem confirmed, proceed to Diagnosis
    - ❌ If output shows Y: Not this issue, see [Related Issues](#related-issues)
 
 2. **Check 2:** [Description]
+
    ```bash
    # Command to check
    check-command
    ```
+
    - ✅ If output shows X: Problem confirmed
    - ❌ If output shows Y: Not this issue
 
@@ -50,6 +55,7 @@ Before diving deep, perform these quick checks:
 ### Step 1: Check [Component/Area]
 
 **What to check:**
+
 ```bash
 # Diagnostic command
 diagnostic-command
@@ -59,6 +65,7 @@ diagnostic-command
 ```
 
 **Interpretation:**
+
 - If you see X: This indicates [root cause 1], proceed to [Solution 1](#solution-1)
 - If you see Y: This indicates [root cause 2], proceed to [Solution 2](#solution-2)
 - If you see Z: This indicates [root cause 3], proceed to [Solution 3](#solution-3)
@@ -68,12 +75,14 @@ diagnostic-command
 ### Step 2: Check [Component/Area]
 
 **What to check:**
+
 ```bash
 # Diagnostic command
 diagnostic-command
 ```
 
 **Interpretation:**
+
 - If you see X: [Interpretation]
 - If you see Y: [Interpretation]
 
@@ -82,12 +91,14 @@ diagnostic-command
 ### Step 3: Check [Component/Area]
 
 **What to check:**
+
 ```bash
 # Diagnostic command
 diagnostic-command
 ```
 
 **Interpretation:**
+
 - If you see X: [Interpretation]
 - If you see Y: [Interpretation]
 
@@ -98,6 +109,7 @@ diagnostic-command
 **Root Cause:** Brief explanation of what's causing the issue
 
 **Fix:**
+
 ```bash
 # Step 1
 command-to-fix-1
@@ -110,6 +122,7 @@ command-to-fix-3
 ```
 
 **Verification:**
+
 ```bash
 # Command to verify fix
 verify-command
@@ -120,6 +133,7 @@ verify-command
 
 **Permanent Fix:**
 If this is a recurring issue, implement this permanent solution:
+
 - Permanent action 1
 - Permanent action 2
 - Configuration change needed
@@ -131,6 +145,7 @@ If this is a recurring issue, implement this permanent solution:
 **Root Cause:** Brief explanation of what's causing the issue
 
 **Fix:**
+
 ```bash
 # Step 1
 command-to-fix-1
@@ -140,12 +155,14 @@ command-to-fix-2
 ```
 
 **Verification:**
+
 ```bash
 # Command to verify fix
 verify-command
 ```
 
 **Permanent Fix:**
+
 - Permanent action 1
 - Permanent action 2
 
@@ -156,18 +173,21 @@ verify-command
 **Root Cause:** Brief explanation of what's causing the issue
 
 **Fix:**
+
 ```bash
 # Commands to fix
 command-to-fix
 ```
 
 **Verification:**
+
 ```bash
 # Command to verify fix
 verify-command
 ```
 
 **Permanent Fix:**
+
 - Permanent action 1
 - Permanent action 2
 
@@ -197,14 +217,17 @@ To prevent this issue in the future:
 <!-- What to monitor to detect this issue early -->
 
 **Key Metrics:**
+
 - Metric 1: [Name] - Alert when [condition]
 - Metric 2: [Name] - Alert when [condition]
 - Metric 3: [Name] - Alert when [condition]
 
 **Dashboard:**
+
 - Link to relevant dashboard: [Dashboard URL]
 
 **Alert Configuration:**
+
 ```yaml
 # Example alert configuration
 alert: [Problem Name]
@@ -217,17 +240,20 @@ severity: [Alert severity]
 <!-- When should this be escalated to another team or person -->
 
 Escalate to [team/person] if:
+
 - Condition 1 (e.g., Problem persists after all solutions tried)
 - Condition 2 (e.g., Multiple systems affected)
 - Condition 3 (e.g., Data loss risk)
 - Any situation involving [critical condition]
 
 **Escalation Contacts:**
+
 - Primary: [Contact info]
 - Secondary: [Contact info]
 - On-call: [How to page on-call]
 
 **Information to gather before escalating:**
+
 - Output of diagnostic commands
 - Timeline of when issue started
 - Recent changes to the system
@@ -239,6 +265,7 @@ Escalate to [team/person] if:
 <!-- Links to similar problems or related troubleshooting guides -->
 
 This problem may be confused with:
+
 - [Related Issue 1](troubleshooting-1.md) - Similar symptoms but different cause
 - [Related Issue 2](troubleshooting-2.md) - Related but distinct problem
 
@@ -273,6 +300,7 @@ This problem may be confused with:
 ### When to Create a Troubleshooting Guide
 
 Create a guide when:
+
 - An issue occurs multiple times
 - Resolution is non-obvious
 - Diagnosis requires specific steps
@@ -292,6 +320,7 @@ Create a guide when:
 ### Naming Convention
 
 Use descriptive, problem-focused names:
+
 - `database-connection-failures.md`
 - `high-memory-usage.md`
 - `authentication-timeouts.md`

@@ -60,18 +60,21 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 ### Protocol Components
 
 **1. Commands**
+
 - `docent analyze --output json` → Project analysis
 - `docent init --non-interactive --output json` → Setup
 - `docent audit --output json` → Gap detection
 - `docent review --output json` → Health check
 
 **2. JSON Schemas**
+
 - `analysis.schema.json` - Language/framework detection format
 - `audit.schema.json` - Documentation gap report format
 - `review.schema.json` - Staleness/drift report format
 - `init.schema.json` - Initialization result format
 
 **3. Agent Guide**
+
 - `.docent-protocol/agent-guide.md` - Complete integration documentation
 - Workflow examples for common tasks
 - Best practices for agent developers
@@ -80,6 +83,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 ### Design Rules
 
 **DO:**
+
 - ✅ Provide structured JSON output for machines
 - ✅ Provide rich human output for developers
 - ✅ Document every field in JSON schemas
@@ -87,6 +91,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 - ✅ Support both interactive and non-interactive modes
 
 **DON'T:**
+
 - ❌ Build agent-specific integrations
 - ❌ Use agent-specific APIs or protocols
 - ❌ Couple to specific agent capabilities
@@ -130,6 +135,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 **Description:** Build docent as a Claude Code MCP server or native integration.
 
 **Pros:**
+
 - Deep integration with Claude Code
 - Rich context sharing
 - Native tool calling
@@ -137,6 +143,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 - Official partnership potential
 
 **Cons:**
+
 - Only works with Claude Code
 - Vendor lock-in
 - Smaller market (only Claude Code users)
@@ -151,6 +158,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 **Description:** Build explicit integrations for multiple agents (Claude Code, Cursor, Aider).
 
 **Pros:**
+
 - Best-in-class experience for each agent
 - Can use agent-specific features
 - Official partnerships possible
@@ -158,6 +166,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 - Great UX for covered agents
 
 **Cons:**
+
 - Massive maintenance burden
 - Must track every agent's API changes
 - Can't support all agents
@@ -172,6 +181,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 **Description:** Provide a JavaScript/TypeScript library agents can import.
 
 **Pros:**
+
 - Type-safe integration
 - Programmatic API
 - Can share code between agents
@@ -179,6 +189,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 - Good developer experience
 
 **Cons:**
+
 - Requires agents use JavaScript/TypeScript
 - Excludes non-JS agents
 - Library API surface to maintain
@@ -193,6 +204,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 **Description:** Run docent as a service with GraphQL API for rich querying.
 
 **Pros:**
+
 - Rich query capabilities
 - Type system built-in
 - Can fetch exactly what's needed
@@ -200,6 +212,7 @@ Build an **agent-agnostic architecture** where docent provides a standardized pr
 - Good tooling
 
 **Cons:**
+
 - Requires running a service
 - Much higher complexity
 - Overkill for simple commands

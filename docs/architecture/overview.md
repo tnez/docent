@@ -12,6 +12,7 @@ Docent is documentation intelligence for AI agents. It provides agents with sema
 The system consists of three main components: an MCP server exposing 5 tools, core analysis libraries written in TypeScript that provide both heuristic and agent-driven assessments, and 10 comprehensive documentation templates.
 
 **Key Points:**
+
 - **Agent-first design** - Built for AI agents, not human CLI usage
 - **MCP-only interface** - Native tool calling through Model Context Protocol
 - **Semantic analysis** - Agent-driven assessment outperforms heuristics 3.5x (73/100 vs 21/100)
@@ -43,6 +44,7 @@ Docent makes AI agents smarter at understanding and improving documentation. It 
 - Prefer invisible infrastructure over explicit tooling
 
 **Not the target:**
+
 - Teams needing CI/CD documentation gates (not docent's lane)
 - Developers without AI agent integration
 - Traditional documentation workflows without agent assistance
@@ -118,6 +120,7 @@ Systems that depend on docent:
 ```
 
 **Key Flow:**
+
 1. Agent calls MCP tool (e.g., `audit`)
 2. MCP server gathers context (detector + auditor + agent-audit)
 3. Returns assessment prompt + structured data to agent
@@ -133,6 +136,7 @@ Systems that depend on docent:
 **Technology:** TypeScript, @modelcontextprotocol/sdk (stdio transport)
 
 **Responsibilities:**
+
 - Implement MCP protocol (JSON-RPC over stdio)
 - Expose 5 tools for agent consumption
 - Route tool calls to appropriate libraries
@@ -140,6 +144,7 @@ Systems that depend on docent:
 - Handle errors gracefully
 
 **Available Tools:**
+
 1. **`analyze`** - Analyze project structure, languages, frameworks
 2. **`audit`** - Agent-driven semantic documentation assessment (73/100 score)
 3. **`audit`** - Heuristic documentation audit for baseline (21/100 score)
@@ -147,11 +152,13 @@ Systems that depend on docent:
 5. **`get-template`** - Fetch template content by type
 
 **Interactions:**
+
 - Calls: Detector, Auditor, Agent-Audit libraries
 - Called by: MCP-compatible agents (Claude Code, Claude Desktop, etc.)
 - Protocol: JSON-RPC 2.0 over stdio
 
 **Key Interfaces:**
+
 ```typescript
 // Tool calling interface
 {
@@ -165,6 +172,7 @@ Systems that depend on docent:
 ```
 
 **Deployment:**
+
 - Entry point: `bin/mcp-server.js`
 - Distributed via npm: `npx @tnezdev/docent`
 - Configured in agent's MCP settings (e.g., `~/.claude.json`)
@@ -179,6 +187,7 @@ Systems that depend on docent:
 **Technology:** TypeScript, Node.js `fs` module, `glob` library
 
 **Responsibilities:**
+
 - Detect programming languages by file extensions
 - Identify frameworks through config file analysis (package.json, Cargo.toml, etc.)
 - Analyze project structure (source/test/docs directories)
@@ -186,14 +195,17 @@ Systems that depend on docent:
 - Generate confidence scores for detections
 
 **Interactions:**
+
 - Called by: MCP `analyze` tool, MCP `audit` tool (for context)
 - Calls: File system APIs, glob pattern matching
 
 **Key Interfaces:**
+
 - `analyzeProject(cwd: string): Promise<AnalysisResult>`
 - Returns structured data matching `analysis.schema.json`
 
 **Deployment:**
+
 - Compiled to `/lib/lib/detector.js` from `/src/lib/detector.ts`
 - Bundled with npm package
 
@@ -206,6 +218,7 @@ Systems that depend on docent:
 **Technology:** TypeScript, Node.js `fs` module, `glob` library
 
 **Responsibilities:**
+
 - Collect structured project context (languages, frameworks, structure)
 - Gather documentation metadata (files, sizes, headings, timestamps)
 - Include heuristic audit results as baseline
@@ -213,10 +226,12 @@ Systems that depend on docent:
 - Format data for agent reasoning
 
 **Interactions:**
+
 - Called by: MCP `audit` tool
 - Calls: Detector, Auditor, prompt builder, file system APIs
 
 **Key Interfaces:**
+
 - `prepareAgentAuditContext(cwd, docsDir, analysis, audit): Promise<AgentContext>`
 - `buildAuditPrompt(context): string` (13K+ character assessment prompt)
 
@@ -224,6 +239,7 @@ Systems that depend on docent:
 Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. This component enables that semantic intelligence.
 
 **Deployment:**
+
 - Compiled to `/lib/lib/agent-audit.js` from `/src/lib/agent-audit.ts`
 - Works with `/templates/prompts/audit.md` template
 
@@ -236,6 +252,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 **Technology:** TypeScript, Node.js `fs` module, `glob` library
 
 **Responsibilities:**
+
 - Scan documentation directory for markdown files
 - Check coverage for key documentation types (architecture, ADRs, testing, etc.)
 - Identify empty or placeholder-only files
@@ -244,16 +261,19 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 - Generate prioritized gap recommendations
 
 **Interactions:**
+
 - Called by: MCP `audit` tool, MCP `audit` tool (for baseline)
 - Calls: File system APIs, pattern matching, analysis result from Detector
 
 **Note:** Heuristic audit provides 21/100 baseline. Used for comparison against agent-driven 73/100 score.
 
 **Key Interfaces:**
+
 - `auditDocumentation(cwd, docsDir, analysis): Promise<AuditResult>`
 - Returns structured data matching `audit.schema.json`
 
 **Deployment:**
+
 - Compiled to `/lib/lib/auditor.js` from `/src/lib/auditor.ts`
 
 ---
@@ -265,6 +285,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 **Technology:** Markdown files with structured content
 
 **Templates (10 types):**
+
 1. `adr-template.md` - Architecture Decision Records
 2. `rfc-template.md` - Request for Comments
 3. `prd-template.md` - Product Requirements
@@ -277,19 +298,23 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 10. `spec-template.md` - Behavioral specifications
 
 **Agent Prompts:**
+
 - `templates/prompts/audit.md` - 13K character assessment prompt for agent-driven analysis
 
 **Responsibilities:**
+
 - Provide structure and guidance for documentation
 - Include examples and best practices
 - Support agent access via `get-template` tool
 - Enable semantic analysis via comprehensive prompts
 
 **Interactions:**
+
 - Called by: MCP `get-template` tool, MCP `list-templates` tool
 - Accessed by: Agent-Audit library for prompts
 
 **Deployment:**
+
 - Source files in `/templates` directory
 - Included in npm package via `files` field in package.json
 
@@ -327,33 +352,39 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ## Technology Stack
 
 ### Core Runtime
+
 - **Language:** TypeScript 5.x
 - **Runtime:** Node.js 18+
 - **Package Manager:** npm
 
 ### MCP Framework
+
 - **Protocol:** Model Context Protocol (MCP)
 - **SDK:** @modelcontextprotocol/sdk
 - **Transport:** stdio (JSON-RPC 2.0)
 - **Reason:** Native tool calling, agent-first, industry standard
 
 ### Build & Development
+
 - **Compiler:** TypeScript compiler (`tsc`)
 - **Testing:** Mocha v10
 - **Linting:** ESLint v8
 
 ### Core Libraries
+
 - **File Operations:** Node.js `fs` module
 - **Pattern Matching:** `glob` v10
 - **MCP SDK:** @modelcontextprotocol/sdk (stdio transport)
 
 ### Distribution
+
 - **Registry:** npm
 - **Package Name:** `@tnezdev/docent`
 - **Entry Point:** `bin/mcp-server.js`
 - **Usage:** `npx @tnezdev/docent`
 
 ### Documentation
+
 - **Format:** Markdown
 - **Templates:** 10 types + agent prompts
 - **Prompt Size:** 13K+ characters for agent-driven assessment
@@ -361,6 +392,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ## Scalability
 
 ### Current Scale
+
 - **Installation size:** ~272 npm packages (72% reduction from 977)
 - **Compiled size:** ~1 MB lib directory
 - **Template count:** 10 markdown files + agent prompts
@@ -369,6 +401,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 - **MCP tools:** 5 (analyze, audit, audit, list-templates, get-template)
 
 ### Performance Characteristics
+
 - **MCP startup:** ~500ms (persistent process, one-time cost)
 - **Analysis time:** < 2 seconds for typical projects
 - **Heuristic audit:** < 1 second (21/100 baseline)
@@ -378,6 +411,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ### Scaling Strategy
 
 **MCP Architecture** - Docent runs as persistent MCP server:
+
 - Individual user machines (no central service)
 - One process per agent session (stdio transport)
 - npm CDN for package distribution
@@ -386,17 +420,20 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ## Security
 
 ### Local Execution Model
+
 - **No network calls** - All analysis is local file system only
 - **No data transmission** - No telemetry or analytics
 - **No credentials** - Doesn't handle secrets or authentication
 
 ### File System Access
+
 - **Read access:** Scans project files for analysis
 - **Write access:** Creates docs/ directory and .docent/ context
 - **Permissions:** Respects standard file system permissions
 - **Safety:** Idempotent operations (won't overwrite existing files)
 
 ### Supply Chain
+
 - **Dependencies:** Managed via npm with package-lock.json
 - **Audit:** Regular `npm audit` for vulnerability scanning
 - **Source:** All code open source on GitHub
@@ -404,11 +441,13 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ## Resilience
 
 ### Error Handling
+
 - **Graceful failures:** Commands fail with clear error messages
 - **Validation:** Input validation for all user-provided data
 - **Rollback:** Idempotent operations mean retries are safe
 
 ### Compatibility
+
 - **Cross-platform:** Works on macOS, Linux, Windows
 - **Node versions:** Requires Node.js 18+
 - **Agent compatibility:** Works with any MCP-compatible agent
@@ -416,12 +455,14 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ## Performance
 
 ### Benchmarks
+
 - **MCP server startup:** ~500ms (one-time per session)
 - **Tool calls:** < 100ms overhead (persistent connection)
 - **Analysis:** < 2 seconds for typical projects
 - **Large projects:** Scales to 10,000+ files without issues
 
 ### Optimization Strategies
+
 - **Persistent process:** MCP server stays running (no startup cost per tool call)
 - **Glob patterns:** Ignore common paths (node_modules, .git, dist)
 - **Lazy loading:** Only load libraries when tool is called
@@ -430,9 +471,11 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ## Deployment
 
 ### Distribution Method
+
 **npm Package** - Published to npm registry as `@tnezdev/docent`
 
 ### MCP Configuration
+
 ```json
 // ~/.claude.json or agent's MCP config
 {
@@ -448,6 +491,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ```
 
 **For local development:**
+
 ```json
 {
   "mcpServers": {
@@ -462,6 +506,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 ```
 
 ### Build Process
+
 ```bash
 # Production build
 npm run build  # Compiles src/ to lib/
@@ -475,6 +520,7 @@ npm publish    # Publishes to registry
 ```
 
 ### Versioning
+
 - **Semantic versioning:** MAJOR.MINOR.PATCH
 - **Current version:** 0.3.0 (pre-1.0 alpha)
 - **Breaking changes:** Will bump major version
@@ -482,17 +528,20 @@ npm publish    # Publishes to registry
 ## Future Considerations
 
 ### Near Term (RFC-0004)
+
 - **Work artifact capture** - Journal for capturing discovered work during sessions
 - **Smart surfacing** - Context-aware reminders of unfinished work
 - **Work promotion** - Convert captures to formal docs (RFC, ADR, etc.)
 
 ### Medium Term
+
 - **More agent prompts** - Review-staleness, init-guidance, etc.
 - **Streaming responses** - Stream large analyses incrementally
 - **Custom templates** - User-provided template repositories
 - **More languages** - Expand language detection (Elixir, Zig, V, etc.)
 
 ### Long Term (Post 1.0)
+
 - **Agent collaboration** - Multiple agents sharing same docent instance
 - **Integration tests** - Test against multiple MCP agents
 - **Template customization** - Project-specific template variants
