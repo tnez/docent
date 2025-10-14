@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * End-to-end test of Docket MCP resources and prompts
+ * End-to-end test of Docent MCP resources and prompts
  * Tests the actual implementations without going through MCP protocol
  */
 
@@ -8,7 +8,7 @@ const {ResourceHandler} = require('./lib/mcp/resources/handler.js')
 const {PromptBuilder} = require('./lib/mcp/prompts/builder.js')
 
 async function main() {
-  console.log('🧪 Docket End-to-End Test\n')
+  console.log('🧪 Docent End-to-End Test\n')
   console.log('=' .repeat(60))
 
   // ===== Test 1: Resource Listing =====

@@ -1,4 +1,4 @@
-# Contributing to docket
+# Contributing to docent
 
 Thank you for considering contributing! This project thrives on community contributions.
 
@@ -56,8 +56,8 @@ For code contributions:
 ### 1. Fork and Branch
 
 ```bash
-git clone git@github.com:your-username/docket.git
-cd docket
+git clone git@github.com:your-username/docent.git
+cd docent
 git checkout -b feature/your-feature-name
 ```
 

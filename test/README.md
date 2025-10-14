@@ -1,6 +1,6 @@
 # Testing Guide
 
-This directory contains the test suite for docket's installation scripts.
+This directory contains the test suite for docent's installation scripts.
 
 ## Running Tests
 
@@ -40,18 +40,18 @@ For comprehensive testing, also perform manual tests:
 1. **Fresh Installation**
    ```bash
    cd /tmp/test-project
-   docket/scripts/install.sh
+   docent/scripts/install.sh
    ```
 
 2. **Update Existing Installation**
    ```bash
    # After initial install
-   docket/scripts/install.sh --force
+   docent/scripts/install.sh --force
    ```
 
 3. **Selective Installation**
    ```bash
-   docket/scripts/install.sh --templates=adr,rfc
+   docent/scripts/install.sh --templates=adr,rfc
    ```
 
 4. **Different Platforms**

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# docket - Installer Test Suite
+# docent - Installer Test Suite
 # Tests the installation and uninstallation scripts
 #
 # Usage:
@@ -435,7 +435,7 @@ run_all_tests() {
   echo ""
   echo "${BOLD}${CYAN}╔═══════════════════════════════════════════╗${RESET}"
   echo "${BOLD}${CYAN}║                                           ║${RESET}"
-  echo "${BOLD}${CYAN}║      docket - Test Suite                 ║${RESET}"
+  echo "${BOLD}${CYAN}║      docent - Test Suite                 ║${RESET}"
   echo "${BOLD}${CYAN}║                                           ║${RESET}"
   echo "${BOLD}${CYAN}╚═══════════════════════════════════════════╝${RESET}"
 

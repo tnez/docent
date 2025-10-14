@@ -48,11 +48,11 @@ export async function handleCaptureWorkTool(args: {
 
   // Get journal path
   const basePath = process.cwd()
-  const docketDir = path.join(basePath, '.docent')
-  const journalPath = path.join(docketDir, 'journal.md')
+  const docentDir = path.join(basePath, '.docent')
+  const journalPath = path.join(docentDir, 'journal.md')
 
   // Ensure .docent directory exists
-  await fs.mkdir(docketDir, {recursive: true})
+  await fs.mkdir(docentDir, {recursive: true})
 
   // Format entry
   const timestamp = new Date().toISOString()

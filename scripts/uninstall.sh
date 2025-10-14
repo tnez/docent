@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# docket - Documentation Template Uninstaller
+# docent - Documentation Template Uninstaller
 # Remove installed documentation templates
 #
 # Usage:
@@ -127,7 +127,7 @@ detect_templates() {
   done
 
   if [ ${#found[@]} -eq 0 ]; then
-    info "No docket templates found in $TARGET_DIR/"
+    info "No docent templates found in $TARGET_DIR/"
     return 1
   fi
 
@@ -205,7 +205,7 @@ uninstall_templates() {
 
 show_help() {
   cat <<EOF
-docket - Documentation Template Uninstaller v$VERSION
+docent - Documentation Template Uninstaller v$VERSION
 
 USAGE:
   $0 [OPTIONS]
@@ -232,14 +232,14 @@ EXAMPLES:
   $0 --target-dir=documentation
 
 DOCUMENTATION:
-  https://github.com/tnez/docket
+  https://github.com/tnez/docent
 
 EOF
 }
 
 show_version() {
-  echo "docket uninstaller v$VERSION"
-  echo "https://github.com/tnez/docket"
+  echo "docent uninstaller v$VERSION"
+  echo "https://github.com/tnez/docent"
 }
 
 parse_arguments() {
@@ -288,7 +288,7 @@ main() {
   echo ""
   echo "${BOLD}${CYAN}╔═══════════════════════════════════════════╗${RESET}"
   echo "${BOLD}${CYAN}║                                           ║${RESET}"
-  echo "${BOLD}${CYAN}║        docket - Template Uninstaller     ║${RESET}"
+  echo "${BOLD}${CYAN}║        docent - Template Uninstaller     ║${RESET}"
   echo "${BOLD}${CYAN}║               Version $VERSION              ║${RESET}"
   echo "${BOLD}${CYAN}║                                           ║${RESET}"
   echo "${BOLD}${CYAN}╚═══════════════════════════════════════════╝${RESET}"

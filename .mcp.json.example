@@ -1,9 +1,9 @@
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tnezdev/docket"],
+      "args": ["-y", "@tnezdev/docent"],
       "env": {}
     }
   }

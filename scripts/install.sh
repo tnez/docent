@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
-# docket - Documentation Template Installer
+# docent - Documentation Template Installer
 # Install documentation templates with a single command
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/tnez/docket/main/scripts/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/tnez/docent/main/scripts/install.sh | bash
 #
 # Or download and run locally:
 #   ./scripts/install.sh
@@ -446,7 +446,7 @@ ${BOLD}📚 Next Steps:${RESET}
      ${CYAN}vim $TARGET_DIR/adr-template.md${RESET}
 
 ${BOLD}📖 Documentation:${RESET}
-   https://github.com/tnez/docket
+   https://github.com/tnez/docent
 
 ${BOLD}💡 Tips:${RESET}
    • Use templates as starting points
@@ -462,7 +462,7 @@ EOF
 
 show_help() {
   cat <<EOF
-docket - Documentation Template Installer v$VERSION
+docent - Documentation Template Installer v$VERSION
 
 USAGE:
   $0 [OPTIONS]
@@ -514,8 +514,8 @@ EOF
 }
 
 show_version() {
-  echo "docket installer v$VERSION"
-  echo "https://github.com/tnez/docket"
+  echo "docent installer v$VERSION"
+  echo "https://github.com/tnez/docent"
 }
 
 parse_arguments() {
@@ -592,7 +592,7 @@ main() {
   echo ""
   echo "${BOLD}${CYAN}╔═══════════════════════════════════════════╗${RESET}"
   echo "${BOLD}${CYAN}║                                           ║${RESET}"
-  echo "${BOLD}${CYAN}║         docket - Template Installer      ║${RESET}"
+  echo "${BOLD}${CYAN}║         docent - Template Installer      ║${RESET}"
   echo "${BOLD}${CYAN}║               Version $VERSION              ║${RESET}"
   echo "${BOLD}${CYAN}║                                           ║${RESET}"
   echo "${BOLD}${CYAN}╚═══════════════════════════════════════════╝${RESET}"
