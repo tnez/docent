@@ -92,7 +92,7 @@ Implement MCP server in `/src/mcp/` within the main docent repository (monorepo 
 ├── templates/
 │   ├── ...                 # Doc templates
 │   └── prompts/            # Agent prompts (shared)
-│       └── audit-quality.md
+│       └── audit.md
 └── bin/
     └── run.js              # CLI entry point
 
@@ -126,7 +126,7 @@ Implement MCP server in `/src/mcp/` within the main docent repository (monorepo 
    Output: AnalysisResult (same as CLI JSON)
    ```
 
-2. **`audit-quality`** - Agent-driven documentation quality assessment
+2. **`audit`** - Agent-driven documentation quality assessment
    ```typescript
    Input: { path: string, docsDir?: string }
    Output: {
@@ -189,12 +189,12 @@ docent/
 │       ├── server.ts          # MCP protocol implementation
 │       └── tools/             # Tool handlers
 │           ├── analyze.ts
-│           ├── audit-quality.ts  # Agent-driven audit
+│           ├── audit.ts  # Agent-driven audit
 │           └── review.ts
 ├── templates/
 │   ├── adr-template.md        # Doc templates
 │   └── prompts/               # Agent prompt templates
-│       ├── audit-quality.md   # Quality assessment
+│       ├── audit.md   # Quality assessment
 │       └── review-staleness.md # Staleness detection
 ├── bin/
 │   ├── run.js                 # CLI entry point
@@ -271,7 +271,7 @@ server.setRequestHandler('tools/call', async (request) => {
         content: [{type: 'text', text: JSON.stringify(result, null, 2)}],
       }
     }
-    case 'audit-quality': {
+    case 'audit': {
       // Agent-driven quality assessment (new approach)
       const analysis = await analyzeProject(args.path)
       const audit = await auditDocumentation(args.path, args.docsDir || 'docs', analysis)
@@ -310,7 +310,7 @@ const analysis = await mcp.callTool('analyze', {path: '/my/project'})
 // Returns typed AnalysisResult, no JSON parsing needed
 
 // Agent-driven quality assessment (recommended)
-const auditPrompt = await mcp.callTool('audit-quality', {path: '/my/project'})
+const auditPrompt = await mcp.callTool('audit', {path: '/my/project'})
 // Returns: { prompt: string, context: AgentAuditContext }
 // Agent analyzes context using the prompt, returns structured assessment
 
@@ -320,7 +320,7 @@ const auditFast = await mcp.callTool('audit', {path: '/my/project'})
 
 // Agent can discover all tools
 const tools = await mcp.listTools()
-// Shows: analyze, audit-quality, audit, review, init, new
+// Shows: analyze, audit, audit, review, init, new
 ```
 
 **Agent Usage (via CLI - still supported):**
@@ -529,7 +529,7 @@ No change - they continue using the CLI as normal. MCP is transparent to them.
 
 **Phase 1: Core Infrastructure (1-2 weeks)**
 - Implement MCP server in `/src/mcp/`
-- Create tool handlers for analyze, audit-quality, audit
+- Create tool handlers for analyze, audit, audit
 - Test with Claude Desktop MCP integration
 - Update package.json to export MCP server
 

@@ -1,17 +1,17 @@
-# Spec: Audit Quality Tool (MCP)
+# Spec: Audit Tool (MCP)
 
 ## Metadata
 - **Status:** draft
 - **Created:** 2025-10-13
 - **Updated:** 2025-10-13
 - **Related:**
-  - Implementation: `/Users/tnez/Code/tnez/docent/src/mcp/tools/audit-quality.ts`
+  - Implementation: `/Users/tnez/Code/tnez/docent/src/mcp/tools/audit.ts`
   - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/auditor.ts`
   - Depends on: analyze tool for project analysis
 
 ## Context
 
-The `audit-quality` MCP tool provides agent-driven semantic documentation quality assessment. Unlike the heuristic `audit` tool (fast, for CI/CD), this tool generates a detailed prompt that enables an AI agent to deeply analyze documentation quality, coherence, completeness, and alignment with the codebase.
+The `audit` MCP tool provides agent-driven semantic documentation quality assessment. This tool generates a detailed prompt that enables an AI agent to deeply analyze documentation quality, coherence, completeness, and alignment with the codebase.
 
 The tool is **context-aware**: a backend project needs API docs but a CLI tool doesn't, a project with tests needs testing docs, and multi-language projects need architecture documentation. Quality assessment is based on analyzing the project first, then providing structured guidance for semantic evaluation.
 
@@ -21,7 +21,7 @@ This tool helps agents provide comprehensive documentation quality feedback that
 
 ### Scenario: Generate Quality Assessment Prompt
 **Given:** A project with documentation that needs quality evaluation
-**When:** Agent calls `audit-quality` tool with project path
+**When:** Agent calls `audit` tool with project path
 **Then:**
 - Tool analyzes project structure and technology stack
 - Scans docs/ directory for documentation files
@@ -37,7 +37,7 @@ This tool helps agents provide comprehensive documentation quality feedback that
 #### Example:
 ```typescript
 // Agent calls tool to get assessment prompt
-const prompt = await tools['audit-quality']({
+const prompt = await tools['audit']({
   path: "/path/to/project",
   docsDir: "docs"  // optional, defaults to "docs"
 });
@@ -97,7 +97,7 @@ const assessment = await agent.process(prompt);
 
 ### Scenario: Custom Documentation Directory
 **Given:** A project using a non-standard docs directory (e.g., "documentation")
-**When:** Agent calls `audit-quality` with docsDir parameter
+**When:** Agent calls `audit` with docsDir parameter
 **Then:**
 - Scans "documentation/" instead of "docs/"
 - All other behavior remains the same
@@ -105,7 +105,7 @@ const assessment = await agent.process(prompt);
 
 #### Example:
 ```typescript
-const prompt = await tools['audit-quality']({
+const prompt = await tools['audit']({
   path: "/path/to/project",
   docsDir: "documentation"
 });
@@ -113,7 +113,7 @@ const prompt = await tools['audit-quality']({
 
 ### Scenario: No Documentation Directory
 **Given:** A project that has no documentation directory
-**When:** Agent calls `audit-quality` tool
+**When:** Agent calls `audit` tool
 **Then:**
 - Tool detects docs/ directory doesn't exist
 - Generates prompt noting absence of documentation

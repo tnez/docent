@@ -80,7 +80,7 @@ You never invoke docent directly—it just makes your agent smarter.
 Agents can use these docent tools via MCP:
 
 - **`analyze`** - Project structure, languages, frameworks
-- **`audit-quality`** - Semantic documentation assessment
+- **`audit`** - Semantic documentation assessment
 - **`list-templates`** - Available documentation templates
 - **`get-template`** - Fetch a specific template
 
@@ -91,7 +91,7 @@ Agents can use these docent tools via MCP:
 ```
 You: "How's my documentation?"
 
-Agent: [uses docent audit-quality]
+Agent: [uses docent audit]
 Agent: "Your documentation is solid (73/100).
        Strong architectural docs, missing testing guide.
        Want me to draft one based on your test structure?"

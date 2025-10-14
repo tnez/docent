@@ -122,7 +122,7 @@ Docent maintains a **work journal** that captures artifacts discovered during de
 **Options:**
 1. Archive to docs/archive/cli-specs/ (preserve history)
 2. Convert to MCP tool behavior specs (reuse scenarios)
-**Context:** Discovered during docent audit-quality assessment
+**Context:** Discovered during docent audit assessment
 
 ### Question
 **Where:** Entire docs/ directory

@@ -42,7 +42,7 @@ Docent integrates with AI agents through MCP (Model Context Protocol):
 ```typescript
 // Ask your AI agent to:
 "Analyze this project using docent's analyze tool"
-"Assess documentation quality using audit-quality"
+"Assess documentation quality using audit"
 "Generate a new ADR using the adr template"
 ```
 
@@ -51,7 +51,7 @@ See [MCP Setup Guide](./guides/mcp-setup.md) for configuration instructions.
 ## Available MCP Tools
 
 - **analyze** - Project structure and technology stack analysis
-- **audit-quality** - Agent-driven documentation quality assessment
+- **audit** - Agent-driven documentation quality assessment
 - **audit** - Fast heuristic documentation audit
 - **list-templates** - List available documentation templates
 - **get-template** - Retrieve a template by type

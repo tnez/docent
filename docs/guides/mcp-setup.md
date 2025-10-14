@@ -60,7 +60,7 @@ In Claude Desktop, ask:
 
 You should see:
 - `analyze` - Project structure analysis
-- `audit-quality` - Agent-driven documentation quality assessment
+- `audit` - Agent-driven documentation quality assessment
 - `audit` - Heuristic documentation audit (fast, for CI/CD)
 
 ## Available Tools
@@ -87,7 +87,7 @@ Analyzes project structure, languages, frameworks, and build tools.
 }
 ```
 
-### audit-quality
+### audit
 
 Generates an agent-driven documentation quality assessment prompt with full project context.
 
@@ -142,7 +142,7 @@ Performs fast heuristic-based documentation audit (legacy, for CI/CD).
 }
 ```
 
-**Note:** Use `audit-quality` for deep analysis. This tool is for quick CI/CD checks.
+**Note:** Use `audit` for deep analysis. This tool is for quick CI/CD checks.
 
 ## Example Workflow
 
@@ -154,10 +154,10 @@ Agent calls `analyze` and gets project structure.
 
 ### 2. Deep Documentation Audit
 
-> "Use audit-quality to assess the documentation in /Users/me/my-project"
+> "Use audit to assess the documentation in /Users/me/my-project"
 
 Agent:
-1. Calls `audit-quality` to get the prompt
+1. Calls `audit` to get the prompt
 2. Reads the context (project type, doc files, heuristic baseline)
 3. Analyzes semantically (not just pattern matching)
 4. Returns structured assessment with score, gaps, recommendations
@@ -183,7 +183,7 @@ Agent calls `audit` and gets fast heuristic results.
 └──────────┬──────────┘
            │
            ├─→ analyze tool → detector.ts
-           ├─→ audit-quality → agent-audit.ts + prompt-builder.ts
+           ├─→ audit → agent-audit.ts + prompt-builder.ts
            └─→ audit tool → auditor.ts (heuristic)
 ```
 
@@ -229,7 +229,7 @@ Docent originally planned dual CLI+MCP interfaces (see [RFC-0001](../rfcs/rfc-00
 
 ```typescript
 // Agent code
-const audit = await mcp.callTool('audit-quality', {path: '.'})
+const audit = await mcp.callTool('audit', {path: '.'})
 // Returns structured prompt + context
 // Agent analyzes and responds with JSON
 ```

@@ -342,7 +342,7 @@ interface ReviewResult {
 
 **Integration with Other Tools:**
 - Uses analyze tool to understand project context
-- Complements audit-quality tool (audit = what's missing, review = what's stale/wrong)
+- Complements audit tool (audit = what's missing, review = what's stale/wrong)
 
 ## Test Hints
 

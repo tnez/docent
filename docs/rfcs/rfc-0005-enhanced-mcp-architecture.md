@@ -18,7 +18,7 @@ Extend docent's MCP server from tools-only to full MCP capabilities by adding **
 
 Following ADR-0004 (MCP-only architecture), docent currently exposes only "tools" via MCP:
 - `analyze` - Project structure analysis
-- `audit-quality` - Agent-driven documentation assessment
+- `audit` - Agent-driven documentation assessment
 - `audit` - Heuristic documentation audit
 - `list-templates` / `get-template` - Template discovery
 
@@ -89,7 +89,7 @@ MCP provides three complementary capabilities:
 
 **Examples:**
 - `analyze(path)` → AnalysisResult
-- `audit-quality(path)` → QualityAssessment
+- `audit(path)` → QualityAssessment
 
 **When to use:** Active operations that transform or analyze data
 
@@ -160,7 +160,7 @@ Extend docent's MCP server (`src/mcp/server.ts`) to expose three capabilities:
 ├─────────────────────────────────────────────────┤
 │ TOOLS (existing)                                │
 │  - analyze(path) → project analysis             │
-│  - audit-quality(path) → quality assessment     │
+│  - audit(path) → quality assessment     │
 │  - audit(path) → heuristic audit                │
 ├─────────────────────────────────────────────────┤
 │ RESOURCES (new)                                 │
@@ -199,7 +199,7 @@ Extend docent's MCP server (`src/mcp/server.ts`) to expose three capabilities:
 │  ┌──────────────────────────────────┐   │
 │  │  Tools Handler                    │   │
 │  │  - analyze()                      │   │
-│  │  - audit-quality()                │   │
+│  │  - audit()                │   │
 │  └──────────────────────────────────┘   │
 │  ┌──────────────────────────────────┐   │
 │  │  Resources Handler                │   │
@@ -827,7 +827,7 @@ server.setRequestHandler('tools/list', async () => {
         inputSchema: { /* ... */ }
       },
       {
-        name: 'audit-quality',
+        name: 'audit',
         description: 'Generate agent-driven documentation quality assessment prompt',
         inputSchema: { /* ... */ }
       },
@@ -1180,7 +1180,7 @@ Enhanced MCP has minimal performance overhead:
    - Only when prompt invoked
 
 2. **Context Gathering**
-   - May call existing tools (analyze, audit-quality)
+   - May call existing tools (analyze, audit)
    - Already optimized
    - No additional overhead
 
@@ -1245,7 +1245,7 @@ Enhanced MCP has minimal performance overhead:
    - Check message structure
 
 3. **Cross-Capability Integration**
-   - Prompt calls tools (analyze, audit-quality)
+   - Prompt calls tools (analyze, audit)
    - Prompt references resources
    - Resources referenced from prompts
 

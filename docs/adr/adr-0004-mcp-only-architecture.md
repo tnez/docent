@@ -94,14 +94,14 @@ docent/
 │       ├── server.ts       # Protocol implementation
 │       └── tools/
 │           ├── analyze.ts
-│           ├── audit-quality.ts  # Agent-driven (73/100)
+│           ├── audit.ts  # Agent-driven (73/100)
 │           ├── audit.ts          # Heuristic (21/100, baseline)
 │           ├── list-templates.ts
 │           └── get-template.ts
 ├── templates/            # Documentation templates
 │   ├── adr-template.md
 │   └── prompts/          # Agent assessment prompts
-│       └── audit-quality.md
+│       └── audit.md
 └── bin/
     └── mcp-server.js     # Single entry point
 ```

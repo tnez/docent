@@ -77,7 +77,7 @@ Systems that depend on docent:
 │              MCP Server (bin/mcp-server.js)              │
 │                                                          │
 │  ┌────────────┬──────────────┬──────────┬────────────┐  │
-│  │  analyze   │ audit-quality│   audit  │list/get    │  │
+│  │  analyze   │ audit│   audit  │list/get    │  │
 │  │            │  (agent-     │(heuristic│ templates  │  │
 │  │            │   driven)    │ fallback)│            │  │
 │  └────────────┴──────────────┴──────────┴────────────┘  │
@@ -118,7 +118,7 @@ Systems that depend on docent:
 ```
 
 **Key Flow:**
-1. Agent calls MCP tool (e.g., `audit-quality`)
+1. Agent calls MCP tool (e.g., `audit`)
 2. MCP server gathers context (detector + auditor + agent-audit)
 3. Returns assessment prompt + structured data to agent
 4. Agent analyzes semantically and provides recommendations
@@ -141,7 +141,7 @@ Systems that depend on docent:
 
 **Available Tools:**
 1. **`analyze`** - Analyze project structure, languages, frameworks
-2. **`audit-quality`** - Agent-driven semantic documentation assessment (73/100 score)
+2. **`audit`** - Agent-driven semantic documentation assessment (73/100 score)
 3. **`audit`** - Heuristic documentation audit for baseline (21/100 score)
 4. **`list-templates`** - List 10 available documentation templates
 5. **`get-template`** - Fetch template content by type
@@ -157,7 +157,7 @@ Systems that depend on docent:
 {
   method: 'tools/call',
   params: {
-    name: 'audit-quality',
+    name: 'audit',
     arguments: {path: '/project', docsDir: 'docs'}
   }
 }
@@ -186,7 +186,7 @@ Systems that depend on docent:
 - Generate confidence scores for detections
 
 **Interactions:**
-- Called by: MCP `analyze` tool, MCP `audit-quality` tool (for context)
+- Called by: MCP `analyze` tool, MCP `audit` tool (for context)
 - Calls: File system APIs, glob pattern matching
 
 **Key Interfaces:**
@@ -213,7 +213,7 @@ Systems that depend on docent:
 - Format data for agent reasoning
 
 **Interactions:**
-- Called by: MCP `audit-quality` tool
+- Called by: MCP `audit` tool
 - Calls: Detector, Auditor, prompt builder, file system APIs
 
 **Key Interfaces:**
@@ -225,7 +225,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 
 **Deployment:**
 - Compiled to `/lib/lib/agent-audit.js` from `/src/lib/agent-audit.ts`
-- Works with `/templates/prompts/audit-quality.md` template
+- Works with `/templates/prompts/audit.md` template
 
 ---
 
@@ -244,7 +244,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 - Generate prioritized gap recommendations
 
 **Interactions:**
-- Called by: MCP `audit` tool, MCP `audit-quality` tool (for baseline)
+- Called by: MCP `audit` tool, MCP `audit` tool (for baseline)
 - Calls: File system APIs, pattern matching, analysis result from Detector
 
 **Note:** Heuristic audit provides 21/100 baseline. Used for comparison against agent-driven 73/100 score.
@@ -277,7 +277,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 10. `spec-template.md` - Behavioral specifications
 
 **Agent Prompts:**
-- `templates/prompts/audit-quality.md` - 13K character assessment prompt for agent-driven analysis
+- `templates/prompts/audit.md` - 13K character assessment prompt for agent-driven analysis
 
 **Responsibilities:**
 - Provide structure and guidance for documentation
@@ -297,7 +297,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 
 ### Primary Flow: Agent-Driven Quality Assessment
 
-1. **Agent calls:** MCP `audit-quality` tool with project path
+1. **Agent calls:** MCP `audit` tool with project path
 2. **MCP Server routes:** Call to Agent-Audit library
 3. **Detector analyzes:** Project structure, languages, frameworks
 4. **Auditor runs:** Heuristic baseline audit (21/100 score)
@@ -366,7 +366,7 @@ Agent-driven analysis (73/100) outperforms heuristic analysis (21/100) by 3.5x. 
 - **Template count:** 10 markdown files + agent prompts
 - **Supported languages:** 30+ (extensible)
 - **Supported frameworks:** 50+ (extensible)
-- **MCP tools:** 5 (analyze, audit-quality, audit, list-templates, get-template)
+- **MCP tools:** 5 (analyze, audit, audit, list-templates, get-template)
 
 ### Performance Characteristics
 - **MCP startup:** ~500ms (persistent process, one-time cost)

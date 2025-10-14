@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - MCP server implementation for agent integration
-- Tools: `analyze`, `audit-quality`, `audit`, `list-templates`, `get-template`, `capture-work`
+- Tools: `analyze`, `audit`, `list-templates`, `get-template`, `capture-work`
 - Agent-driven documentation quality assessment (73/100 vs 21/100 heuristic baseline)
 - Template library: ADR, RFC, PRD, API docs, architecture, onboarding, patterns, runbook, spec, standards, testing, troubleshooting, writing-software
 

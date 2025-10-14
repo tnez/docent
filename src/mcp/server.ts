@@ -12,7 +12,6 @@ import {
 
 // Import tool definitions and handlers
 import {analyzeToolDefinition, handleAnalyzeTool} from './tools/analyze.js'
-import {auditQualityToolDefinition, handleAuditQualityTool} from './tools/audit-quality.js'
 import {auditToolDefinition, handleAuditTool} from './tools/audit.js'
 import {listTemplatesToolDefinition, handleListTemplatesTool} from './tools/list-templates.js'
 import {getTemplateToolDefinition, handleGetTemplateTool} from './tools/get-template.js'
@@ -51,7 +50,6 @@ const promptBuilder = new PromptBuilder()
 // Register all available tools
 const tools = [
   analyzeToolDefinition,
-  auditQualityToolDefinition,
   auditToolDefinition,
   listTemplatesToolDefinition,
   getTemplateToolDefinition,
@@ -73,8 +71,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (name) {
       case 'analyze':
         return await handleAnalyzeTool(args as {path: string})
-      case 'audit-quality':
-        return await handleAuditQualityTool(args as {path: string; docsDir?: string})
       case 'audit':
         return await handleAuditTool(args as {path: string; docsDir?: string})
       case 'list-templates':

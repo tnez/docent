@@ -1,9 +1,11 @@
 import {analyzeProject} from '../../lib/detector.js'
 import {auditDocumentation} from '../../lib/auditor.js'
+import {prepareAgentAuditContext} from '../../lib/agent-audit.js'
+import {buildAuditPrompt} from '../../lib/prompt-builder.js'
 
 export const auditToolDefinition = {
   name: 'audit',
-  description: 'Perform heuristic-based documentation audit (fast, for CI/CD). For deeper quality analysis, use audit-quality instead.',
+  description: 'Assess documentation quality using agent-driven semantic analysis. Returns a structured prompt for deep, context-aware evaluation of documentation completeness and quality.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -24,14 +26,19 @@ export const auditToolDefinition = {
 export async function handleAuditTool(args: {path: string; docsDir?: string}) {
   const docsDir = args.docsDir || 'docs'
 
+  // Gather all context
   const analysis = await analyzeProject(args.path)
-  const result = await auditDocumentation(args.path, docsDir, analysis)
+  const audit = await auditDocumentation(args.path, docsDir, analysis)
+  const context = await prepareAgentAuditContext(args.path, docsDir, analysis, audit)
+
+  // Generate prompt
+  const prompt = buildAuditPrompt(context)
 
   return {
     content: [
       {
         type: 'text' as const,
-        text: JSON.stringify(result, null, 2),
+        text: prompt,
       },
     ],
   }
