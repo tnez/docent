@@ -1,5 +1,4 @@
 import {analyzeProject} from '../../lib/detector.js'
-import {auditDocumentation} from '../../lib/auditor.js'
 import {prepareAgentAuditContext} from '../../lib/agent-audit.js'
 import {buildAuditPrompt} from '../../lib/prompt-builder.js'
 
@@ -28,8 +27,7 @@ export async function handleAuditTool(args: {path: string; docsDir?: string}) {
 
   // Gather all context
   const analysis = await analyzeProject(args.path)
-  const audit = await auditDocumentation(args.path, docsDir, analysis)
-  const context = await prepareAgentAuditContext(args.path, docsDir, analysis, audit)
+  const context = await prepareAgentAuditContext(args.path, docsDir, analysis)
 
   // Generate prompt
   const prompt = buildAuditPrompt(context)

@@ -18,14 +18,6 @@ The following documentation files exist in the project:
 {documentation_json}
 ```
 
-## Heuristic Analysis (for reference)
-
-A heuristic-based audit has already been performed. Use this as a starting point, but don't be constrained by it:
-
-```json
-{heuristic_gaps_json}
-```
-
 ## Your Task
 
 Assess the documentation quality and completeness with these principles:
@@ -93,5 +85,5 @@ Provide your assessment as JSON in this exact structure:
 - Be objective but context-aware - what matters for THIS project?
 - A lower score isn't necessarily bad if accompanied by clear, actionable guidance
 - Acknowledge what exists and works well, not just what's missing
-- Consider the heuristic analysis as one data point, but apply your own reasoning
+- Apply semantic reasoning to understand documentation quality beyond simple checks
 - Focus on documentation that serves the actual needs of the project type
