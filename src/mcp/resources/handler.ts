@@ -17,11 +17,35 @@ export class ResourceHandler {
     // Add template resources
     resources.push(...(await this.listTemplateResources()))
 
-    // Add runbook resources (if directory exists)
+    // Add documentation resources (if directories exist)
     try {
       resources.push(...(await this.listRunbookResources()))
     } catch {
       // Runbooks directory doesn't exist yet - skip
+    }
+
+    try {
+      resources.push(...(await this.listGuideResources()))
+    } catch {
+      // Guides directory doesn't exist yet - skip
+    }
+
+    try {
+      resources.push(...(await this.listStandardResources()))
+    } catch {
+      // Standards directory doesn't exist yet - skip
+    }
+
+    try {
+      resources.push(...(await this.listAdrResources()))
+    } catch {
+      // ADR directory doesn't exist yet - skip
+    }
+
+    try {
+      resources.push(...(await this.listRfcResources()))
+    } catch {
+      // RFC directory doesn't exist yet - skip
     }
 
     return resources
@@ -40,6 +64,12 @@ export class ResourceHandler {
         return this.readTemplate(parsed.identifier)
       case 'standard':
         return this.readStandard(parsed.identifier)
+      case 'guide':
+        return this.readGuide(parsed.identifier)
+      case 'adr':
+        return this.readAdr(parsed.identifier)
+      case 'rfc':
+        return this.readRfc(parsed.identifier)
       case 'doc':
         return this.readDoc(parsed.identifier)
       case 'journal':
@@ -59,7 +89,7 @@ export class ResourceHandler {
     }
 
     // Parse: docent://runbook/preview-branch
-    const match = uri.match(/^docket:\/\/([^/]+)\/(.+)$/)
+    const match = uri.match(/^docent:\/\/([^/]+)\/(.+)$/)
     if (!match) {
       throw new Error(`Invalid URI format: ${uri}`)
     }
@@ -139,12 +169,160 @@ export class ResourceHandler {
       const titleMatch = content.match(/^#\s+(.+)$/m)
       const title = titleMatch ? titleMatch[1] : this.formatName(name)
 
-      // Extract description from content (first paragraph after title)
-      const descMatch = content.match(/^#\s+.+\n\n(.+)$/m)
-      const description = descMatch ? descMatch[1] : `Operational runbook: ${title}`
+      // Try to extract "when to use" guidance, otherwise use first paragraph
+      const whenToUse = this.extractWhenToUse(content)
+      let description: string
+      if (whenToUse) {
+        description = `${whenToUse}`
+      } else {
+        const descMatch = content.match(/^#\s+.+\n\n(.+)$/m)
+        description = descMatch ? descMatch[1] : `Operational runbook: ${title}`
+      }
 
       resources.push({
         uri: `docent://runbook/${name}`,
+        name: title,
+        description,
+        mimeType: 'text/markdown',
+      })
+    }
+
+    return resources
+  }
+
+  /**
+   * List guide resources
+   */
+  private async listGuideResources(): Promise<Resource[]> {
+    const resources: Resource[] = []
+    const guidesDir = path.join(this.basePath, 'docs', 'guides')
+
+    const files = await fs.readdir(guidesDir)
+    const guideFiles = files.filter((f) => f.endsWith('.md'))
+
+    for (const file of guideFiles) {
+      const name = file.replace('.md', '')
+      const content = await fs.readFile(path.join(guidesDir, file), 'utf-8')
+
+      // Extract title from first heading
+      const titleMatch = content.match(/^#\s+(.+)$/m)
+      const title = titleMatch ? titleMatch[1] : this.formatName(name)
+
+      // Try to extract "when to use" guidance, otherwise use first paragraph
+      const whenToUse = this.extractWhenToUse(content)
+      let description: string
+      if (whenToUse) {
+        description = `${whenToUse}`
+      } else {
+        const descMatch = content.match(/^#\s+.+\n\n(.+)$/m)
+        description = descMatch ? descMatch[1] : `Guide: ${title}`
+      }
+
+      resources.push({
+        uri: `docent://guide/${name}`,
+        name: title,
+        description,
+        mimeType: 'text/markdown',
+      })
+    }
+
+    return resources
+  }
+
+  /**
+   * List standard resources
+   */
+  private async listStandardResources(): Promise<Resource[]> {
+    const resources: Resource[] = []
+    const standardsDir = path.join(this.basePath, 'docs', 'standards')
+
+    const files = await fs.readdir(standardsDir)
+    const standardFiles = files.filter((f) => f.endsWith('.md'))
+
+    for (const file of standardFiles) {
+      const name = file.replace('.md', '')
+      const content = await fs.readFile(path.join(standardsDir, file), 'utf-8')
+
+      // Extract title from first heading
+      const titleMatch = content.match(/^#\s+(.+)$/m)
+      const title = titleMatch ? titleMatch[1] : this.formatName(name)
+
+      // Extract description from content (first paragraph after title)
+      const descMatch = content.match(/^#\s+.+\n\n(.+)$/m)
+      const description = descMatch ? descMatch[1] : `Standard: ${title}`
+
+      resources.push({
+        uri: `docent://standard/${name}`,
+        name: title,
+        description,
+        mimeType: 'text/markdown',
+      })
+    }
+
+    return resources
+  }
+
+  /**
+   * List ADR resources
+   */
+  private async listAdrResources(): Promise<Resource[]> {
+    const resources: Resource[] = []
+    const adrDir = path.join(this.basePath, 'docs', 'adr')
+
+    const files = await fs.readdir(adrDir)
+    const adrFiles = files.filter((f) => f.endsWith('.md'))
+
+    for (const file of adrFiles) {
+      const name = file.replace('.md', '')
+      const content = await fs.readFile(path.join(adrDir, file), 'utf-8')
+
+      // Extract title from first heading
+      const titleMatch = content.match(/^#\s+(.+)$/m)
+      const title = titleMatch ? titleMatch[1] : this.formatName(name)
+
+      // Extract status if present
+      const statusMatch = content.match(/\*\*Status:\*\*\s+(.+)$/m)
+      const status = statusMatch ? statusMatch[1] : 'Unknown'
+
+      const description = `ADR (${status}): ${title}`
+
+      resources.push({
+        uri: `docent://adr/${name}`,
+        name: title,
+        description,
+        mimeType: 'text/markdown',
+      })
+    }
+
+    return resources
+  }
+
+  /**
+   * List RFC resources
+   */
+  private async listRfcResources(): Promise<Resource[]> {
+    const resources: Resource[] = []
+    const rfcDir = path.join(this.basePath, 'docs', 'rfcs')
+
+    const files = await fs.readdir(rfcDir)
+    const rfcFiles = files.filter((f) => f.endsWith('.md'))
+
+    for (const file of rfcFiles) {
+      const name = file.replace('.md', '')
+      const content = await fs.readFile(path.join(rfcDir, file), 'utf-8')
+
+      // Extract title from first heading
+      const titleMatch = content.match(/^#\s+(.+)$/m)
+      const title = titleMatch ? titleMatch[1] : this.formatName(name)
+
+      // Extract status if present
+      const statusMatch = content.match(/\*\*Status:\*\*\s+(.+)$/m)
+      const status = statusMatch ? statusMatch[1] : 'Unknown'
+
+      const description = `RFC (${status}): ${title}`
+
+      resources.push({
+        uri: `docent://rfc/${name}`,
         name: title,
         description,
         mimeType: 'text/markdown',
@@ -191,6 +369,48 @@ export class ResourceHandler {
 
     return {
       uri: `docent://standard/${identifier}`,
+      mimeType: 'text/markdown',
+      text: content,
+    }
+  }
+
+  /**
+   * Read guide resource
+   */
+  private async readGuide(identifier: string): Promise<ResourceContent> {
+    const filePath = path.join(this.basePath, 'docs', 'guides', `${identifier}.md`)
+    const content = await fs.readFile(filePath, 'utf-8')
+
+    return {
+      uri: `docent://guide/${identifier}`,
+      mimeType: 'text/markdown',
+      text: content,
+    }
+  }
+
+  /**
+   * Read ADR resource
+   */
+  private async readAdr(identifier: string): Promise<ResourceContent> {
+    const filePath = path.join(this.basePath, 'docs', 'adr', `${identifier}.md`)
+    const content = await fs.readFile(filePath, 'utf-8')
+
+    return {
+      uri: `docent://adr/${identifier}`,
+      mimeType: 'text/markdown',
+      text: content,
+    }
+  }
+
+  /**
+   * Read RFC resource
+   */
+  private async readRfc(identifier: string): Promise<ResourceContent> {
+    const filePath = path.join(this.basePath, 'docs', 'rfcs', `${identifier}.md`)
+    const content = await fs.readFile(filePath, 'utf-8')
+
+    return {
+      uri: `docent://rfc/${identifier}`,
       mimeType: 'text/markdown',
       text: content,
     }
@@ -244,5 +464,28 @@ export class ResourceHandler {
       .split('-')
       .map((word) => this.capitalize(word))
       .join(' ')
+  }
+
+  /**
+   * Extract "when to use" guidance from markdown content
+   * Looks for sections like "When to Use", "Use Cases", "Purpose"
+   */
+  private extractWhenToUse(content: string): string | null {
+    // Look for common section headers
+    const patterns = [
+      /##\s+When to Use\s*\n\n(.+?)(?=\n##|\n\n##|$)/is,
+      /##\s+Use Cases?\s*\n\n(.+?)(?=\n##|\n\n##|$)/is,
+      /##\s+Purpose\s*\n\n(.+?)(?=\n##|\n\n##|$)/is,
+    ]
+
+    for (const pattern of patterns) {
+      const match = content.match(pattern)
+      if (match && match[1]) {
+        // Clean up the extracted text
+        return match[1].trim().replace(/\n\n.*$/s, '') // First paragraph only
+      }
+    }
+
+    return null
   }
 }

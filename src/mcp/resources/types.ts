@@ -2,7 +2,7 @@
  * Resource types and interfaces for MCP resources
  */
 
-export type ResourceType = 'runbook' | 'template' | 'standard' | 'doc' | 'journal'
+export type ResourceType = 'runbook' | 'template' | 'standard' | 'guide' | 'adr' | 'rfc' | 'doc' | 'journal'
 
 export interface Resource {
   uri: string
