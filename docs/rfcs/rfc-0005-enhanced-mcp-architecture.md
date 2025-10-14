@@ -96,13 +96,13 @@ MCP provides three complementary capabilities:
 #### 2. Resources (Not Using: ❌)
 **Purpose:** URI-based content discovery and retrieval
 
-**Pattern:** `docket://{type}/{identifier}`
+**Pattern:** `docent://{type}/{identifier}`
 
 **Examples:**
-- `docket://runbook/preview-branch` → Step-by-step DB branch creation
-- `docket://template/adr` → ADR template markdown
-- `docket://standard/testing` → Team testing standards
-- `docket://journal/current` → Active work journal
+- `docent://runbook/preview-branch` → Step-by-step DB branch creation
+- `docent://template/adr` → ADR template markdown
+- `docent://standard/testing` → Team testing standards
+- `docent://journal/current` → Active work journal
 
 **Benefits:**
 - **Discoverable**: Agents list available resources
@@ -164,11 +164,11 @@ Extend docket's MCP server (`src/mcp/server.ts`) to expose three capabilities:
 │  - audit(path) → heuristic audit                │
 ├─────────────────────────────────────────────────┤
 │ RESOURCES (new)                                 │
-│  - docket://runbook/{name}                      │
-│  - docket://template/{type}                     │
-│  - docket://standard/{type}                     │
-│  - docket://doc/{path}                          │
-│  - docket://journal/current                     │
+│  - docent://runbook/{name}                      │
+│  - docent://template/{type}                     │
+│  - docent://standard/{type}                     │
+│  - docent://doc/{path}                          │
+│  - docent://journal/current                     │
 ├─────────────────────────────────────────────────┤
 │ PROMPTS (new)                                   │
 │  - Review RFC (perspective, rfc_path)           │
@@ -230,7 +230,7 @@ Extend docket's MCP server (`src/mcp/server.ts`) to expose three capabilities:
 
 #### 1. Resources Implementation
 
-**URI Pattern:** `docket://{type}/{identifier}`
+**URI Pattern:** `docent://{type}/{identifier}`
 
 **Supported Resource Types:**
 
@@ -245,7 +245,7 @@ type ResourceType =
   | 'journal'    // Work journal
 
 interface Resource {
-  uri: string                    // docket://runbook/preview-branch
+  uri: string                    // docent://runbook/preview-branch
   name: string                   // "Create Preview Database Branch"
   description?: string           // "Step-by-step procedure..."
   mimeType: string               // "text/markdown"
@@ -288,7 +288,7 @@ class ResourceHandler {
   }
 
   private parseUri(uri: string): { type: ResourceType; identifier: string } {
-    // Parse: docket://runbook/preview-branch
+    // Parse: docent://runbook/preview-branch
     // Returns: { type: 'runbook', identifier: 'preview-branch' }
   }
 
@@ -297,7 +297,7 @@ class ResourceHandler {
     const path = `docs/runbooks/${name}.md`
     const content = await fs.readFile(path, 'utf-8')
     return {
-      uri: `docket://runbook/${name}`,
+      uri: `docent://runbook/${name}`,
       mimeType: 'text/markdown',
       text: content
     }
@@ -308,7 +308,7 @@ class ResourceHandler {
     const path = `templates/${type}-template.md`
     const content = await fs.readFile(path, 'utf-8')
     return {
-      uri: `docket://template/${type}`,
+      uri: `docent://template/${type}`,
       mimeType: 'text/markdown',
       text: content
     }
@@ -322,7 +322,7 @@ class ResourceHandler {
 
     const content = await fs.readFile(path, 'utf-8')
     return {
-      uri: `docket://journal/${identifier}`,
+      uri: `docent://journal/${identifier}`,
       mimeType: 'text/markdown',
       text: content
     }
@@ -391,7 +391,7 @@ interface PromptMessage {
     type: 'text' | 'resource'
     text?: string                // Rendered prompt
     resource?: {
-      uri: string                // docket://runbook/preview-branch
+      uri: string                // docent://runbook/preview-branch
       text: string               // Resource content
     }
   }
@@ -550,7 +550,7 @@ Provide assessment using this structure:
 
   private async buildCreatePreviewBranch(args: Record<string, string>): Promise<PromptMessage[]> {
     // 1. Get runbook resource
-    const runbookUri = 'docket://runbook/preview-branch'
+    const runbookUri = 'docent://runbook/preview-branch'
 
     // 2. Get project context
     const analysis = await analyzeProject('.')
@@ -607,7 +607,7 @@ Please:
 
   private async buildResumeWork(args: Record<string, string>): Promise<PromptMessage[]> {
     // 1. Read journal
-    const journal = await this.readResource('docket://journal/current')
+    const journal = await this.readResource('docent://journal/current')
 
     // 2. Get recent commits
     const commits = await this.getRecentCommits(10)
@@ -755,7 +755,7 @@ server.setRequestHandler('prompts/get', async (request) => {
 **Standardized URI scheme:**
 
 ```
-docket://{type}/{identifier}[?{params}]
+docent://{type}/{identifier}[?{params}]
 
 Types:
 - runbook/{name}              → docs/runbooks/{name}.md
@@ -765,12 +765,12 @@ Types:
 - journal/{date|'current'}    → .docket/journal[-{date}].md
 
 Examples:
-- docket://runbook/preview-branch
-- docket://template/adr
-- docket://standard/testing
-- docket://doc/architecture/overview
-- docket://journal/current
-- docket://journal/2025-10-13
+- docent://runbook/preview-branch
+- docent://template/adr
+- docent://standard/testing
+- docent://doc/architecture/overview
+- docent://journal/current
+- docent://journal/2025-10-13
 ```
 
 **Discovery:**
@@ -780,13 +780,13 @@ Examples:
 const resources = await mcp.listResources()
 // Returns:
 [
-  { uri: 'docket://runbook/preview-branch', name: 'Create Preview DB Branch', ... },
-  { uri: 'docket://template/adr', name: 'ADR Template', ... },
-  { uri: 'docket://journal/current', name: 'Current Work Journal', ... }
+  { uri: 'docent://runbook/preview-branch', name: 'Create Preview DB Branch', ... },
+  { uri: 'docent://template/adr', name: 'ADR Template', ... },
+  { uri: 'docent://journal/current', name: 'Current Work Journal', ... }
 ]
 
 // Agent reads specific resource
-const runbook = await mcp.readResource('docket://runbook/preview-branch')
+const runbook = await mcp.readResource('docent://runbook/preview-branch')
 // Returns: { text: "# Create Preview DB Branch\n\n1. Install Neon CLI...", ... }
 ```
 
@@ -884,10 +884,10 @@ await server.connect(transport)
 ```typescript
 // Example 1: Discover and use runbook
 const resources = await mcp.listResources()
-const runbooks = resources.filter(r => r.uri.startsWith('docket://runbook/'))
+const runbooks = resources.filter(r => r.uri.startsWith('docent://runbook/'))
 // User: "Create preview branch"
-// Agent finds: docket://runbook/preview-branch
-const runbook = await mcp.readResource('docket://runbook/preview-branch')
+// Agent finds: docent://runbook/preview-branch
+const runbook = await mcp.readResource('docent://runbook/preview-branch')
 // Agent follows runbook steps...
 
 // Example 2: Invoke workflow prompt
@@ -908,9 +908,9 @@ const prompt = await mcp.getPrompt('resume-work', {})
 
 // Example 4: Browse templates
 const templates = await mcp.listResources()
-  .then(r => r.filter(res => res.uri.startsWith('docket://template/')))
+  .then(r => r.filter(res => res.uri.startsWith('docent://template/')))
 // Returns: [adr, rfc, spec, runbook, ...]
-const adrTemplate = await mcp.readResource('docket://template/adr')
+const adrTemplate = await mcp.readResource('docent://template/adr')
 // Agent uses template to create new ADR
 ```
 
@@ -973,10 +973,10 @@ User: "Create a preview database branch"
 Agent:
 1. Discovery:
    resources = await mcp.listResources()
-   // Finds: docket://runbook/preview-branch
+   // Finds: docent://runbook/preview-branch
 
 2. Retrieval:
-   runbook = await mcp.readResource('docket://runbook/preview-branch')
+   runbook = await mcp.readResource('docent://runbook/preview-branch')
 
 3. Execution:
    // Runbook says:
@@ -1117,7 +1117,7 @@ Enhanced MCP architecture has minimal new security concerns:
 
 2. **Path Traversal**
    - Malicious URIs could attempt directory traversal
-   - Example: `docket://doc/../../etc/passwd`
+   - Example: `docent://doc/../../etc/passwd`
    - **Mitigation:** Validate and sanitize all resource paths, restrict to project directory
 
 3. **Sensitive Information**
@@ -1483,7 +1483,7 @@ Deliverable: Validated workflows, real-world feedback
    - **Recommendation:** Not Phase 1, consider future
 
 5. **Resource Templates:** Should we support template interpolation in resources?
-   - Example: `docket://runbook/preview-branch?project={{projectName}}`
+   - Example: `docent://runbook/preview-branch?project={{projectName}}`
    - Dynamic content generation?
    - **Recommendation:** Start static (Phase 2), consider dynamic later
 
@@ -1522,7 +1522,7 @@ Once resources and prompts are established:
 
 1. **Dynamic Resources**
    - Resources generated on-demand
-   - Example: `docket://status/current` generates project status report
+   - Example: `docent://status/current` generates project status report
    - Computed content
 
 2. **Resource Subscriptions**

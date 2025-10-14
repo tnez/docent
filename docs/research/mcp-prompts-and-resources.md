@@ -96,19 +96,19 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
   return {
     resources: [
       {
-        uri: "docket://runbook/preview-branch",
+        uri: "docent://runbook/preview-branch",
         name: "Create Preview Database Branch",
         description: "Step-by-step procedure for creating Neon DB preview branches",
         mimeType: "text/markdown"
       },
       {
-        uri: "docket://template/adr",
+        uri: "docent://template/adr",
         name: "ADR Template",
         description: "Architecture Decision Record template",
         mimeType: "text/markdown"
       },
       {
-        uri: "docket://journal/current",
+        uri: "docent://journal/current",
         name: "Current Work Journal",
         description: "Active work journal with session context",
         mimeType: "text/markdown"
@@ -153,7 +153,7 @@ import fs from 'fs/promises';
 server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const { uri } = request.params;
 
-  // Parse URI: docket://runbook/preview-branch
+  // Parse URI: docent://runbook/preview-branch
   const match = uri.match(/^docket:\/\/([^\/]+)\/(.+)$/);
   if (!match) {
     throw new Error(`Invalid URI format: ${uri}`);
@@ -215,11 +215,11 @@ MCP defines standard URI schemes, but implementations can use custom schemes:
 - `file://` - Filesystem-like resources (may be virtual)
 
 **Custom Schemes (for docket):**
-- `docket://runbook/{name}` - Operational runbooks
-- `docket://template/{type}` - Documentation templates
-- `docket://standard/{type}` - Project standards/conventions
-- `docket://doc/{path}` - Project documentation
-- `docket://journal/{date|'current'}` - Work journals
+- `docent://runbook/{name}` - Operational runbooks
+- `docent://template/{type}` - Documentation templates
+- `docent://standard/{type}` - Project standards/conventions
+- `docent://doc/{path}` - Project documentation
+- `docent://journal/{date|'current'}` - Work journals
 
 **Best Practice:** Use descriptive custom schemes that clearly identify the resource type and origin.
 
@@ -236,7 +236,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   }
 
   // Whitelist allowed URI patterns
-  if (!uri.startsWith('docket://')) {
+  if (!uri.startsWith('docent://')) {
     throw new Error('Access denied: unsupported URI scheme');
   }
 
@@ -465,7 +465,7 @@ ${getReviewCriteria(perspective)}
 
     case 'resume-work': {
       // Read journal via resource
-      const journalUri = 'docket://journal/current';
+      const journalUri = 'docent://journal/current';
       const journalResponse = await handleResourceRead(journalUri);
       const journal = journalResponse.contents[0].text;
 
@@ -600,7 +600,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
   const { name } = request.params;
 
   if (name === 'create-preview-branch') {
-    const runbookUri = 'docket://runbook/preview-branch';
+    const runbookUri = 'docent://runbook/preview-branch';
     const runbookContent = await readResource(runbookUri);
 
     return {
@@ -747,8 +747,8 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
 // Tool returns resource references, not full content
 {
   result: [
-    { uri: "docket://doc/architecture/overview" },
-    { uri: "docket://doc/adr/adr-0004-mcp-only-architecture" }
+    { uri: "docent://doc/architecture/overview" },
+    { uri: "docent://doc/adr/adr-0004-mcp-only-architecture" }
   ]
 }
 
@@ -798,7 +798,7 @@ While MCP spec doesn't mandate caching headers, servers can include metadata:
 
 ```typescript
 {
-  uri: "docket://journal/current",
+  uri: "docent://journal/current",
   name: "Current Work Journal",
   mimeType: "text/markdown",
   metadata: {
@@ -818,7 +818,7 @@ While MCP spec doesn't mandate caching headers, servers can include metadata:
 ### Resources
 
 1. **Use descriptive URI schemes**
-   - Good: `docket://runbook/preview-branch`
+   - Good: `docent://runbook/preview-branch`
    - Bad: `file:///docs/runbooks/preview-branch.md`
 
 2. **Keep resource handlers lightweight**
@@ -923,9 +923,9 @@ While MCP spec doesn't mandate caching headers, servers can include metadata:
 ### Phase 1: Resources Implementation
 
 **Priority 1 Resources:**
-1. `docket://journal/current` - Session context
-2. `docket://template/{type}` - Documentation templates
-3. `docket://runbook/{name}` - Operational procedures
+1. `docent://journal/current` - Session context
+2. `docent://template/{type}` - Documentation templates
+3. `docent://runbook/{name}` - Operational procedures
 
 **Implementation:**
 ```typescript
@@ -993,7 +993,7 @@ describe('ResourceHandler', () => {
     const resources = await handler.list();
     expect(resources).toContainEqual(
       expect.objectContaining({
-        uri: 'docket://journal/current',
+        uri: 'docent://journal/current',
         name: 'Current Work Journal'
       })
     );
@@ -1001,14 +1001,14 @@ describe('ResourceHandler', () => {
 
   it('reads journal resource', async () => {
     const handler = new ResourceHandler();
-    const content = await handler.read('docket://journal/current');
+    const content = await handler.read('docent://journal/current');
     expect(content.contents[0].text).toContain('# Docket Work Journal');
   });
 
   it('rejects path traversal attempts', async () => {
     const handler = new ResourceHandler();
     await expect(
-      handler.read('docket://doc/../../etc/passwd')
+      handler.read('docent://doc/../../etc/passwd')
     ).rejects.toThrow('path traversal');
   });
 });
@@ -1074,7 +1074,7 @@ async readTemplate(type: string): Promise<ResourceContent> {
   // Existing templates directory
   const path = `templates/${type}-template.md`;
   const content = await fs.readFile(path, 'utf-8');
-  return { uri: `docket://template/${type}`, text: content };
+  return { uri: `docent://template/${type}`, text: content };
 }
 ```
 
@@ -1183,12 +1183,12 @@ const server = new Server(
 
 const RESOURCES = [
   {
-    uri: 'docket://journal/current',
+    uri: 'docent://journal/current',
     name: 'Current Work Journal',
     mimeType: 'text/markdown'
   },
   {
-    uri: 'docket://template/adr',
+    uri: 'docent://template/adr',
     name: 'ADR Template',
     mimeType: 'text/markdown'
   }
@@ -1201,12 +1201,12 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => ({
 server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const { uri } = request.params;
 
-  if (uri === 'docket://journal/current') {
+  if (uri === 'docent://journal/current') {
     const text = await fs.readFile('.docket/journal.md', 'utf-8');
     return { contents: [{ uri, mimeType: 'text/markdown', text }] };
   }
 
-  if (uri === 'docket://template/adr') {
+  if (uri === 'docent://template/adr') {
     const text = await fs.readFile('templates/adr-template.md', 'utf-8');
     return { contents: [{ uri, mimeType: 'text/markdown', text }] };
   }

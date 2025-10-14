@@ -53,7 +53,7 @@ export class PromptBuilder {
     // Read journal via resource handler
     let journal = ''
     try {
-      const journalContent = await this.resourceHandler.read('docket://journal/current')
+      const journalContent = await this.resourceHandler.read('docent://journal/current')
       journal = journalContent.text || ''
     } catch {
       journal = 'No journal found'
@@ -95,7 +95,7 @@ You are helping me continue work after a context window reset. I need you to syn
 
 ## Context Gathered
 
-### Work Journal (.docket/journal.md)
+### Work Journal (.docent/journal.md)
 <journal>
 ${journal}
 </journal>
@@ -245,7 +245,7 @@ Be specific and cite sections of the RFC when providing feedback.
     }
 
     // Get ADR template
-    const template = await this.resourceHandler.read('docket://template/adr')
+    const template = await this.resourceHandler.read('docent://template/adr')
 
     const prompt = `# Create Architecture Decision Record
 

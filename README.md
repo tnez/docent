@@ -1,12 +1,14 @@
-# Docket
+# Docent
 
-Documentation intelligence for AI agents.
+> Your guide through the codebase.
 
-Docket makes your agent better at understanding and improving documentation. No commands to learn—just configure once and talk to your agent naturally.
+Documentation intelligence for AI agents. Just as a museum docent guides visitors through exhibits, explaining context and connections, docent guides AI agents through your codebase.
 
-## What Docket Does
+Docent makes your agent better at understanding and improving documentation. No commands to learn—just configure once and talk to your agent naturally.
 
-Docket provides your agent with:
+## What Docent Does
+
+Docent provides your agent with:
 
 - **Project analysis** - Understand languages, frameworks, structure
 - **Quality assessment** - Semantic evaluation, not pattern matching
@@ -24,10 +26,10 @@ Add to `~/.claude.json`:
 ```json
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tnezdev/docket"],
+      "args": ["-y", "@tnezdev/docent"],
       "env": {}
     }
   }
@@ -43,9 +45,9 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "command": "npx",
-      "args": ["-y", "@tnezdev/docket"]
+      "args": ["-y", "@tnezdev/docent"]
     }
   }
 }
@@ -60,22 +62,22 @@ That's it. Just ask about documentation:
 - "Create an ADR for switching to PostgreSQL"
 - "What should I document for this feature?"
 
-Your agent will use docket automatically.
+Your agent will use docent automatically.
 
 ## How It Works
 
 When you ask your agent about documentation, it:
 
-1. Uses docket to analyze your project
+1. Uses docent to analyze your project
 2. Gathers context about what exists
 3. Reasons semantically (not pattern matching)
 4. Provides contextual recommendations
 
-You never invoke docket directly—it just makes your agent smarter.
+You never invoke docent directly—it just makes your agent smarter.
 
 ## Available Tools
 
-Agents can use these docket tools via MCP:
+Agents can use these docent tools via MCP:
 
 - **`analyze`** - Project structure, languages, frameworks
 - **`audit-quality`** - Semantic documentation assessment
@@ -89,7 +91,7 @@ Agents can use these docket tools via MCP:
 ```
 You: "How's my documentation?"
 
-Agent: [uses docket audit-quality]
+Agent: [uses docent audit-quality]
 Agent: "Your documentation is solid (73/100).
        Strong architectural docs, missing testing guide.
        Want me to draft one based on your test structure?"
@@ -100,7 +102,7 @@ Agent: "Your documentation is solid (73/100).
 ```
 You: "Document the decision to use PostgreSQL"
 
-Agent: [uses docket get-template with type 'adr']
+Agent: [uses docent get-template with type 'adr']
 Agent: [creates docs/adr/adr-0004-postgresql.md]
 Agent: "I've documented the PostgreSQL decision. Review?"
 ```
@@ -110,7 +112,7 @@ Agent: "I've documented the PostgreSQL decision. Review?"
 ```
 You: "Initialize documentation for this project"
 
-Agent: [uses docket analyze]
+Agent: [uses docent analyze]
 Agent: "TypeScript CLI tool with Mocha testing.
        I'll create architecture/, adr/, and specs/ directories
        with appropriate templates. Proceed?"
@@ -120,7 +122,7 @@ Agent: "TypeScript CLI tool with Mocha testing.
 
 Solo developers using AI agents as part of their development workflow.
 
-If you're using Claude, ChatGPT, or other AI coding assistants, docket helps them understand and improve your documentation.
+If you're using Claude, ChatGPT, or other AI coding assistants, docent helps them understand and improve your documentation.
 
 ## Documentation
 
@@ -132,17 +134,17 @@ If you're using Claude, ChatGPT, or other AI coding assistants, docket helps the
 
 ```bash
 # Clone and build
-git clone https://github.com/tnez/docket.git
-cd docket
+git clone https://github.com/tnez/docent.git
+cd docent
 npm install
 npm run build
 
 # Add to ~/.claude.json for local development
 {
   "mcpServers": {
-    "docket": {
+    "docent": {
       "type": "stdio",
-      "command": "/absolute/path/to/docket/bin/mcp-server.js",
+      "command": "/absolute/path/to/docent/bin/mcp-server.js",
       "args": [],
       "env": {}
     }
@@ -158,11 +160,11 @@ MIT © Travis Nez
 
 ## Philosophy
 
-Docket is infrastructure for AI agents, not a direct tool for humans.
+Docent is infrastructure for AI agents, not a direct tool for humans.
 
 Think of it like a database:
 - Humans don't query databases directly
 - Applications (agents) query databases
 - Makes applications smarter
 
-Docket makes agents smarter about documentation.
+Docent makes agents smarter about documentation.

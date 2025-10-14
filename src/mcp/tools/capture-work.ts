@@ -48,10 +48,10 @@ export async function handleCaptureWorkTool(args: {
 
   // Get journal path
   const basePath = process.cwd()
-  const docketDir = path.join(basePath, '.docket')
+  const docketDir = path.join(basePath, '.docent')
   const journalPath = path.join(docketDir, 'journal.md')
 
-  // Ensure .docket directory exists
+  // Ensure .docent directory exists
   await fs.mkdir(docketDir, {recursive: true})
 
   // Format entry
@@ -92,7 +92,7 @@ This journal captures session context, key discoveries, and next steps to enable
     content: [
       {
         type: 'text' as const,
-        text: `✓ Journal entry added to .docket/journal.md\n\n${entry}`,
+        text: `✓ Journal entry added to .docent/journal.md\n\n${entry}`,
       },
     ],
   }

@@ -1,16 +1,16 @@
 {
-  "name": "@tnezdev/docket",
+  "name": "@tnezdev/docent",
   "version": "0.3.0",
-  "description": "Documentation intelligence for AI agents",
+  "description": "Documentation intelligence for AI agents - Your guide through the codebase",
   "author": "Travis Nez @tnez",
   "license": "MIT",
-  "homepage": "https://github.com/tnez/docket",
+  "homepage": "https://github.com/tnez/docent",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tnez/docket.git"
+    "url": "https://github.com/tnez/docent.git"
   },
   "bugs": {
-    "url": "https://github.com/tnez/docket/issues"
+    "url": "https://github.com/tnez/docent/issues"
   },
   "keywords": [
     "documentation",

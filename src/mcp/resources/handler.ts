@@ -50,7 +50,7 @@ export class ResourceHandler {
   }
 
   /**
-   * Parse a docket:// URI into type and identifier
+   * Parse a docent:// URI into type and identifier
    */
   private parseUri(uri: string): ParsedUri {
     // Validate URI doesn't contain path traversal
@@ -58,7 +58,7 @@ export class ResourceHandler {
       throw new Error('Invalid URI: path traversal detected')
     }
 
-    // Parse: docket://runbook/preview-branch
+    // Parse: docent://runbook/preview-branch
     const match = uri.match(/^docket:\/\/([^/]+)\/(.+)$/)
     if (!match) {
       throw new Error(`Invalid URI format: ${uri}`)
@@ -76,12 +76,12 @@ export class ResourceHandler {
    */
   private async listJournalResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const journalPath = path.join(this.basePath, '.docket', 'journal.md')
+    const journalPath = path.join(this.basePath, '.docent', 'journal.md')
 
     try {
       await fs.access(journalPath)
       resources.push({
-        uri: 'docket://journal/current',
+        uri: 'docent://journal/current',
         name: 'Current Work Journal',
         description:
           'Active work journal capturing session context. IMPORTANT: Update this frequently as you work to capture key discoveries, rationale behind decisions, and partially explored ideas. Rich journal entries enable effective session recovery via the resume-work prompt. Use the capture-work tool to append entries easily.',
@@ -108,7 +108,7 @@ export class ResourceHandler {
       for (const file of templateFiles) {
         const type = file.replace('-template.md', '')
         resources.push({
-          uri: `docket://template/${type}`,
+          uri: `docent://template/${type}`,
           name: `${this.capitalize(type)} Template`,
           description: `Template for creating ${type} documents`,
           mimeType: 'text/markdown',
@@ -144,7 +144,7 @@ export class ResourceHandler {
       const description = descMatch ? descMatch[1] : `Operational runbook: ${title}`
 
       resources.push({
-        uri: `docket://runbook/${name}`,
+        uri: `docent://runbook/${name}`,
         name: title,
         description,
         mimeType: 'text/markdown',
@@ -162,7 +162,7 @@ export class ResourceHandler {
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
-      uri: `docket://runbook/${identifier}`,
+      uri: `docent://runbook/${identifier}`,
       mimeType: 'text/markdown',
       text: content,
     }
@@ -176,7 +176,7 @@ export class ResourceHandler {
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
-      uri: `docket://template/${identifier}`,
+      uri: `docent://template/${identifier}`,
       mimeType: 'text/markdown',
       text: content,
     }
@@ -190,7 +190,7 @@ export class ResourceHandler {
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
-      uri: `docket://standard/${identifier}`,
+      uri: `docent://standard/${identifier}`,
       mimeType: 'text/markdown',
       text: content,
     }
@@ -205,7 +205,7 @@ export class ResourceHandler {
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
-      uri: `docket://doc/${identifier}`,
+      uri: `docent://doc/${identifier}`,
       mimeType: 'text/markdown',
       text: content,
     }
@@ -217,13 +217,13 @@ export class ResourceHandler {
   private async readJournal(identifier: string): Promise<ResourceContent> {
     const filePath =
       identifier === 'current'
-        ? path.join(this.basePath, '.docket', 'journal.md')
-        : path.join(this.basePath, '.docket', `journal-${identifier}.md`)
+        ? path.join(this.basePath, '.docent', 'journal.md')
+        : path.join(this.basePath, '.docent', `journal-${identifier}.md`)
 
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
-      uri: `docket://journal/${identifier}`,
+      uri: `docent://journal/${identifier}`,
       mimeType: 'text/markdown',
       text: content,
     }

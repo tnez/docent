@@ -32,7 +32,7 @@ const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
 // Create MCP server
 const server = new Server(
   {
-    name: 'docket',
+    name: 'docent',
     version: pkg.version,
   },
   {
@@ -159,7 +159,7 @@ async function main() {
   await server.connect(transport)
 
   // Log to stderr (stdout is used for MCP protocol)
-  console.error('Docket MCP server running on stdio')
+  console.error('Docent MCP server running on stdio')
 }
 
 main().catch((error) => {
