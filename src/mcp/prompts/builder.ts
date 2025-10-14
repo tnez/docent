@@ -115,6 +115,32 @@ ${gitStatus}
 ${todos}
 \`\`\`
 
+## Suggested Health Checks
+
+Before continuing work, consider verifying project health. This project may have runbooks or documentation that specify how to check:
+
+1. **CI/Build Status**
+   - Check if continuous integration is passing
+   - Look for runbooks in \`docs/runbooks/*\` that document health checks
+   - Review recent build/test failures if any
+
+2. **Code Quality**
+   - Verify linting passes
+   - Check for test failures
+   - Review any static analysis warnings
+
+3. **Project Cleanup**
+   - Review untracked files in git status (potential cruft to clean up)
+   - Check for leftover temporary files
+   - Verify no sensitive files are uncommitted
+
+4. **Documentation Sync**
+   - Ensure recent changes are documented
+   - Check if architecture docs need updating
+   - Verify runbooks reflect current procedures
+
+**How to check:** If this project has runbooks (accessible via \`docent://runbook/*\` resources), review them for project-specific verification procedures. Projects often document their health check commands in runbooks.
+
 ## Your Task
 
 Analyze the context above and generate a comprehensive continuation prompt. Focus on extracting insights and rationale, not just summarizing facts.

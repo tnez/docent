@@ -796,3 +796,26 @@ Returns: {
 
 ---
 
+## 2025-10-14T02:37:54.309Z
+
+**Summary:** Implemented resume-work prompt with project health check guidance
+
+**Key Discoveries:**
+- resume-work prompt was already fully implemented with journal, git status, commits, and TODO scanning
+- Key architectural insight: docent provides generic intelligence ("check CI"), projects provide specifics ("run gh run list")
+- Health checks should reference project runbooks via docent://runbook/* resources
+- Pattern: Discovery (docent suggests) → Context (runbook details) → Execution (agent acts)
+
+**Next Steps:**
+- Commit the resume-work enhancement
+- Create example runbook for docent project (check-ci-health.md)
+- Test resume-work prompt in real session recovery scenario
+- Consider adding RFC-0005 CI status integration as optional enhancement
+
+**Open Questions:**
+- Should we create a default health check runbook template?
+- Do we need a project-health resource (docent://health/current)?
+- Should health checks be part of audit tool output?
+
+---
+
