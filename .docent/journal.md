@@ -925,3 +925,56 @@ Returns: {
 - Consider adding metadata tags for better resource filtering
 
 ---
+## 2025-10-15T13:00:49.671Z
+
+**Summary:** Brainstormed "senior engineer buddy" vision for docent - agent that answers project questions for onboarding developers
+
+**Key Discoveries:**
+- Docent should answer natural language questions about the project (code standards, architecture, how-tos)
+- Current gap: agents manually search files instead of asking docent directly
+- This is RAG (Retrieval-Augmented Generation) for project knowledge
+- Fits docent philosophy: documentation becomes configuration for AI agents
+- Need an 'ask' tool that classifies questions, searches docs, synthesizes answers with citations
+
+**Next Steps:**
+- Compile list of canonical onboarding questions developers/agents would ask
+- Research existing RAG/semantic search approaches for documentation
+- Draft RFC for 'ask' tool or enhanced search capability
+- Prototype simple version that handles common question categories
+
+**Open Questions:**
+- Should this be an 'ask' tool, enhanced resources, or a specialized prompt?
+- Do we need semantic search indexing or can we use simple grep + LLM synthesis?
+- What question categories matter most: onboarding, architecture, operations, troubleshooting?
+- How do we handle questions that span multiple docs (e.g., 'how do I add a feature end-to-end')?
+
+---
+
+## 2025-10-15T13:32:15.820Z
+
+**Summary:** Fixed build automation, improved documentation (testing/API/onboarding guides), achieved 94/100 audit score, and researched 'ask tool' vision for docent as senior engineer buddy
+
+**Key Discoveries:**
+- Build was failing due to missing src/lib/ files that were gitignored - fixed with prepare script automation
+- Documentation audit identified 3 critical gaps - all now addressed with comprehensive guides
+- Audit score improved from 82 to 94 (+12 points) after adding guides
+- Vision crystallized: docent should answer project questions like a senior engineer buddy
+- Compiled 50+ canonical onboarding questions across 7 categories for ask tool design
+- This is RAG for project knowledge - fits perfectly with docent's philosophy
+- Real example from today: asking about code standards required manual file searches instead of asking docent
+
+**Next Steps:**
+- Let ask tool vision percolate - revisit in next session
+- If moving forward: draft RFC for ask tool based on onboarding questions research
+- Consider prototyping simple version that handles top 10 questions
+- Validate question list with actual onboarding experience
+- Research existing RAG/semantic search approaches for documentation
+
+**Open Questions:**
+- Should ask tool be MCP tool, enhanced resources, or specialized prompt?
+- Simple grep + LLM synthesis vs semantic search indexing?
+- What's the MVP - handle 10 questions well or 50 questions poorly?
+- How do we measure success - answer quality, citation accuracy, or coverage?
+
+---
+
