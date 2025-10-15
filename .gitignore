@@ -75,7 +75,7 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 # Build output
-lib/
+/lib/
 dist/
 *.tsbuildinfo
 

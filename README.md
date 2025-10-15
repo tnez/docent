@@ -133,11 +133,10 @@ If you're using Claude, ChatGPT, or other AI coding assistants, docent helps the
 ## Development
 
 ```bash
-# Clone and build
+# Clone and install (build happens automatically)
 git clone https://github.com/tnez/docent.git
 cd docent
 npm install
-npm run build
 
 # Add to ~/.claude.json for local development
 {

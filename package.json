@@ -33,6 +33,7 @@
   },
   "scripts": {
     "build": "tsc -b",
+    "prepare": "npm run build",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
