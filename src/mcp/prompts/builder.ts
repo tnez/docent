@@ -1,16 +1,17 @@
-import * as fs from 'fs/promises'
 import * as path from 'path'
-import {execSync} from 'child_process'
 import {analyzeProject} from '../../lib/detector.js'
 import {ResourceHandler} from '../resources/handler.js'
+import {WorkflowContextGatherer} from '../workflows/context-gatherer.js'
 import type {PromptMessage} from './types.js'
 import {PROMPTS} from './definitions.js'
 
 export class PromptBuilder {
   private resourceHandler: ResourceHandler
+  private contextGatherer: WorkflowContextGatherer
 
   constructor(basePath: string = process.cwd()) {
     this.resourceHandler = new ResourceHandler(basePath)
+    this.contextGatherer = new WorkflowContextGatherer(basePath)
   }
 
   /**
@@ -50,44 +51,8 @@ export class PromptBuilder {
    * Build "Resume Work" prompt
    */
   private async buildResumeWork(): Promise<{description?: string; messages: PromptMessage[]}> {
-    // Read journal via resource handler
-    let journal = ''
-    try {
-      const journalContent = await this.resourceHandler.read('docent://journal/current')
-      journal = journalContent.text || ''
-    } catch {
-      journal = 'No journal found'
-    }
-
-    // Get recent commits
-    let commits = ''
-    try {
-      commits = execSync('git log --oneline -10', {encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore']})
-    } catch {
-      commits = 'No git history available'
-    }
-
-    // Get git status
-    let gitStatus = ''
-    try {
-      gitStatus = execSync('git status', {encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore']})
-    } catch {
-      gitStatus = 'Not a git repository'
-    }
-
-    // Find TODOs (simple grep)
-    let todos = ''
-    try {
-      todos = execSync('git grep -n "TODO\\|FIXME" || true', {
-        encoding: 'utf-8',
-        stdio: ['pipe', 'pipe', 'ignore'],
-      })
-      if (!todos.trim()) {
-        todos = 'No TODOs found'
-      }
-    } catch {
-      todos = 'Unable to search for TODOs'
-    }
+    // Use shared context gatherer (single source of truth)
+    const context = await this.contextGatherer.gatherResumeWorkContext()
 
     const prompt = `# Resume Work - Session Continuation
 
@@ -97,22 +62,22 @@ You are helping me continue work after a context window reset. I need you to syn
 
 ### Work Journal (.docent/journal.md)
 <journal>
-${journal}
+${context.journal}
 </journal>
 
 ### Recent Commits (last 10)
 \`\`\`
-${commits}
+${context.commits}
 \`\`\`
 
 ### Git Status
 \`\`\`
-${gitStatus}
+${context.gitStatus}
 \`\`\`
 
 ### TODOs Found
 \`\`\`
-${todos}
+${context.todos}
 \`\`\`
 
 ## Suggested Health Checks
@@ -192,43 +157,36 @@ Be specific, cite file paths with line numbers where relevant, and focus on **wh
       throw new Error('Missing required argument: rfc_path')
     }
 
-    // Read RFC content
-    const rfcContent = await fs.readFile(rfc_path, 'utf-8')
+    // Use shared context gatherer (single source of truth)
+    const context = await this.contextGatherer.gatherReviewRfcContext(rfc_path, perspective)
 
-    // Get project analysis
-    const analysis = await analyzeProject(process.cwd())
-
-    // Extract RFC title
-    const titleMatch = rfcContent.match(/^#\s+(.+)$/m)
-    const title = titleMatch ? titleMatch[1] : path.basename(rfc_path)
-
-    const prompt = `# RFC Review: ${perspective} Perspective
+    const prompt = `# RFC Review: ${context.perspective} Perspective
 
 ## Your Task
 
-Conduct a thorough ${perspective} review of the RFC: ${title}
+Conduct a thorough ${context.perspective} review of the RFC: ${context.title}
 
 ## RFC Content
 
-<rfc path="${rfc_path}">
-${rfcContent}
+<rfc path="${context.rfcPath}">
+${context.rfcContent}
 </rfc>
 
 ## Project Context
 
-- **Languages**: ${analysis.languages.join(', ')}
-- **Frameworks**: ${analysis.frameworks.join(', ')}
-- **Build Tools**: ${analysis.buildTools.join(', ')}
+- **Languages**: ${context.projectLanguages.join(', ')}
+- **Frameworks**: ${context.projectFrameworks.join(', ')}
+- **Build Tools**: ${context.projectBuildTools.join(', ')}
 
 ## Review Criteria
 
-${this.getReviewCriteria(perspective)}
+${this.getReviewCriteria(context.perspective)}
 
 ## Process
 
 1. Read the RFC carefully
 2. Review related documentation for context
-3. Apply ${perspective} review criteria
+3. Apply ${context.perspective} review criteria
 4. Identify blockers, concerns, and recommendations
 5. Provide structured assessment
 
@@ -247,7 +205,7 @@ Be specific and cite sections of the RFC when providing feedback.
 `
 
     return {
-      description: `RFC review from ${perspective} perspective`,
+      description: `RFC review from ${context.perspective} perspective`,
       messages: [
         {
           role: 'user',
