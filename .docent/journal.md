@@ -978,3 +978,25 @@ Returns: {
 
 ---
 
+## 2025-10-16T15:15:18.729Z
+
+**Summary:** Implemented RFC-0005 Enhanced MCP Architecture with full resources and prompts support
+
+**Key Discoveries:**
+- MCP SDK 1.20.0 provides full support for resources (URI-based content) and prompts (workflow templates)
+- Resources enable documentation discovery - runbooks, templates, standards, guides, ADRs, RFCs, journal all accessible via docent:// URIs
+- Prompts provide pre-defined workflows with context gathering - resume-work, review-rfc, create-adr, plan-feature, research-topic
+- The 'Beautiful Pattern' is realized: Discovery → Context → Execution
+- Documentation becomes configuration for AI agents
+
+**Next Steps:**
+- Test resume-work prompt to validate session recovery
+- Dogfood review-rfc prompt on RFC-0005 itself
+- Consider publishing 0.4.0 to npm
+
+**Open Questions:**
+- Should we add more prompts based on usage patterns?
+- How well does resource caching work in practice?
+
+---
+
