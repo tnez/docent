@@ -81,3 +81,6 @@ dist/
 
 # Claude Code MCP config (local paths)
 .mcp.json
+
+# Docent journals - ephemeral agent state per worktree
+docs/.journal/
