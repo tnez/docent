@@ -14,6 +14,8 @@ Docent provides your agent with:
 - **Quality assessment** - Semantic evaluation, not pattern matching
 - **Template library** - ADRs, RFCs, specs, guides
 - **Context gathering** - Structured data for agent reasoning
+- **Resource discovery** - Runbooks, templates, standards via URI
+- **Workflow prompts** - Pre-defined procedures (RFC review, session recovery)
 
 ## Quick Start
 
@@ -75,16 +77,64 @@ When you ask your agent about documentation, it:
 
 You never invoke docent directly—it just makes your agent smarter.
 
-## Available Tools
+## MCP Capabilities
 
-Agents can use these docent tools via MCP:
+Docent exposes three types of MCP capabilities:
+
+### Tools
 
 - **`analyze`** - Project structure, languages, frameworks
 - **`audit`** - Semantic documentation assessment
 - **`list-templates`** - Available documentation templates
 - **`get-template`** - Fetch a specific template
+- **`capture-work`** - Append to work journal
+
+### Resources
+
+Discoverable content via URI (`docent://type/identifier`):
+
+- **`docent://journal/current`** - Work journal for session continuity
+- **`docent://template/{type}`** - Documentation templates (adr, rfc, etc.)
+- **`docent://runbook/{name}`** - Operational procedures
+- **`docent://guide/{name}`** - Development guides
+- **`docent://standard/{type}`** - Project standards
+- **`docent://adr/{name}`** - Architecture decisions
+- **`docent://rfc/{name}`** - RFCs
+
+### Prompts
+
+Pre-defined workflows agents can invoke:
+
+- **`resume-work`** - Session recovery with git, journal, TODOs
+- **`review-rfc`** - Multi-perspective RFC review
+- **`create-adr`** - Guided ADR creation
+- **`plan-feature`** - Feature planning workflow
+- **`research-topic`** - Structured research
 
 ## Example Workflows
+
+### Session Recovery
+
+```
+You: "Help me resume work"
+
+Agent: [invokes docent prompt 'resume-work']
+Agent: [gathers journal, git status, commits, TODOs]
+Agent: "You were implementing RFC-0005 (Enhanced MCP Architecture).
+       Resources and prompts are complete. Next: update docs.
+       3 uncommitted files. Ready to continue?"
+```
+
+### RFC Review
+
+```
+You: "Review RFC-0005 from architecture perspective"
+
+Agent: [invokes docent prompt 'review-rfc']
+Agent: [reads RFC, analyzes project, applies criteria]
+Agent: "APPROVE_WITH_CHANGES. Strong design but missing
+       performance benchmarks. Recommend Phase 0 testing."
+```
 
 ### Assess Documentation Quality
 
@@ -97,6 +147,17 @@ Agent: "Your documentation is solid (73/100).
        Want me to draft one based on your test structure?"
 ```
 
+### Follow Operational Runbooks
+
+```
+You: "Check CI/CD health"
+
+Agent: [discovers docent://runbook/ci-cd-health-check]
+Agent: [follows runbook procedures]
+Agent: "CI/CD check complete. Test workflow passing.
+       Lint workflow has 2 markdown errors. Fix them?"
+```
+
 ### Create New Documentation
 
 ```
@@ -105,17 +166,6 @@ You: "Document the decision to use PostgreSQL"
 Agent: [uses docent get-template with type 'adr']
 Agent: [creates docs/adr/adr-0004-postgresql.md]
 Agent: "I've documented the PostgreSQL decision. Review?"
-```
-
-### Set Up Documentation Structure
-
-```
-You: "Initialize documentation for this project"
-
-Agent: [uses docent analyze]
-Agent: "TypeScript CLI tool with Mocha testing.
-       I'll create architecture/, adr/, and specs/ directories
-       with appropriate templates. Proceed?"
 ```
 
 ## Target Audience
