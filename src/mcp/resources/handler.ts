@@ -106,19 +106,32 @@ export class ResourceHandler {
    */
   private async listJournalResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const journalPath = path.join(this.basePath, '.docent', 'journal.md')
+    const journalDir = path.join(this.basePath, 'docs', '.journal')
 
     try {
-      await fs.access(journalPath)
-      resources.push({
-        uri: 'docent://journal/current',
-        name: 'Current Work Journal',
-        description:
-          'Active work journal capturing session context. IMPORTANT: Update this frequently as you work to capture key discoveries, rationale behind decisions, and partially explored ideas. Rich journal entries enable effective session recovery via the resume-work prompt. Use the capture-work tool to append entries easily.',
-        mimeType: 'text/markdown',
-      })
+      const files = await fs.readdir(journalDir)
+      const sessionFiles = files.filter((f) => /^\d{4}-\d{2}-\d{2}-session-\d{3}\.md$/.test(f))
+
+      if (sessionFiles.length > 0) {
+        // Add "current" resource pointing to latest session
+        const latestSession = sessionFiles.sort().pop()!
+        resources.push({
+          uri: 'docent://journal/current',
+          name: 'Current Work Journal Session',
+          description: `Active work journal session (${latestSession}). IMPORTANT: Update this frequently as you work to capture key discoveries, rationale behind decisions, and partially explored ideas. Rich journal entries enable effective session recovery via the resume-work prompt. Use the capture-work tool to append entries easily.`,
+          mimeType: 'text/markdown',
+        })
+
+        // Add "recent" resource for resume-work
+        resources.push({
+          uri: 'docent://journal/recent',
+          name: 'Recent Work Journal Sessions',
+          description: 'Last 3 work journal sessions for session recovery and context gathering',
+          mimeType: 'text/markdown',
+        })
+      }
     } catch {
-      // Journal doesn't exist yet
+      // Journal directory doesn't exist yet
     }
 
     return resources
@@ -435,18 +448,86 @@ export class ResourceHandler {
    * Read journal resource
    */
   private async readJournal(identifier: string): Promise<ResourceContent> {
-    const filePath =
-      identifier === 'current'
-        ? path.join(this.basePath, '.docent', 'journal.md')
-        : path.join(this.basePath, '.docent', `journal-${identifier}.md`)
+    const journalDir = path.join(this.basePath, 'docs', '.journal')
 
-    const content = await fs.readFile(filePath, 'utf-8')
+    if (identifier === 'current') {
+      // Return latest session
+      const files = await fs.readdir(journalDir)
+      const sessionFiles = files.filter((f) => /^\d{4}-\d{2}-\d{2}-session-\d{3}\.md$/.test(f)).sort()
 
-    return {
-      uri: `docent://journal/${identifier}`,
-      mimeType: 'text/markdown',
-      text: content,
+      if (sessionFiles.length === 0) {
+        throw new Error('No journal sessions found')
+      }
+
+      const latestSession = sessionFiles[sessionFiles.length - 1]
+      const filePath = path.join(journalDir, latestSession)
+      const content = await fs.readFile(filePath, 'utf-8')
+
+      return {
+        uri: 'docent://journal/current',
+        mimeType: 'text/markdown',
+        text: content,
+      }
     }
+
+    if (identifier === 'recent') {
+      // Return last 3 sessions
+      const files = await fs.readdir(journalDir)
+      const sessionFiles = files.filter((f) => /^\d{4}-\d{2}-\d{2}-session-\d{3}\.md$/.test(f)).sort()
+
+      const recentFiles = sessionFiles.slice(-3)
+      const sessions = await Promise.all(
+        recentFiles.map(async (file) => {
+          const filePath = path.join(journalDir, file)
+          const content = await fs.readFile(filePath, 'utf-8')
+          return `## Session: ${file}\n\n${content}\n`
+        }),
+      )
+
+      return {
+        uri: 'docent://journal/recent',
+        mimeType: 'text/markdown',
+        text: sessions.join('\n---\n\n'),
+      }
+    }
+
+    // Check if identifier is a date (YYYY-MM-DD)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(identifier)) {
+      const files = await fs.readdir(journalDir)
+      const dateSessions = files.filter((f) => f.startsWith(identifier)).sort()
+
+      if (dateSessions.length === 0) {
+        throw new Error(`No journal sessions found for date: ${identifier}`)
+      }
+
+      const sessions = await Promise.all(
+        dateSessions.map(async (file) => {
+          const filePath = path.join(journalDir, file)
+          const content = await fs.readFile(filePath, 'utf-8')
+          return `## Session: ${file}\n\n${content}\n`
+        }),
+      )
+
+      return {
+        uri: `docent://journal/${identifier}`,
+        mimeType: 'text/markdown',
+        text: sessions.join('\n---\n\n'),
+      }
+    }
+
+    // Check if identifier is a specific session ID (YYYY-MM-DD-session-NNN)
+    if (/^\d{4}-\d{2}-\d{2}-session-\d{3}$/.test(identifier)) {
+      const filePath = path.join(journalDir, `${identifier}.md`)
+      const content = await fs.readFile(filePath, 'utf-8')
+
+      return {
+        uri: `docent://journal/${identifier}`,
+        mimeType: 'text/markdown',
+        text: content,
+      }
+    }
+
+    throw new Error(`Invalid journal identifier: ${identifier}`)
   }
 
   /**

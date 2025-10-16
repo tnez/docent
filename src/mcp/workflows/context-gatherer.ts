@@ -2,6 +2,7 @@ import * as fs from 'fs/promises'
 import {execSync} from 'child_process'
 import {analyzeProject} from '../../lib/detector.js'
 import {ResourceHandler} from '../resources/handler.js'
+import {SessionManager} from '../../lib/journal/session-manager.js'
 
 /**
  * Context gatherer for workflow tools and prompts
@@ -9,22 +10,35 @@ import {ResourceHandler} from '../resources/handler.js'
  */
 export class WorkflowContextGatherer {
   private resourceHandler: ResourceHandler
+  private sessionManager: SessionManager
 
   constructor(basePath: string = process.cwd()) {
     this.resourceHandler = new ResourceHandler(basePath)
+    this.sessionManager = new SessionManager(basePath)
   }
 
   /**
    * Gather context for resume-work workflow
    */
   async gatherResumeWorkContext(): Promise<ResumeWorkContext> {
-    // Read journal
+    // Read recent journal sessions (last 3)
     let journal = ''
     try {
-      const journalContent = await this.resourceHandler.read('docent://journal/current')
-      journal = journalContent.text || ''
-    } catch {
-      journal = 'No journal found'
+      const recentSessions = await this.sessionManager.getRecentSessions(3)
+
+      if (recentSessions.length === 0) {
+        journal = 'No journal sessions found'
+      } else {
+        const sessionContents = await Promise.all(
+          recentSessions.map(async (session) => {
+            const content = await this.sessionManager.readSession(session)
+            return `## Session: ${session.file}\n\n${content}\n`
+          }),
+        )
+        journal = sessionContents.join('\n---\n\n')
+      }
+    } catch (error) {
+      journal = `Error reading journal: ${error}`
     }
 
     // Get recent commits

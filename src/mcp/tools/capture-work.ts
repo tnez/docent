@@ -1,5 +1,5 @@
 import * as fs from 'fs/promises'
-import * as path from 'path'
+import {SessionManager} from '../../lib/journal/session-manager.js'
 
 export const captureWorkToolDefinition = {
   name: 'capture-work',
@@ -33,6 +33,10 @@ export const captureWorkToolDefinition = {
           type: 'string',
         },
       },
+      new_session: {
+        type: 'boolean',
+        description: 'Force start a new session (default: auto-detect based on time gap)',
+      },
     },
     required: ['summary'],
   },
@@ -43,16 +47,18 @@ export async function handleCaptureWorkTool(args: {
   discoveries?: string[]
   next_steps?: string[]
   questions?: string[]
+  new_session?: boolean
 }) {
-  const {summary, discoveries, next_steps, questions} = args
+  const {summary, discoveries, next_steps, questions, new_session = false} = args
 
-  // Get journal path
-  const basePath = process.cwd()
-  const docentDir = path.join(basePath, '.docent')
-  const journalPath = path.join(docentDir, 'journal.md')
+  // Initialize session manager
+  const sessionManager = new SessionManager()
 
-  // Ensure .docent directory exists
-  await fs.mkdir(docentDir, {recursive: true})
+  // Run migration if needed (checks for old .docent/journal.md)
+  await migrateOldJournal(sessionManager)
+
+  // Get current session file (may create new session)
+  const sessionFile = await sessionManager.getCurrentSessionFile(new_session)
 
   // Format entry
   const timestamp = new Date().toISOString()
@@ -64,38 +70,58 @@ export async function handleCaptureWorkTool(args: {
     questions,
   })
 
-  // Check if journal exists
-  let journalExists = false
-  try {
-    await fs.access(journalPath)
-    journalExists = true
-  } catch {
-    // Journal doesn't exist yet
-  }
+  // Append entry to session file
+  await fs.appendFile(sessionFile, entry, 'utf-8')
 
-  // If journal doesn't exist, create with header
-  if (!journalExists) {
-    const header = `# Work Journal
-
-This journal captures session context, key discoveries, and next steps to enable effective work continuation.
-
----
-
-`
-    await fs.writeFile(journalPath, header, 'utf-8')
-  }
-
-  // Append entry
-  await fs.appendFile(journalPath, entry, 'utf-8')
+  // Extract session info for response
+  const sessions = await sessionManager.listSessions()
+  const currentSession = sessions[sessions.length - 1]
 
   return {
     content: [
       {
         type: 'text' as const,
-        text: `✓ Journal entry added to .docent/journal.md\n\n${entry}`,
+        text: `✓ Journal entry added to ${currentSession.file}\n\n${entry}`,
       },
     ],
   }
+}
+
+/**
+ * Migrate old .docent/journal.md to new session-based structure
+ */
+async function migrateOldJournal(sessionManager: SessionManager): Promise<void> {
+  const basePath = process.cwd()
+  const oldJournalPath = `${basePath}/.docent/journal.md`
+
+  try {
+    await fs.access(oldJournalPath)
+  } catch {
+    // Old journal doesn't exist, nothing to migrate
+    return
+  }
+
+  // Read old journal
+  const content = await fs.readFile(oldJournalPath, 'utf-8')
+
+  // Get current session file (creates new session if needed)
+  const sessionFile = await sessionManager.getCurrentSessionFile()
+
+  // Append old content to new session (with migration note)
+  const migrationNote = `## Migration from .docent/journal.md
+
+The following content was migrated from the old journal structure:
+
+---
+
+`
+
+  await fs.appendFile(sessionFile, migrationNote + content, 'utf-8')
+
+  // Rename old journal for safety (don't delete)
+  await fs.rename(oldJournalPath, `${oldJournalPath}.migrated`)
+
+  console.log(`✓ Migrated old journal to session-based structure`)
 }
 
 function formatJournalEntry(data: {
