@@ -3,13 +3,30 @@ import * as path from 'path'
 import type {ParsedUri, Resource, ResourceContent, ResourceType} from './types.js'
 
 export class ResourceHandler {
-  constructor(private basePath: string = process.cwd()) {}
+  private projectPath: string
+  private packagePath: string
+
+  constructor(projectPath: string = process.cwd(), packagePath?: string) {
+    this.projectPath = projectPath
+    // Resolve package directory (where templates are bundled)
+    // In dev: /Users/tnez/Code/tnez/docent
+    // In npm: /Users/bob/myproject/node_modules/@tnezdev/docent
+    if (packagePath) {
+      this.packagePath = packagePath
+    } else {
+      // From /path/to/docent/lib/mcp/resources/handler.js -> /path/to/docent
+      this.packagePath = path.resolve(__dirname, '..', '..', '..')
+    }
+  }
 
   /**
    * List all available resources
    */
   async list(): Promise<Resource[]> {
     const resources: Resource[] = []
+
+    // Add meta resources (init-session, etc.)
+    resources.push(...this.listMetaResources())
 
     // Add journal resources
     resources.push(...(await this.listJournalResources()))
@@ -58,6 +75,8 @@ export class ResourceHandler {
     const parsed = this.parseUri(uri)
 
     switch (parsed.type) {
+      case 'meta':
+        return this.readMeta(parsed.identifier)
       case 'runbook':
         return this.readRunbook(parsed.identifier)
       case 'template':
@@ -102,11 +121,25 @@ export class ResourceHandler {
   }
 
   /**
+   * List meta resources (prompts exposed as resources for Claude Code compatibility)
+   */
+  private listMetaResources(): Resource[] {
+    return [
+      {
+        uri: 'docent://meta/init-session',
+        name: 'Session Initialization',
+        description: 'Bootstrap work session with project context, available resources, journal workflow, and docent usage guidelines. Invoke this at the start of a session to get oriented.',
+        mimeType: 'text/markdown',
+      },
+    ]
+  }
+
+  /**
    * List journal resources
    */
   private async listJournalResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const journalDir = path.join(this.basePath, 'docs', '.journal')
+    const journalDir = path.join(this.projectPath, 'docs', '.journal')
 
     try {
       const files = await fs.readdir(journalDir)
@@ -142,7 +175,7 @@ export class ResourceHandler {
    */
   private async listTemplateResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const templatesDir = path.join(this.basePath, 'templates')
+    const templatesDir = path.join(this.packagePath, 'templates')
 
     try {
       const files = await fs.readdir(templatesDir)
@@ -169,7 +202,7 @@ export class ResourceHandler {
    */
   private async listRunbookResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const runbooksDir = path.join(this.basePath, 'docs', 'runbooks')
+    const runbooksDir = path.join(this.projectPath, 'docs', 'runbooks')
 
     const files = await fs.readdir(runbooksDir)
     const runbookFiles = files.filter((f) => f.endsWith('.md'))
@@ -208,7 +241,7 @@ export class ResourceHandler {
    */
   private async listGuideResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const guidesDir = path.join(this.basePath, 'docs', 'guides')
+    const guidesDir = path.join(this.projectPath, 'docs', 'guides')
 
     const files = await fs.readdir(guidesDir)
     const guideFiles = files.filter((f) => f.endsWith('.md'))
@@ -247,7 +280,7 @@ export class ResourceHandler {
    */
   private async listStandardResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const standardsDir = path.join(this.basePath, 'docs', 'standards')
+    const standardsDir = path.join(this.projectPath, 'docs', 'standards')
 
     const files = await fs.readdir(standardsDir)
     const standardFiles = files.filter((f) => f.endsWith('.md'))
@@ -280,7 +313,7 @@ export class ResourceHandler {
    */
   private async listAdrResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const adrDir = path.join(this.basePath, 'docs', 'adr')
+    const adrDir = path.join(this.projectPath, 'docs', 'adr')
 
     const files = await fs.readdir(adrDir)
     const adrFiles = files.filter((f) => f.endsWith('.md'))
@@ -315,7 +348,7 @@ export class ResourceHandler {
    */
   private async listRfcResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const rfcDir = path.join(this.basePath, 'docs', 'rfcs')
+    const rfcDir = path.join(this.projectPath, 'docs', 'rfcs')
 
     const files = await fs.readdir(rfcDir)
     const rfcFiles = files.filter((f) => f.endsWith('.md'))
@@ -346,10 +379,38 @@ export class ResourceHandler {
   }
 
   /**
+   * Read meta resource (prompts exposed as resources)
+   */
+  private async readMeta(identifier: string): Promise<ResourceContent> {
+    if (identifier === 'init-session') {
+      // Import PromptBuilder to generate init-session content
+      const {PromptBuilder} = await import('../prompts/builder.js')
+      const promptBuilder = new PromptBuilder(this.projectPath)
+      const result = await promptBuilder.build('init-session', {})
+
+      // Extract text from messages
+      const text = result.messages.map((m) => {
+        if (m.content.type === 'text') {
+          return m.content.text
+        }
+        return ''
+      }).join('\n\n')
+
+      return {
+        uri: 'docent://meta/init-session',
+        mimeType: 'text/markdown',
+        text,
+      }
+    }
+
+    throw new Error(`Unknown meta resource: ${identifier}`)
+  }
+
+  /**
    * Read runbook resource
    */
   private async readRunbook(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.basePath, 'docs', 'runbooks', `${identifier}.md`)
+    const filePath = path.join(this.projectPath, 'docs', 'runbooks', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -363,7 +424,7 @@ export class ResourceHandler {
    * Read template resource
    */
   private async readTemplate(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.basePath, 'templates', `${identifier}-template.md`)
+    const filePath = path.join(this.packagePath, 'templates', `${identifier}-template.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -377,7 +438,7 @@ export class ResourceHandler {
    * Read standard resource
    */
   private async readStandard(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.basePath, 'docs', 'standards', `${identifier}.md`)
+    const filePath = path.join(this.projectPath, 'docs', 'standards', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -391,7 +452,7 @@ export class ResourceHandler {
    * Read guide resource
    */
   private async readGuide(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.basePath, 'docs', 'guides', `${identifier}.md`)
+    const filePath = path.join(this.projectPath, 'docs', 'guides', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -405,7 +466,7 @@ export class ResourceHandler {
    * Read ADR resource
    */
   private async readAdr(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.basePath, 'docs', 'adr', `${identifier}.md`)
+    const filePath = path.join(this.projectPath, 'docs', 'adr', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -419,7 +480,7 @@ export class ResourceHandler {
    * Read RFC resource
    */
   private async readRfc(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.basePath, 'docs', 'rfcs', `${identifier}.md`)
+    const filePath = path.join(this.projectPath, 'docs', 'rfcs', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -434,7 +495,7 @@ export class ResourceHandler {
    */
   private async readDoc(identifier: string): Promise<ResourceContent> {
     // identifier is a path like "architecture/overview"
-    const filePath = path.join(this.basePath, 'docs', `${identifier}.md`)
+    const filePath = path.join(this.projectPath, 'docs', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -448,7 +509,7 @@ export class ResourceHandler {
    * Read journal resource
    */
   private async readJournal(identifier: string): Promise<ResourceContent> {
-    const journalDir = path.join(this.basePath, 'docs', '.journal')
+    const journalDir = path.join(this.projectPath, 'docs', '.journal')
 
     if (identifier === 'current') {
       // Return latest session
