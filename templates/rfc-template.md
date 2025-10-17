@@ -263,3 +263,4 @@ Write an RFC for:
 - **Address concerns:** Cover security, performance, testing
 - **Keep it living:** Update as design evolves during review
 - **Link liberally:** Reference related RFCs, issues, docs
+- **Future file references:** RFCs may reference files that don't exist yet - this is expected for proposals describing future implementations

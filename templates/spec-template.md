@@ -5,7 +5,9 @@
 - **Status:** draft
 - **Created:** [CREATED_DATE]
 - **Updated:** [CREATED_DATE]
-- **Related:**
+- **Related:** [Links to related specs, RFCs, or implementation files]
+
+**Note:** Draft specs may reference implementation files that don't exist yet - this is expected when describing future features.
 
 ## Context
 

@@ -531,15 +531,7 @@ Linting configuration in `package.json` scripts:
 }
 ```
 
-Optional `.markdownlint.json` for custom rules:
-
-```json
-{
-  "MD013": false,  // Disable line length
-  "MD033": false,  // Allow inline HTML
-  "MD041": false   // Don't require H1 as first line
-}
-```
+This project uses the default markdownlint rules. If you need to customize rules, you can create a `.markdownlintrc` or `.markdownlint.json` file in the project root.
 
 ## Notes
 
