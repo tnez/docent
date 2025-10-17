@@ -121,7 +121,7 @@ The following content was migrated from the old journal structure:
   // Rename old journal for safety (don't delete)
   await fs.rename(oldJournalPath, `${oldJournalPath}.migrated`)
 
-  console.log(`✓ Migrated old journal to session-based structure`)
+  // Migration complete - old journal safely preserved as .migrated
 }
 
 function formatJournalEntry(data: {

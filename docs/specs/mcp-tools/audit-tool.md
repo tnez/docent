@@ -42,7 +42,7 @@ This tool helps agents provide comprehensive documentation quality feedback that
 ```typescript
 // Agent calls tool to get assessment prompt
 const prompt = await tools['audit']({
-  path: "/path/to/project",
+  path: process.cwd(),
   docsDir: "docs"  // optional, defaults to "docs"
 });
 
@@ -123,7 +123,7 @@ const assessment = await agent.process(prompt);
 
 ```typescript
 const prompt = await tools['audit']({
-  path: "/path/to/project",
+  path: process.cwd(),
   docsDir: "documentation"
 });
 ```

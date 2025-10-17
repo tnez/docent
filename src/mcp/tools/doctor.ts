@@ -8,7 +8,7 @@ import {analyzeProject} from '../../lib/detector.js'
 export const doctorToolDefinition: Tool = {
   name: 'doctor',
   description:
-    'Run comprehensive project health checks including broken links, debug code, test markers, and documentation quality. Returns actionable findings for pre-release validation.',
+    'Run comprehensive project health checks including broken links, debug code, test markers, and documentation quality. Use anytime to get actionable insights about project health. Especially useful before releases.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -192,6 +192,7 @@ async function checkDebugCode(projectPath: string): Promise<DoctorIssue[]> {
 
   try {
     // Use git grep to find debug patterns
+    // Note: patterns are constructed to avoid matching this file's own pattern list
     const patterns = [
       'console\\.log',
       'console\\.debug',
@@ -203,6 +204,7 @@ async function checkDebugCode(projectPath: string): Promise<DoctorIssue[]> {
 
     for (const pattern of patterns) {
       try {
+        // Search for pattern in source files
         const result = execSync(`git grep -n "${pattern}" -- 'src/' '*.ts' '*.js' '*.tsx' '*.jsx' || true`, {
           cwd: projectPath,
           encoding: 'utf-8',
@@ -214,6 +216,24 @@ async function checkDebugCode(projectPath: string): Promise<DoctorIssue[]> {
           for (const line of lines) {
             const [location, ...rest] = line.split(':')
             const code = rest.join(':').trim()
+
+            // Exclude false positives:
+            // - This file (doctor.ts) - contains the search patterns themselves
+            // - Test files (test-*.js, *-test.*, *.test.*, *.spec.*, test/, **/*test*.js)
+            const isTestFile =
+              location.includes('doctor.ts') ||
+              location.match(/^test-/) ||
+              location.match(/\/test-/) ||
+              location.match(/-test\./) ||
+              location.match(/\.test\./) ||
+              location.match(/\.spec\./) ||
+              location.match(/\/test\//) ||
+              location.match(/test.*\.js$/)
+
+            if (isTestFile) {
+              continue
+            }
+
             issues.push({
               type: pattern.includes('console') ? 'warning' : 'error',
               category: 'Debug Code',
