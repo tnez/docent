@@ -13,6 +13,7 @@ import {
 // Import tool definitions and handlers
 import {analyzeToolDefinition, handleAnalyzeTool} from './tools/analyze.js'
 import {auditToolDefinition, handleAuditTool} from './tools/audit.js'
+import {doctorToolDefinition, handleDoctorTool} from './tools/doctor.js'
 import {listTemplatesToolDefinition, handleListTemplatesTool} from './tools/list-templates.js'
 import {getTemplateToolDefinition, handleGetTemplateTool} from './tools/get-template.js'
 import {captureWorkToolDefinition, handleCaptureWorkTool} from './tools/capture-work.js'
@@ -55,6 +56,7 @@ const tools = [
   initProjectToolDefinition,
   analyzeToolDefinition,
   auditToolDefinition,
+  doctorToolDefinition,
   listTemplatesToolDefinition,
   getTemplateToolDefinition,
   captureWorkToolDefinition,
@@ -81,6 +83,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await handleAnalyzeTool(args as {path: string})
       case 'audit':
         return await handleAuditTool(args as {path: string; docsDir?: string})
+      case 'doctor':
+        return await handleDoctorTool(args as {path?: string; docsDir?: string; checks?: string[]})
       case 'list-templates':
         return await handleListTemplatesTool()
       case 'get-template':

@@ -91,7 +91,7 @@ Next steps:
 1. Review docs/README.md for documentation guidelines
 2. Edit docs/guides/getting-started.md with project specifics
 3. Use templates to create ADRs, RFCs, or runbooks as needed
-4. Run 'docent audit' to assess documentation quality
+4. Run 'docent doctor' to check project health and documentation quality
 
 Available templates:
 - ADR: Architecture Decision Records
@@ -219,7 +219,7 @@ When adding documentation:
 3. Keep docs up-to-date with code changes
 4. Link related documents
 
-Use \`docent audit\` to assess documentation quality and find gaps.
+Use \`docent doctor\` to check project health and documentation quality.
 `
 }
 
