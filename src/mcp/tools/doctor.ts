@@ -50,6 +50,7 @@ interface DoctorIssue {
 
 interface DoctorResult {
   healthy: boolean
+  score: number // 0-100 health score
   issues: DoctorIssue[]
   summary: string
 }
@@ -109,16 +110,52 @@ export async function handleDoctorTool(args: DoctorArgs): Promise<{content: Text
   const warnings = issues.filter(i => i.type === 'warning')
   const healthy = errors.length === 0
 
-  const summary = buildSummary({healthy, issues, summary: ''})
+  // Calculate health score (0-100)
+  const score = calculateHealthScore(issues)
+
+  const summary = buildSummary({healthy, score, issues, summary: ''})
 
   return {
     content: [
       {
         type: 'text' as const,
-        text: formatDoctorReport({healthy, issues, summary}),
+        text: formatDoctorReport({healthy, score, issues, summary}),
       },
     ],
   }
+}
+
+/**
+ * Calculate overall health score (0-100) based on issues
+ *
+ * Scoring system:
+ * - Start at 100 (perfect health)
+ * - Errors: -10 points each (critical issues)
+ * - Warnings: -3 points each (important issues)
+ * - Info: -1 point each (suggestions)
+ * - Minimum score: 0
+ *
+ * Score interpretation:
+ * - 90-100: Excellent health
+ * - 70-89: Good health (minor issues)
+ * - 50-69: Fair health (needs attention)
+ * - 30-49: Poor health (significant issues)
+ * - 0-29: Critical (major problems)
+ */
+function calculateHealthScore(issues: DoctorIssue[]): number {
+  const errors = issues.filter(i => i.type === 'error').length
+  const warnings = issues.filter(i => i.type === 'warning').length
+  const infos = issues.filter(i => i.type === 'info').length
+
+  // Calculate deductions
+  const errorDeduction = errors * 10
+  const warningDeduction = warnings * 3
+  const infoDeduction = infos * 1
+
+  // Start at 100, subtract deductions, floor at 0
+  const score = Math.max(0, 100 - errorDeduction - warningDeduction - infoDeduction)
+
+  return score
 }
 
 /**
@@ -773,16 +810,37 @@ function buildSummary(result: DoctorResult): string {
  * Format doctor report as markdown
  */
 function formatDoctorReport(result: DoctorResult): string {
-  const {healthy, issues} = result
+  const {healthy, score, issues} = result
 
   let report = '# Project Health Check\n\n'
 
-  // Summary
+  // Summary with score
   const errors = issues.filter(i => i.type === 'error')
   const warnings = issues.filter(i => i.type === 'warning')
   const infos = issues.filter(i => i.type === 'info')
 
-  report += `**Status:** ${healthy ? '✓ Healthy' : '✗ Issues Found'}\n\n`
+  // Score interpretation
+  let scoreLabel = ''
+  let scoreEmoji = ''
+  if (score >= 90) {
+    scoreLabel = 'Excellent'
+    scoreEmoji = '🌟'
+  } else if (score >= 70) {
+    scoreLabel = 'Good'
+    scoreEmoji = '✅'
+  } else if (score >= 50) {
+    scoreLabel = 'Fair'
+    scoreEmoji = '⚠️'
+  } else if (score >= 30) {
+    scoreLabel = 'Poor'
+    scoreEmoji = '❌'
+  } else {
+    scoreLabel = 'Critical'
+    scoreEmoji = '🚨'
+  }
+
+  report += `**Status:** ${healthy ? '✓ Healthy' : '✗ Issues Found'}\n`
+  report += `**Health Score:** ${scoreEmoji} ${score}/100 (${scoreLabel})\n\n`
   report += `- **Errors:** ${errors.length} (must fix)\n`
   report += `- **Warnings:** ${warnings.length} (should fix)\n`
   report += `- **Info:** ${infos.length} (suggestions)\n\n`
