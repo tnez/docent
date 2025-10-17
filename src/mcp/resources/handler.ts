@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises'
+import * as fsSync from 'fs'
 import * as path from 'path'
 import type {ParsedUri, Resource, ResourceContent, ResourceType} from './types.js'
 
@@ -124,7 +125,7 @@ export class ResourceHandler {
    * List meta resources (prompts exposed as resources for Claude Code compatibility)
    */
   private listMetaResources(): Resource[] {
-    return [
+    const resources: Resource[] = [
       {
         uri: 'docent://meta/init-session',
         name: 'Session Initialization',
@@ -132,6 +133,23 @@ export class ResourceHandler {
         mimeType: 'text/markdown',
       },
     ]
+
+    // Check if docs/ directory exists - if not, add setup-needed resource
+    const docsPath = path.join(this.projectPath, 'docs')
+    try {
+      fsSync.accessSync(docsPath)
+      // docs/ exists - no setup needed
+    } catch {
+      // docs/ doesn't exist - add setup-needed resource
+      resources.push({
+        uri: 'docent://meta/setup-needed',
+        name: '⚠️ Docent Setup Required',
+        description: 'This project needs docent initialization. Run the init-project tool to create docs/ structure and generate initial documentation based on project analysis.',
+        mimeType: 'text/markdown',
+      })
+    }
+
+    return resources
   }
 
   /**
@@ -398,6 +416,56 @@ export class ResourceHandler {
 
       return {
         uri: 'docent://meta/init-session',
+        mimeType: 'text/markdown',
+        text,
+      }
+    }
+
+    if (identifier === 'setup-needed') {
+      const text = `# ⚠️ Docent Setup Required
+
+This project has not been initialized with docent yet.
+
+## What You Need to Do
+
+Run the \`init-project\` tool to bootstrap docent:
+
+\`\`\`typescript
+// Via MCP tool call
+mcp.callTool('init-project', {})
+
+// Or with custom path
+mcp.callTool('init-project', {path: '/path/to/project'})
+
+// Force reinitialize (if docs/ already exists)
+mcp.callTool('init-project', {force: true})
+\`\`\`
+
+## What This Will Create
+
+The \`init-project\` tool will:
+
+1. **Analyze your project** - Detect languages, frameworks, and build tools
+2. **Create docs/ structure** - Set up guides/, runbooks/, adr/, rfcs/, specs/, architecture/
+3. **Generate README.md** - Documentation index with project info
+4. **Create getting-started.md** - Initial guide customized for your project
+5. **Set up .journal/** - Work session tracking (gitignored)
+
+## After Initialization
+
+Once initialized, you can:
+
+- Read resources via \`readResource('docent://...')\`
+- Use templates via \`readResource('docent://template/adr')\`
+- Capture work via \`capture-work\` tool
+- Resume sessions via \`resume-work\` tool
+- Run documentation audits via \`audit\` tool
+
+Run \`init-project\` now to get started!
+`
+
+      return {
+        uri: 'docent://meta/setup-needed',
         mimeType: 'text/markdown',
         text,
       }

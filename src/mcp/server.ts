@@ -18,6 +18,7 @@ import {getTemplateToolDefinition, handleGetTemplateTool} from './tools/get-temp
 import {captureWorkToolDefinition, handleCaptureWorkTool} from './tools/capture-work.js'
 import {resumeWorkToolDefinition, handleResumeWorkTool} from './tools/resume-work.js'
 import {reviewRfcToolDefinition, handleReviewRfcTool} from './tools/review-rfc.js'
+import {initProjectToolDefinition, handleInitProjectTool} from './tools/init-project.js'
 
 // Import resource and prompt handlers
 import {ResourceHandler} from './resources/handler.js'
@@ -51,6 +52,7 @@ const promptBuilder = new PromptBuilder()
 
 // Register all available tools
 const tools = [
+  initProjectToolDefinition,
   analyzeToolDefinition,
   auditToolDefinition,
   listTemplatesToolDefinition,
@@ -73,6 +75,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   try {
     switch (name) {
+      case 'init-project':
+        return await handleInitProjectTool(args as {path?: string; force?: boolean})
       case 'analyze':
         return await handleAnalyzeTool(args as {path: string})
       case 'audit':

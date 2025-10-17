@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Project Bootstrap Workflow**
+  - `init-project` MCP tool for one-command project initialization
+  - Auto-detects project type (languages, frameworks, build tools)
+  - Creates docs/ structure: guides/, runbooks/, adr/, rfcs/, specs/, architecture/
+  - Generates context-aware README.md with project info
+  - Creates starter getting-started.md guide with TODO placeholders
+  - Sets up .journal/ directory (gitignored) for work session tracking
+  - `docent://meta/setup-needed` resource auto-appears when docs/ missing
+  - Seamless onboarding: `docent init` just works
 - **Session Initialization Prompt (RFC-0008)**
   - `init-session` prompt for bootstrapping agent work sessions
   - Dynamically discovers and lists available resources (guides, runbooks, standards, templates)
