@@ -1,5 +1,7 @@
 # Runbook: Prepare Release
 
+**⚠️ DEPRECATED:** This runbook has been superseded by [Release Package](./release-package.md) which combines preparation and automated publishing into a single GitOps workflow.
+
 **Purpose:** Prepare a new version of docent for release to npm
 **Owner:** Maintainers
 **Last Updated:** 2025-10-17

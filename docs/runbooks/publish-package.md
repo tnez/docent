@@ -1,5 +1,7 @@
 # Runbook: Publish Package
 
+**⚠️ DEPRECATED:** This runbook has been superseded by [Release Package](./release-package.md) which combines preparation and automated publishing into a single GitOps workflow.
+
 **Purpose:** Publish a new version of docent to npm registry
 **Owner:** Maintainers
 **Last Updated:** 2025-10-17
