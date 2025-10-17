@@ -134,6 +134,21 @@ async function checkBrokenLinks(projectPath: string, docsDir: string): Promise<D
         const content = await fs.readFile(file, 'utf-8')
         const relPath = path.relative(projectPath, file)
 
+        // Track code blocks to skip link checking inside them
+        const lines = content.split('\n')
+        let inCodeBlock = false
+        const codeBlockLines = new Set<number>()
+
+        lines.forEach((line, idx) => {
+          if (line.trim().startsWith('```')) {
+            inCodeBlock = !inCodeBlock
+            codeBlockLines.add(idx + 1) // Mark fence line itself
+          }
+          if (inCodeBlock) {
+            codeBlockLines.add(idx + 1) // Line numbers are 1-indexed
+          }
+        })
+
         // Find markdown links [text](path)
         const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
         let match
@@ -141,6 +156,12 @@ async function checkBrokenLinks(projectPath: string, docsDir: string): Promise<D
         while ((match = linkRegex.exec(content)) !== null) {
           const linkText = match[1]
           const linkPath = match[2]
+          const lineNumber = content.substring(0, match.index).split('\n').length
+
+          // Skip links inside code blocks
+          if (codeBlockLines.has(lineNumber)) {
+            continue
+          }
 
           // Skip external URLs
           if (linkPath.startsWith('http://') || linkPath.startsWith('https://')) {
@@ -163,7 +184,6 @@ async function checkBrokenLinks(projectPath: string, docsDir: string): Promise<D
           try {
             await fs.access(targetPath)
           } catch {
-            const lineNumber = content.substring(0, match.index).split('\n').length
             issues.push({
               type: 'error',
               category: 'Broken Link',
@@ -218,10 +238,13 @@ async function checkDebugCode(projectPath: string): Promise<DoctorIssue[]> {
             const code = rest.join(':').trim()
 
             // Exclude false positives:
-            // - This file (doctor.ts) - contains the search patterns themselves
+            // - This file (doctor.ts/doctor.js) - contains the search patterns themselves
             // - Test files (test-*.js, *-test.*, *.test.*, *.spec.*, test/, **/*test*.js)
-            const isTestFile =
-              location.includes('doctor.ts') ||
+            const isExcluded =
+              location.endsWith('doctor.ts') ||
+              location.endsWith('doctor.js') ||
+              location.includes('/doctor.ts') ||
+              location.includes('/doctor.js') ||
               location.match(/^test-/) ||
               location.match(/\/test-/) ||
               location.match(/-test\./) ||
@@ -230,7 +253,7 @@ async function checkDebugCode(projectPath: string): Promise<DoctorIssue[]> {
               location.match(/\/test\//) ||
               location.match(/test.*\.js$/)
 
-            if (isTestFile) {
+            if (isExcluded) {
               continue
             }
 
