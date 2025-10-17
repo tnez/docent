@@ -259,8 +259,8 @@ const audit = await mcp.callTool('audit', {path: '.'})
 ## Next Steps
 
 - See [RFC-0001](../rfcs/rfc-0001-mcp-server-for-agent-integration.md) for architecture details
-- Check [Audit Command Spec](../specs/audit-command.md) for behavior documentation
-- Read [Agent Guide](../../.docent-protocol/agent-guide.md) for integration patterns
+- Check [Audit Tool Spec](../specs/mcp-tools/audit-tool.md) for behavior documentation
+- Read [MCP API Reference](./mcp-api-reference.md) for integration patterns
 
 ## Performance
 

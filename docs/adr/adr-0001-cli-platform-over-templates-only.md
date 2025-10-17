@@ -208,10 +208,9 @@ If CLI adoption is poor:
 
 ## References
 
-- [Phase 3.9 Dogfooding Plan](./phase-3.9-dogfooding-plan.md) - Original planning discussion
-- [Agent Guide](./.docent-protocol/agent-guide.md) - Complete protocol documentation
-- [oclif Documentation](https://oclif.io/) - CLI framework we chose
-- [ADR-0002: Use Oclif for CLI Framework](./adr-0002-oclif-for-cli.md) - Related decision
+- [MCP Setup Guide](../guides/mcp-setup.md) - Agent integration documentation
+- [oclif Documentation](https://oclif.io/) - CLI framework (superseded)
+- [ADR-0002: Use Oclif for CLI Framework](./adr-0002-oclif-for-cli-framework.md) - Related decision (superseded)
 
 ---
 

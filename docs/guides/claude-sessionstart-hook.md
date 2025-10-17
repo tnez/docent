@@ -210,8 +210,7 @@ The SessionStart hook is Claude Code's dynamic solution for post-compaction cont
 ## Related
 
 - [Getting Started](./getting-started.md) - Development setup
-- [MCP API Reference](./mcp-api-reference.md) - Full docent MCP capabilities
-- [Session Continuity](./session-continuity.md) - Work journal and resume patterns
+- [MCP API Reference](./mcp-api-reference.md) - Full docent MCP capabilities including capture-work and resume-work tools for session continuity
 
 ## Revision History
 

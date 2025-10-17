@@ -274,7 +274,7 @@ const primaryLang = analysis.languages[0]?.name
 ## References
 
 - [ADR-0001: CLI Platform Decision](./adr-0001-cli-platform-over-templates-only.md)
-- [Agent Guide](../.docent-protocol/agent-guide.md)
+- [MCP API Reference](../guides/mcp-api-reference.md) - Agent integration guide
 - [JSON Schema Specification](https://json-schema.org/)
 - [UNIX Philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) - "Do one thing well, compose via interfaces"
 - [The Rule of Least Power](https://www.w3.org/2001/tag/doc/leastPower.html) - Use simplest tool that works

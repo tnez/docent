@@ -998,7 +998,7 @@ $ docent init --non-interactive --output json
 ## Metadata
 - **Status:** draft
 - **Created:** 2025-10-12
-- **Related:** [RFC-0002](../rfcs/rfc-0002-add-behavioral-specification-support.md)
+- **Related:** RFC-0002 (behavioral specification support - draft, not yet created)
 
 ## Context
 Add support for behavioral specifications that AI agents can read, understand, and use to generate tests or validate implementations.

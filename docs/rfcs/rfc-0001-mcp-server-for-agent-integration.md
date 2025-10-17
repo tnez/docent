@@ -650,7 +650,7 @@ Once MCP server is established:
 - [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 - [Claude Desktop MCP Guide](https://modelcontextprotocol.io/quickstart)
 - [ADR-0003: Agent-Agnostic Architecture](../adr/adr-0003-agent-agnostic-architecture.md)
-- [Docent Agent Protocol Guide](../../.docent-protocol/agent-guide.md)
+- [MCP Setup Guide](../guides/mcp-setup.md)
 
 ---
 

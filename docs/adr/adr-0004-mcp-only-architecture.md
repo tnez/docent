@@ -355,7 +355,7 @@ docent review
 - [ADR-0002: Oclif Framework](./adr-0002-oclif-for-cli-framework.md) - **Superseded**
 - [RFC-0001: MCP Server](../rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Implementation that led to this decision
 - [ADR-0003: Agent-Agnostic Architecture](./adr-0003-agent-agnostic-architecture.md) - Still valid (MCP is agent-agnostic)
-- [Agent-Driven Audit Prototype Results](../research/agent-audit-validation.md) - Validation data (73/100 vs 21/100)
+- [Agent-Driven Audit Research](../research/behavioral-specifications-investigation.md) - Context on agent-driven development
 
 ---
 

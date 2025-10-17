@@ -551,18 +551,18 @@ npm publish    # Publishes to registry
 
 Key architectural decisions documented in ADRs:
 
-- [ADR-0001: CLI Platform Over Templates-Only](./adr/adr-0001-cli-platform-over-templates-only.md) - **Superseded** by ADR-0004
-- [ADR-0002: Use Oclif for CLI Framework](./adr/adr-0002-oclif-for-cli-framework.md) - **Superseded** by ADR-0004
-- [ADR-0003: Agent-Agnostic Architecture](./adr/adr-0003-agent-agnostic-architecture.md) - Still valid (MCP is agent-agnostic)
-- [ADR-0004: MCP-Only Architecture](./adr/adr-0004-mcp-only-architecture.md) - **Current** - Remove CLI, commit to agent-first
+- [ADR-0001: CLI Platform Over Templates-Only](../adr/adr-0001-cli-platform-over-templates-only.md) - **Superseded** by ADR-0004
+- [ADR-0002: Use Oclif for CLI Framework](../adr/adr-0002-oclif-for-cli-framework.md) - **Superseded** by ADR-0004
+- [ADR-0003: Agent-Agnostic Architecture](../adr/adr-0003-agent-agnostic-architecture.md) - Still valid (MCP is agent-agnostic)
+- [ADR-0004: MCP-Only Architecture](../adr/adr-0004-mcp-only-architecture.md) - **Current** - Remove CLI, commit to agent-first
 
 ## References
 
-- [RFC-0001: MCP Server Implementation](./rfcs/rfc-0001-mcp-server-for-agent-integration.md) - MCP architecture details
-- [RFC-0004: Work Artifact Capture](./rfcs/rfc-0004-work-artifact-capture-and-surfacing.md) - Future workflow features
+- [RFC-0001: MCP Server Implementation](../rfcs/rfc-0001-mcp-server-for-agent-integration.md) - MCP architecture details
+- [RFC-0004: Work Artifact Capture](../rfcs/rfc-0004-work-artifact-capture-and-surfacing.md) - Future workflow features
 - [MCP Spec](https://spec.modelcontextprotocol.io/) - Model Context Protocol specification
 - [README](../README.md) - Project overview and quick start
-- [Contributing Guide](../CONTRIBUTING.md) - How to contribute to docent
+- [Contributing Guide](../../CONTRIBUTING.md) - How to contribute to docent
 
 ## Glossary
 
