@@ -501,7 +501,7 @@ async function checkTempFiles(projectPath: string): Promise<DoctorIssue[]> {
 }
 
 /**
- * Check for mismatches between documented file structure and reality
+ * Check for mismatches between documented file structure and reality (bidirectional)
  */
 async function checkStructureReconciliation(projectPath: string, docsDir: string): Promise<DoctorIssue[]> {
   const issues: DoctorIssue[] = []
@@ -519,11 +519,10 @@ async function checkStructureReconciliation(projectPath: string, docsDir: string
     for (const file of mdFiles) {
       try {
         const content = await fs.readFile(file, 'utf-8')
-        const relPath = path.relative(projectPath, file)
 
         // Extract file/directory paths from inline code
         // Matches: /path/to/file.ext, path/to/file.ext, ./relative/path
-        const pathRegex = /`([./][\w\-./]+\.(ts|js|tsx|jsx|json|md|toml|yaml|yml|lock))`/g
+        const pathRegex = /`([./][\w\-./]+\.(ts|js|tsx|jsx|json|md|toml|yaml|yml|lock|sh|bash))`/g
         let match
 
         while ((match = pathRegex.exec(content)) !== null) {
@@ -537,7 +536,7 @@ async function checkStructureReconciliation(projectPath: string, docsDir: string
       }
     }
 
-    // Check each documented path
+    // Forward check: documented paths that don't exist
     for (const docPath of documentedPaths) {
       // Skip if it looks like an example or placeholder
       if (docPath.includes('example') || docPath.includes('placeholder') || docPath.includes('/your-') || docPath.includes('/my-')) {
@@ -563,17 +562,193 @@ async function checkStructureReconciliation(projectPath: string, docsDir: string
       }
     }
 
+    // Inverse check: files that exist but aren't documented
+    const inverseIssues = await checkUndocumentedFiles(projectPath, docsDir, documentedPaths)
+    issues.push(...inverseIssues)
+
     // Report summary if we found documented paths
     if (documentedPaths.size > 0 && issues.length === 0) {
       issues.push({
         type: 'info',
         category: 'Structure Reconciliation',
-        message: `Checked ${documentedPaths.size} documented file path(s) - all exist`,
+        message: `Checked ${documentedPaths.size} documented file path(s) - all exist and no undocumented files found`,
         location: docsDir,
       })
     }
   } catch {
     // Docs directory doesn't exist, handled elsewhere
+  }
+
+  return issues
+}
+
+/**
+ * Default ignore patterns for undocumented file check
+ */
+const DEFAULT_IGNORE_PATTERNS = [
+  '**/node_modules/**',
+  '**/.git/**',
+  '**/.github/**',
+  '**/dist/**',
+  '**/lib/**',
+  '**/build/**',
+  '**/coverage/**',
+  '**/.vscode/**',
+  '**/.idea/**',
+  '**/*.log',
+  '**/.DS_Store',
+  '**/Thumbs.db',
+  '**/.env*',
+  '**/*.tmp',
+  '**/*.temp',
+  '**/*.cache',
+  '**/docs/.journal/**',
+  '**/.mcp.json',
+  '**/package-lock.json',
+  '**/yarn.lock',
+  '**/pnpm-lock.yaml',
+  '**/*.tsbuildinfo',
+]
+
+/**
+ * Severity rules for undocumented files
+ */
+interface SeverityRule {
+  pattern: RegExp
+  severity: 'error' | 'warning' | 'info'
+  reason: string
+}
+
+const SEVERITY_RULES: SeverityRule[] = [
+  // Errors: critical files that should be documented
+  {pattern: /^scripts\/.*\.(sh|bash|ps1)$/, severity: 'error', reason: 'executable script'},
+  {pattern: /^\.github\/workflows\//, severity: 'error', reason: 'CI/CD workflow'},
+  {pattern: /Dockerfile$/, severity: 'error', reason: 'container definition'},
+
+  // Warnings: important files
+  {pattern: /^_[^/]+\//, severity: 'warning', reason: 'underscore-prefixed directory'},
+  {pattern: /^test-[^/]+\.(js|ts|jsx|tsx)$/, severity: 'warning', reason: 'test file at root'},
+  {pattern: /\.(yml|yaml|toml)$/, severity: 'warning', reason: 'configuration file'},
+  {pattern: /docker-compose/, severity: 'warning', reason: 'Docker configuration'},
+
+  // Info: less critical
+  {pattern: /^examples?\//, severity: 'info', reason: 'example directory'},
+  {pattern: /^demos?\//, severity: 'info', reason: 'demo directory'},
+]
+
+/**
+ * Check for files that exist but aren't documented
+ */
+async function checkUndocumentedFiles(
+  projectPath: string,
+  docsDir: string,
+  documentedPaths: Set<string>
+): Promise<DoctorIssue[]> {
+  const issues: DoctorIssue[] = []
+
+  try {
+    // Get all files in project (respecting ignore patterns)
+    const allFiles = await glob('**/*', {
+      cwd: projectPath,
+      ignore: DEFAULT_IGNORE_PATTERNS,
+      nodir: true, // Exclude directories for now, only check files
+      dot: false, // Exclude hidden files by default
+    })
+
+    // Check for specific high-priority patterns first
+    const highPriorityChecks = [
+      {pattern: '_research', check: (f: string) => f.startsWith('_research/')},
+      {pattern: 'test-e2e.js', check: (f: string) => f === 'test-e2e.js'},
+    ]
+
+    for (const {pattern, check} of highPriorityChecks) {
+      const matchingFiles = allFiles.filter(check)
+      if (matchingFiles.length > 0) {
+        // Check severity rules
+        const firstMatch = matchingFiles[0]
+        const rule = SEVERITY_RULES.find(r => r.pattern.test(firstMatch))
+        if (rule) {
+          for (const file of matchingFiles.slice(0, 5)) {
+            // Limit to first 5 to avoid spam
+            issues.push({
+              type: rule.severity,
+              category: 'Structure Mismatch',
+              message: `Undocumented ${rule.reason}: '${file}'`,
+              location: file,
+              fix: `Document this ${rule.reason} in ${docsDir}/ or move to appropriate location`,
+            })
+          }
+          if (matchingFiles.length > 5) {
+            issues.push({
+              type: 'info',
+              category: 'Structure Mismatch',
+              message: `... and ${matchingFiles.length - 5} more files in '${pattern}'`,
+              location: pattern,
+            })
+          }
+        }
+      }
+    }
+
+    // Group remaining undocumented files by top-level directory
+    const undocumentedByDir = new Map<string, string[]>()
+
+    for (const file of allFiles) {
+      // Skip if this exact path is documented
+      if (documentedPaths.has(file) || documentedPaths.has(`/${file}`) || documentedPaths.has(`./${file}`)) {
+        continue
+      }
+
+      // Skip docs directory itself
+      if (file.startsWith(docsDir + '/') || file === docsDir) {
+        continue
+      }
+
+      // Skip files we already reported in high-priority checks
+      if (file.startsWith('_research/') || file === 'test-e2e.js') {
+        continue
+      }
+
+      // Determine severity
+      const rule = SEVERITY_RULES.find(r => r.pattern.test(file))
+      if (rule) {
+        issues.push({
+          type: rule.severity,
+          category: 'Structure Mismatch',
+          message: `Undocumented ${rule.reason}: '${file}'`,
+          location: file,
+          fix: `Document this ${rule.reason} in ${docsDir}/ or move to appropriate location`,
+        })
+      } else {
+        // Group by top-level directory for summary reporting
+        const topDir = file.split('/')[0]
+        const existing = undocumentedByDir.get(topDir) || []
+        existing.push(file)
+        undocumentedByDir.set(topDir, existing)
+      }
+    }
+
+    // Report grouped undocumented directories
+    for (const [dir, files] of undocumentedByDir) {
+      // Only report if there are multiple files
+      if (files.length >= 3) {
+        issues.push({
+          type: 'info',
+          category: 'Structure Mismatch',
+          message: `Undocumented directory: '${dir}/' (${files.length} files)`,
+          location: dir + '/',
+          fix: `Document this directory's purpose in ${docsDir}/ or add to .gitignore if temporary`,
+        })
+      }
+    }
+  } catch (error) {
+    // Report error for debugging
+    issues.push({
+      type: 'warning',
+      category: 'Structure Mismatch',
+      message: `Error checking undocumented files: ${error}`,
+      location: projectPath,
+    })
   }
 
   return issues
