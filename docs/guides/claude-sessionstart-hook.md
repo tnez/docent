@@ -13,78 +13,87 @@ When Claude Code's context window resets (via `/compact` or automatic compaction
 
 Manually running `docent init` after every compaction is tedious and easy to forget.
 
-## The Solution: SessionStart Hook
+## The Solution: CLAUDE.md Instructions
 
-Claude Code provides a `SessionStart` hook that runs at the beginning of every session, including after compaction and when resuming with `claude --continue`.
+The recommended approach is to add initialization instructions to `.claude/CLAUDE.md` (or `CLAUDE.md` at project root) that instruct Claude to run `docent init` as its first action in every session.
 
-By creating a SessionStart hook that automatically reads `docent://meta/init-session`, you ensure docent context is always fresh.
+**Why not SessionStart hooks?** MCP servers initialize asynchronously and may not be ready when SessionStart hooks execute. Instructions in CLAUDE.md are processed after MCP servers are available.
 
 ## Implementation
 
-### Step 1: Create Hook File
+### Step 1: Add Instructions to CLAUDE.md
 
-Create `.claude/hooks/SessionStart.md` in your project root:
+Add the following to `.claude/CLAUDE.md` (or create it at project root as `CLAUDE.md`):
+
+```markdown
+## Session Initialization
+
+**CRITICAL:** At the start of NEW sessions and after COMPACTION, you MUST initialize docent context as your FIRST ACTION before any other work.
+
+### Initialization Command
+
+Immediately run:
+
+\`\`\`
+docent init
+\`\`\`
+
+Or explicitly: "read the docent://meta/init-session resource"
+
+### When to Initialize
+
+- At the beginning of a new session (context window is empty)
+- After a `/compact` operation (context was reset)
+- When the user explicitly requests it
+
+### When NOT to Initialize
+
+- When resuming with `claude --continue` (init content is already in context)
+- When init content is visible earlier in the conversation
+
+### What This Provides
+
+- Available resources (guides, runbooks, standards, templates)
+- Journal workflow instructions (capture → resume pattern)
+- Project info and conventions
+- Quick reference for common tasks
+
+### Important Notes
+
+- **Do NOT attempt to call MCP resources from SessionStart hooks** - MCP servers may not be initialized yet
+- This initialization happens in your first response after MCP servers are ready
+- If you don't have MCP access, inform the user to check MCP server status
+```
+
+### Step 2: Optional SessionStart Hook Reminder
+
+Optionally create `.claude/hooks/SessionStart.md` as a reminder (but NOT to execute the MCP call):
 
 ```markdown
 # SessionStart Hook
 
-**CRITICAL:** This hook runs at the start of every session, including:
-
-- New sessions
-- After `/compact` operations
-- When resuming with `claude --continue`
+⚠️ **MCP servers may not be initialized when this hook executes.**
 
 ## Required Action
 
-You MUST automatically read the `docent://meta/init-session` resource from the docent MCP server to bootstrap the session with project context.
+After this hook and your first message:
 
-**Do this BEFORE responding to any user message.**
+1. Check if docent init content is already in context (look earlier in conversation)
+2. If NOT present AND MCP is available: Run `docent init`
+3. If MCP not available: Inform user to check MCP server status
 
-## Implementation
+**Note:** When resuming with `--continue`, init content is already present - no need to reinitialize.
 
-\`\`\`
-1. Read resource: docent://meta/init-session
-2. Process the initialization content
-3. Continue with user's request
-\`\`\`
-
-## What This Provides
-
-- Available resources (guides, runbooks, standards, templates)
-- Journal workflow instructions (capture → resume pattern)
-- Project-specific conventions and standards
-- Quick reference for common documentation tasks
-
-## Example
-
-\`\`\`
-[SessionStart hook triggered]
-Assistant: [reads docent://meta/init-session via MCP]
-Assistant: [processes initialization]
-Assistant: [proceeds with user's request]
-\`\`\`
-
-The user doesn't see the initialization explicitly - it happens transparently to ensure you always have current project context.
+See `.claude/CLAUDE.md` for full instructions.
 ```
 
-### Step 2: Gitignore the Hook (Optional)
+### Step 3: Restart Claude Code (if using hook)
 
-The `.claude/` directory is typically gitignored globally, but you can add it to your project's `.gitignore` if needed:
-
-```gitignore
-# Claude Code personal configuration
-.claude/
-```
-
-This keeps the hook as a local development tool rather than checked into the repository.
-
-### Step 3: Restart Claude Code
-
-After creating the hook:
+If you created the SessionStart hook:
 
 1. Exit Claude Code (`/exit`)
 2. Restart Claude Code
-3. The hook will now trigger automatically at session start
+3. The hook reminder will trigger, but actual initialization happens after MCP is ready
 
 ## Testing
 
@@ -100,21 +109,25 @@ You shouldn't need to manually run `docent init` anymore.
 
 When Claude Code starts a session:
 
-1. SessionStart hook triggers
-2. Hook reads `docent://meta/init-session` resource
-3. Resource dynamically gathers current project state:
+1. CLAUDE.md is loaded into context (or SessionStart hook provides reminder)
+2. MCP servers initialize asynchronously
+3. User sends first message (or warmup occurs)
+4. Claude checks for MCP availability
+5. Claude runs `docent init` to read `docent://meta/init-session`
+6. Resource dynamically gathers current project state:
    - Available documentation (guides, runbooks, ADRs, RFCs)
    - Recent journal entries
    - Project conventions
    - Template catalog
-4. Agent receives this context before any user interaction
-5. Session begins with full project awareness
+7. Session begins with full project awareness
 
 After compaction:
 
-1. SessionStart hook triggers again
-2. Fresh context is loaded
-3. Agent maintains continuity despite context window reset
+1. CLAUDE.md instructions are still in context
+2. MCP servers are already initialized
+3. Claude runs `docent init` at start of resumed session
+4. Fresh context is loaded
+5. Agent maintains continuity despite context window reset
 
 ## Benefits
 
@@ -146,38 +159,53 @@ The SessionStart hook is Claude Code's dynamic solution for post-compaction cont
 
 ## Troubleshooting
 
-### Hook Not Running
+### Agent Says MCP Not Available
 
-**Symptoms**: Agent doesn't seem to have docent context at session start
+**Symptoms**: Agent reports it doesn't have access to MCP tools at session start
 
-**Solutions**:
-
-- Verify hook file exists at `.claude/hooks/SessionStart.md`
-- Check hook file has correct markdown syntax
-- Restart Claude Code completely (not just new chat)
-- Enable verbose logging to see hook execution
-
-### Hook Runs But Context Not Applied
-
-**Symptoms**: Hook runs but agent still doesn't know about docs
+**Cause**: MCP servers haven't finished initializing yet
 
 **Solutions**:
 
-- Verify docent MCP server is configured in `~/.claude.json`
-- Check MCP server is running: Look for "docent" in `/mcp status`
-- Test manual init: Try `docent init` to see if resource is accessible
-- Check for errors in Claude Code logs
+- Wait a moment and manually run `docent init`
+- Check MCP server status: `/mcp status`
+- Verify docent is configured in `~/.claude.json` or project settings
+- Restart Claude Code if MCP servers fail to initialize
 
-### Hook Slows Down Session Start
+### Context Not Applied After Init
 
-**Symptoms**: Noticeable delay when starting sessions
+**Symptoms**: Agent runs `docent init` but doesn't seem to have documentation awareness
 
 **Solutions**:
 
-- This is expected - initialization reads resources
+- Verify docent MCP server is configured correctly
+- Check MCP server is running: `/mcp status`
+- Look for "docent" with status "connected"
+- Test resource manually: try reading `docent://guide/getting-started`
+- Check Claude Code logs for MCP errors
+
+### Initialization Slows Down Session Start
+
+**Symptoms**: Noticeable delay when running `docent init`
+
+**Solutions**:
+
+- This is expected - initialization reads documentation
 - Delay should be < 1 second for most projects
 - If > 2 seconds, check if docs/ directory is very large
 - Consider reducing number of documentation files if needed
+
+### MCP Timing Issues
+
+**Symptoms**: Inconsistent behavior where sometimes MCP works, sometimes doesn't
+
+**Cause**: Race condition between SessionStart hooks and MCP server initialization
+
+**Solution**:
+
+- Use CLAUDE.md instructions instead of SessionStart hooks for MCP calls
+- SessionStart hooks execute before MCP servers are ready
+- CLAUDE.md is processed after MCP initialization completes
 
 ## Related
 

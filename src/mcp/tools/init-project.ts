@@ -352,17 +352,31 @@ This project uses [docent](https://github.com/tnez/docent) for documentation int
 
 ### Session Initialization
 
-**At the start of every session** (including after compaction/context resets), read the docent init-session resource to load project context:
+**CRITICAL:** At the start of NEW sessions and after COMPACTION, you MUST initialize docent context as your FIRST ACTION before any other work.
 
-\`\`\`
-Read resource: docent://meta/init-session
-\`\`\`
+**Initialization Command:**
 
-This provides:
+Run \`docent init\` or explicitly: "read the docent://meta/init-session resource"
+
+**When to Initialize:**
+- At the beginning of a new session (context window is empty)
+- After a \`/compact\` operation (context was reset)
+- When the user explicitly requests it
+
+**When NOT to Initialize:**
+- When resuming with \`claude --continue\` (init content is already in context)
+- When init content is visible earlier in the conversation
+
+**What This Provides:**
 - Available documentation resources (guides, runbooks, ADRs, RFCs, templates)
 - Journal workflow for session continuity
 - Project-specific conventions and standards
 - Quick reference for common documentation tasks
+
+**Important Notes:**
+- Do NOT attempt to call MCP resources from SessionStart hooks - MCP servers may not be initialized yet
+- This initialization happens in your first response after MCP servers are ready
+- If you don't have MCP access, inform the user to check MCP server status
 
 ### Working with Docent
 
