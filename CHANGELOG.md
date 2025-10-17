@@ -18,6 +18,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Sets up .journal/ directory (gitignored) for work session tracking
   - `docent://meta/setup-needed` resource auto-appears when docs/ missing
   - Seamless onboarding: `docent init` just works
+- **Agent Configuration Integration**
+  - Auto-detects existing agent config files (AGENTS.md, CLAUDE.md, .cursorrules, .aiderules)
+  - Intelligently merges docent instructions into detected config
+  - Creates AGENTS.md if no config exists (agent-agnostic standard)
+  - Includes session initialization instructions for post-compaction context recovery
+  - Idempotent - safe to run multiple times without duplication
+- **Claude SessionStart Hook Guide**
+  - Comprehensive guide for automatic docent initialization in Claude Code
+  - Documents SessionStart hook pattern for post-compact context recovery
+  - Zero-friction solution: no manual `docent init` after compaction
+  - Includes troubleshooting and alternative approaches
 - **Session Initialization Prompt (RFC-0008)**
   - `init-session` prompt for bootstrapping agent work sessions
   - Dynamically discovers and lists available resources (guides, runbooks, standards, templates)
