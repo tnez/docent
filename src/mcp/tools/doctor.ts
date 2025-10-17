@@ -24,10 +24,10 @@ export const doctorToolDefinition: Tool = {
       checks: {
         type: 'array',
         description:
-          'Specific checks to run. If omitted, runs all checks. Options: links, debug-code, test-markers, docs-quality, uncommitted, temp-files',
+          'Specific checks to run. If omitted, runs all checks. Options: links, debug-code, test-markers, docs-quality, uncommitted, temp-files, structure',
         items: {
           type: 'string',
-          enum: ['links', 'debug-code', 'test-markers', 'docs-quality', 'uncommitted', 'temp-files'],
+          enum: ['links', 'debug-code', 'test-markers', 'docs-quality', 'uncommitted', 'temp-files', 'structure'],
         },
       },
     },
@@ -64,6 +64,7 @@ export async function handleDoctorTool(args: DoctorArgs): Promise<{content: Text
     'docs-quality',
     'uncommitted',
     'temp-files',
+    'structure',
   ]
 
   const issues: DoctorIssue[] = []
@@ -96,6 +97,11 @@ export async function handleDoctorTool(args: DoctorArgs): Promise<{content: Text
   // Check 6: Temporary files
   if (enabledChecks.includes('temp-files')) {
     issues.push(...(await checkTempFiles(projectPath)))
+  }
+
+  // Check 7: Structure reconciliation
+  if (enabledChecks.includes('structure')) {
+    issues.push(...(await checkStructureReconciliation(projectPath, docsDir)))
   }
 
   // Build result
@@ -489,6 +495,85 @@ async function checkTempFiles(projectPath: string): Promise<DoctorIssue[]> {
     }
   } catch {
     // Git not available
+  }
+
+  return issues
+}
+
+/**
+ * Check for mismatches between documented file structure and reality
+ */
+async function checkStructureReconciliation(projectPath: string, docsDir: string): Promise<DoctorIssue[]> {
+  const issues: DoctorIssue[] = []
+  const docsPath = path.join(projectPath, docsDir)
+
+  try {
+    // Find all markdown files in docs
+    const pattern = path.join(docsPath, '**', '*.md')
+    const mdFiles = await glob(pattern, {
+      ignore: ['**/node_modules/**'],
+    })
+
+    const documentedPaths = new Set<string>()
+
+    for (const file of mdFiles) {
+      try {
+        const content = await fs.readFile(file, 'utf-8')
+        const relPath = path.relative(projectPath, file)
+
+        // Extract file/directory paths from inline code
+        // Matches: /path/to/file.ext, path/to/file.ext, ./relative/path
+        const pathRegex = /`([./][\w\-./]+\.(ts|js|tsx|jsx|json|md|toml|yaml|yml|lock))`/g
+        let match
+
+        while ((match = pathRegex.exec(content)) !== null) {
+          const docPath = match[1]
+          // Normalize path (remove leading ./)
+          const normalizedPath = docPath.replace(/^\.\//, '')
+          documentedPaths.add(normalizedPath)
+        }
+      } catch {
+        // Skip files we can't read
+      }
+    }
+
+    // Check each documented path
+    for (const docPath of documentedPaths) {
+      // Skip if it looks like an example or placeholder
+      if (docPath.includes('example') || docPath.includes('placeholder') || docPath.includes('/your-') || docPath.includes('/my-')) {
+        continue
+      }
+
+      // Treat paths starting with / as project-relative (not filesystem root)
+      const cleanPath = docPath.startsWith('/') ? docPath.substring(1) : docPath
+      const fullPath = path.join(projectPath, cleanPath)
+
+      try {
+        await fs.access(fullPath)
+        // File exists - all good
+      } catch {
+        // File doesn't exist - report mismatch
+        issues.push({
+          type: 'warning',
+          category: 'Structure Mismatch',
+          message: `Documented file does not exist: '${docPath}'`,
+          location: 'Documentation',
+          fix: `Either create the file or update documentation to reflect current structure`,
+        })
+      }
+    }
+
+    // Report summary if we found documented paths
+    if (documentedPaths.size > 0 && issues.length === 0) {
+      issues.push({
+        type: 'info',
+        category: 'Structure Reconciliation',
+        message: `Checked ${documentedPaths.size} documented file path(s) - all exist`,
+        location: docsDir,
+      })
+    }
+  } catch {
+    // Docs directory doesn't exist, handled elsewhere
   }
 
   return issues
