@@ -71,6 +71,7 @@ Assess documentation quality using agent-driven semantic analysis. Returns a str
 **Returns:**
 
 A comprehensive assessment prompt including:
+
 - Project context (languages, frameworks, structure)
 - Documentation inventory (all markdown files found)
 - Quality assessment criteria (completeness, accuracy, coherence, depth)
@@ -118,6 +119,7 @@ List all available documentation templates.
 ```
 
 **Available Templates:**
+
 - `adr` - Architecture Decision Records
 - `rfc` - Request for Comments
 - `prd` - Product Requirements Documents
@@ -243,6 +245,7 @@ docent://<type>/<identifier>
 **Description:** Active work journal capturing session context, discoveries, and rationale.
 
 **When to Use:**
+
 - Session recovery (resume work after interruption)
 - Understanding recent project decisions
 - Finding partially explored ideas
@@ -264,6 +267,7 @@ const journal = await client.readResource('docent://journal/current')
 **URI Pattern:** `docent://template/<type>`
 
 **Available Types:**
+
 - `adr`, `rfc`, `prd`, `architecture-overview`, `api-documentation`
 - `onboarding`, `testing`, `runbook`, `standards`, `spec`
 - `patterns`, `troubleshooting`, `writing-software`
@@ -287,9 +291,11 @@ const adrTemplate = await client.readResource('docent://template/adr')
 Operational procedures and troubleshooting guides.
 
 **Example Runbooks:**
+
 - `docent://runbook/ci-cd-health-check` - Check GitHub Actions status
 
 **When to Use:**
+
 - Need step-by-step operational procedures
 - Troubleshooting common issues
 - Understanding deployment processes
@@ -313,6 +319,7 @@ const runbook = await client.readResource('docent://runbook/ci-cd-health-check')
 Developer guides and setup instructions.
 
 **Available Guides:**
+
 - `docent://guide/contributing` - Contributing to docent
 - `docent://guide/mcp-setup` - MCP server setup
 - `docent://guide/neovim-markdown-setup` - Neovim configuration
@@ -335,6 +342,7 @@ const guide = await client.readResource('docent://guide/testing')
 **URI Pattern:** `docent://adr/<filename>`
 
 **Available ADRs:**
+
 - `docent://adr/adr-0001-cli-platform-over-templates-only` (Superseded)
 - `docent://adr/adr-0002-oclif-for-cli-framework` (Superseded)
 - `docent://adr/adr-0003-agent-agnostic-architecture` (Accepted)
@@ -357,6 +365,7 @@ const adr = await client.readResource('docent://adr/adr-0004-mcp-only-architectu
 **URI Pattern:** `docent://rfc/<filename>`
 
 **Available RFCs:**
+
 - `docent://rfc/rfc-0001-mcp-server-for-agent-integration` (Superseded)
 - `docent://rfc/rfc-0002-add-behavioral-specification-support-for-agent-driven-development` (In Review)
 - `docent://rfc/rfc-0003-workflow-orchestration-for-multi-agent-tasks` (Draft)
@@ -398,6 +407,7 @@ Session recovery: analyze recent work and provide context to continue.
 **Arguments:** None
 
 **What It Does:**
+
 1. Reads work journal
 2. Gets recent git commits
 3. Checks git status
@@ -406,6 +416,7 @@ Session recovery: analyze recent work and provide context to continue.
 6. Generates comprehensive continuation prompt
 
 **When to Use:**
+
 - Returning to work after a break
 - Context window reset
 - New agent joining session
@@ -437,12 +448,14 @@ Conduct multi-perspective RFC review with context gathering.
 ```
 
 **What It Does:**
+
 1. Reads RFC content
 2. Analyzes project context
 3. Provides review criteria for chosen perspective
 4. Generates structured review prompt
 
 **When to Use:**
+
 - Reviewing proposed changes
 - Getting feedback on RFCs
 - Multi-perspective analysis
@@ -475,12 +488,14 @@ Create new Architecture Decision Record with guided process.
 ```
 
 **What It Does:**
+
 1. Retrieves ADR template
 2. Guides through ADR sections (context, decision, consequences, alternatives)
 3. Prompts for necessary information
 4. Generates structured ADR
 
 **When to Use:**
+
 - Documenting architectural decisions
 - Creating formal decision records
 
@@ -511,12 +526,14 @@ Research and plan new feature through research → design → spec phases.
 ```
 
 **What It Does:**
+
 1. Analyzes project context
 2. Guides through research phase (requirements, existing patterns)
 3. Guides through design phase (architecture, components)
 4. Guides through specification phase (acceptance criteria, implementation steps)
 
 **When to Use:**
+
 - Planning new features
 - Breaking down complex work
 - Creating implementation specs
@@ -549,6 +566,7 @@ Conduct structured research on a topic and create documentation.
 ```
 
 **What It Does:**
+
 1. Provides 3-phase research workflow (Discovery → Synthesis → Documentation)
 2. Guides WebSearch and WebFetch usage
 3. Includes document template with required sections
@@ -556,6 +574,7 @@ Conduct structured research on a topic and create documentation.
 5. Adds project context for relevance
 
 **When to Use:**
+
 - Investigating technical topics
 - Researching implementation options
 - Creating knowledge base articles

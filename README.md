@@ -203,10 +203,6 @@ npm install
 # Restart Claude Code to load the MCP server
 ```
 
-## License
-
-MIT © Travis Nez
-
 ## Philosophy
 
 Docent is infrastructure for AI agents, not a direct tool for humans.

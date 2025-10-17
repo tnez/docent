@@ -566,11 +566,13 @@ docs/.journal/
 **Description:** Keep `.docent/journal.md`, use markdown sections for sessions
 
 **Pros:**
+
 - Simple implementation (current state)
 - Single file to read
 - No migration needed
 
 **Cons:**
+
 - ❌ Worktree conflicts (can't isolate per worktree)
 - ❌ Unbounded growth (file gets huge)
 - ❌ Poor git diffs (massive appends)
@@ -583,11 +585,13 @@ docs/.journal/
 **Description:** Store journals in SQLite database per worktree
 
 **Pros:**
+
 - Structured queries (search, filter)
 - Better performance for large history
 - Atomic operations
 
 **Cons:**
+
 - ❌ Over-engineered (journals are simple markdown)
 - ❌ Not human-readable (can't browse with cat/less)
 - ❌ Requires SQLite dependency
@@ -601,10 +605,12 @@ docs/.journal/
 **Description:** Journal deleted when worktree deleted, no cross-session history
 
 **Pros:**
+
 - Simplest isolation model
 - Perfect worktree boundaries
 
 **Cons:**
+
 - ❌ Loses history within worktree (can't see yesterday's work)
 - ❌ No resume-work context from previous day
 - ❌ Too ephemeral (some persistence is valuable)
@@ -616,10 +622,12 @@ docs/.journal/
 **Description:** Use full timestamp as filename: `2025-10-16T09-30-15.md`
 
 **Pros:**
+
 - Unique by default
 - No session numbering logic needed
 
 **Cons:**
+
 - ❌ Hard to read (too much precision)
 - ❌ Doesn't group sessions by day
 - ❌ Less discoverable (many files per day)
@@ -631,10 +639,12 @@ docs/.journal/
 **Description:** Use session-based files but stay in `.docent/journal/`
 
 **Pros:**
+
 - Keeps `.docent/` directory for all docent state
 - Separation from `docs/` documentation
 
 **Cons:**
+
 - ❌ Another top-level directory (cognitive overhead)
 - ❌ Violates docent philosophy (docs/ as primary namespace)
 - ❌ Inconsistent with resource URIs (`docent://` suggests docs/ location)

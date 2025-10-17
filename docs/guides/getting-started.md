@@ -190,7 +190,7 @@ export async function handleMyTool(args: {arg: string}) {
 }
 ```
 
-2. Register in `src/mcp/server.ts`:
+1. Register in `src/mcp/server.ts`:
 
 ```typescript
 import {myToolDefinition, handleMyTool} from './tools/my-tool.js'
@@ -205,7 +205,7 @@ case 'my-tool':
   return await handleMyTool(args as {arg: string})
 ```
 
-3. Build and test:
+1. Build and test:
 
 ```bash
 npm run build
@@ -222,9 +222,9 @@ npm run build
 Template content here...
 ```
 
-2. Update template type in `src/mcp/tools/get-template.ts` if needed
+1. Update template type in `src/mcp/tools/get-template.ts` if needed
 
-3. Rebuild and test
+2. Rebuild and test
 
 ### Run Linting
 
@@ -289,6 +289,7 @@ git commit -m "feat: add your feature description"
 ```
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
+
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation only
@@ -374,6 +375,7 @@ Use `capture-work` tool to document your changes as you work.
 ### Debug MCP Communication
 
 Enable MCP debugging in your agent to see:
+
 - Tool calls
 - Resource requests
 - Prompt invocations

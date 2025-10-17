@@ -17,6 +17,7 @@ Validate that docent's MCP resources are discoverable enough for agents to answe
 **The Question:**
 
 When developers or agents join a project, they ask questions:
+
 - "What are the code standards?"
 - "How do I add a new feature?"
 - "What's the testing strategy?"
@@ -25,12 +26,14 @@ When developers or agents join a project, they ask questions:
 **Current State:**
 
 Agents must:
+
 1. Manually search files (grep, read random docs)
 2. Guess where information lives
 3. Synthesize answers from disconnected sources
 4. No guidance on what documentation exists
 
 **Research shows 50+ canonical questions** across 7 categories (see `docs/research/onboarding-questions-for-ask-tool.md`):
+
 - Setup & Environment
 - Code Standards & Conventions
 - Architecture & Design
@@ -83,6 +86,7 @@ Agent thinks: "I need code standards"
 **Use the 50+ questions from research as a test suite for resource discoverability.**
 
 For each question category, verify:
+
 1. Does a resource exist that answers it?
 2. Is the resource description clear enough?
 3. Does the content actually answer the question?
@@ -123,6 +127,7 @@ For each question category, verify:
 **1. Logical URI Structure**
 
 Resources organized by purpose:
+
 - `docent://guide/*` - How-to guides (onboarding, contributing, testing)
 - `docent://standard/*` - Standards and conventions (code style, patterns)
 - `docent://adr/*` - Decision history (why we chose X)
@@ -132,6 +137,7 @@ Resources organized by purpose:
 **2. Descriptive Naming**
 
 Resource descriptions should:
+
 - Mention key topics covered
 - Use terms from common questions
 - Be specific, not generic
@@ -158,6 +164,7 @@ Resource descriptions should:
 **3. Content Completeness**
 
 Each resource should:
+
 - Answer its category of questions fully
 - Include examples where helpful
 - Cite related resources
@@ -168,6 +175,7 @@ Each resource should:
 **Phase 1: Question Mapping (1-2 days)**
 
 For each of the 50+ questions:
+
 1. Identify which resource should answer it
 2. Check if that resource exists
 3. Verify resource description mentions relevant terms
@@ -176,6 +184,7 @@ For each of the 50+ questions:
 **Phase 2: Gap Analysis (1 day)**
 
 Identify:
+
 - Questions with no corresponding resource → need to create docs
 - Resources with unclear descriptions → improve descriptions
 - Content gaps in existing resources → enhance docs
@@ -184,6 +193,7 @@ Identify:
 **Phase 3: Iteration (ongoing)**
 
 Fix identified issues:
+
 - Create missing resources (guides, standards, runbooks)
 - Improve resource descriptions for discoverability
 - Enhance content to answer questions more directly
@@ -192,6 +202,7 @@ Fix identified issues:
 **Phase 4: Agent Testing (1-2 days)**
 
 Real-world validation:
+
 - Ask agent common questions
 - Observe what resources it discovers
 - Check if answers are accurate and complete
@@ -200,11 +211,13 @@ Real-world validation:
 ### Success Criteria
 
 **Quantitative:**
+
 - 80% of onboarding questions (Setup, Standards, Testing) have discoverable resources
 - 60% of architecture questions have discoverable resources
 - 40% of operations questions have discoverable resources
 
 **Qualitative:**
+
 - Agent finds correct resource within 2 attempts (list + browse)
 - Resource descriptions clearly indicate content
 - Answers include accurate citations (file:line)
@@ -215,6 +228,7 @@ Real-world validation:
 **Question:** "How do I set up my development environment?"
 
 **Test:**
+
 1. Agent lists resources: `mcp.listResources()`
 2. Finds: `docent://guide/getting-started` (description mentions "development setup")
 3. Reads resource: `mcp.readResource('docent://guide/getting-started')`
@@ -225,6 +239,7 @@ Real-world validation:
 **Question:** "What commit format should I use?"
 
 **Test:**
+
 1. Agent lists resources
 2. Finds: `docent://guide/contributing` (description mentions "commit format")
 3. Reads resource
@@ -235,6 +250,7 @@ Real-world validation:
 **Question:** "How do I debug failing tests?"
 
 **Test:**
+
 1. Agent lists resources
 2. Finds: `docent://guide/testing` (description mentions "testing")
 3. Reads resource
@@ -247,21 +263,25 @@ Real-world validation:
 ### High Priority (Onboarding - Must Answer)
 
 **Setup & Environment:**
+
 - How do I set up my development environment?
 - How do I run the project locally?
 - How do I verify my setup is working?
 
 **Code Standards:**
+
 - What are the code standards?
 - What commit message format should I use?
 - How do I format my code?
 
 **Testing:**
+
 - How do I run tests?
 - Where should I put test files?
 - What's the testing philosophy?
 
 **Contributing:**
+
 - How do I add a new feature?
 - What's the PR process?
 - When should I ask for code review?
@@ -269,16 +289,19 @@ Real-world validation:
 ### Medium Priority (Understanding - Should Answer)
 
 **Architecture:**
+
 - What's the overall architecture?
 - What design patterns are used?
 - Where are architecture decisions documented?
 
 **Development:**
+
 - How is the code organized?
 - Where should I put new code?
 - What's the development workflow?
 
 **Workflows:**
+
 - What's the branching strategy?
 - How do we release new versions?
 - What checks run in CI/CD?
@@ -286,11 +309,13 @@ Real-world validation:
 ### Lower Priority (Operations - Nice to Answer)
 
 **Deployment:**
+
 - How do I deploy changes?
 - What environments exist?
 - How do I create a preview environment?
 
 **Troubleshooting:**
+
 - Build is failing - what should I check?
 - Where can I find troubleshooting guides?
 - Who should I ask about specific areas?
@@ -300,6 +325,7 @@ Real-world validation:
 ### Chosen Approach: Validation via Question Bank
 
 **Advantages:**
+
 - ✅ Builds on existing infrastructure (RFC-0005 resources)
 - ✅ Natural and conversational (agents browse, not special commands)
 - ✅ Lightweight (no new tools or indexing)
@@ -307,6 +333,7 @@ Real-world validation:
 - ✅ Identifies gaps in documentation
 
 **Disadvantages:**
+
 - ❌ Requires good resource descriptions (manual work)
 - ❌ Depends on agent intelligence to find resources
 - ❌ Doesn't handle complex multi-doc questions elegantly
@@ -319,11 +346,13 @@ Real-world validation:
 **Description:** Create `ask(question: string)` tool that parses questions and searches docs
 
 **Pros:**
+
 - Direct interface ("ask a question, get an answer")
 - Can implement smart question classification
 - Consistent interface
 
 **Cons:**
+
 - ❌ Custom question parsing (complex)
 - ❌ Custom document search (complex)
 - ❌ Doesn't leverage existing MCP resources
@@ -337,11 +366,13 @@ Real-world validation:
 **Description:** Index docs with embeddings, use vector search for questions
 
 **Pros:**
+
 - Handles semantic similarity
 - Works with vague questions
 - No need for perfect resource descriptions
 
 **Cons:**
+
 - ❌ Heavy infrastructure (vector DB, embedding generation)
 - ❌ Requires indexing pipeline
 - ❌ More complex deployment
@@ -355,11 +386,13 @@ Real-world validation:
 **Description:** Load all docs into context, let LLM answer questions
 
 **Pros:**
+
 - Simple approach (just prompt engineering)
 - Handles any question format
 - No special infrastructure
 
 **Cons:**
+
 - ❌ Context window limits (can't load all docs)
 - ❌ No citation/source tracking
 - ❌ Expensive (large prompts on every question)
@@ -373,10 +406,12 @@ Real-world validation:
 **Description:** Don't validate, assume resources work
 
 **Pros:**
+
 - No effort required
 - Resources already implemented
 
 **Cons:**
+
 - ❌ Don't know if resources are discoverable
 - ❌ Missing documentation not identified
 - ❌ Unclear if descriptions are effective
@@ -391,6 +426,7 @@ Real-world validation:
 **Goal:** Map each question to expected resources
 
 **Tasks:**
+
 1. Create validation spreadsheet/document
 2. For each of 50+ questions, identify:
    - Expected resource URI
@@ -405,6 +441,7 @@ Real-world validation:
 **Goal:** Test discoverability and identify gaps
 
 **Tasks:**
+
 1. For each expected resource:
    - Check if description enables discovery
    - Read content to verify it answers questions
@@ -421,6 +458,7 @@ Real-world validation:
 **Goal:** Fix identified issues
 
 **Tasks:**
+
 1. **High Priority (Onboarding)**:
    - Create missing guides
    - Improve key resource descriptions
@@ -440,6 +478,7 @@ Real-world validation:
 **Goal:** Real-world validation
 
 **Tasks:**
+
 1. Ask agent sample questions from each category
 2. Observe:
    - Which resources agent discovers
@@ -457,6 +496,7 @@ Real-world validation:
 **Goal:** Continuous improvement
 
 **Tasks:**
+
 1. Add new questions as they arise
 2. Create resources for new question categories
 3. Refine descriptions based on usage
@@ -469,6 +509,7 @@ Real-world validation:
 ### Discovery Metrics
 
 **Can agents find resources?**
+
 - 90% of questions in high-priority categories → resource found within 2 attempts
 - 70% of questions in medium-priority categories → resource found within 3 attempts
 - 50% of questions in lower-priority categories → resource found
@@ -476,6 +517,7 @@ Real-world validation:
 ### Quality Metrics
 
 **Do resources answer questions?**
+
 - 90% of high-priority questions fully answered by resource content
 - 80% of medium-priority questions fully answered
 - 60% of lower-priority questions fully answered
@@ -483,6 +525,7 @@ Real-world validation:
 ### Efficiency Metrics
 
 **How fast can agents answer?**
+
 - Simple questions (single resource): <30 seconds
 - Moderate questions (2-3 resources): <2 minutes
 - Complex questions (synthesis required): <5 minutes
@@ -490,6 +533,7 @@ Real-world validation:
 ### Feedback Metrics
 
 **Are we improving?**
+
 - Number of missing resources identified → decreases over time
 - Number of unclear descriptions → decreases over time
 - Agent discovery success rate → increases over time
@@ -501,6 +545,7 @@ Once validation proves the approach works:
 ### 1. Common Question Patterns
 
 Document patterns that help agents:
+
 ```markdown
 ## Common Question Patterns
 
@@ -513,6 +558,7 @@ Document patterns that help agents:
 ### 2. Resource Metadata Tags
 
 Add tags to resources for better discovery:
+
 ```typescript
 {
   uri: 'docent://guide/contributing',
@@ -528,6 +574,7 @@ Add tags to resources for better discovery:
 ### 3. Specialized Q&A Prompt
 
 If validation shows value, create MCP prompt:
+
 ```typescript
 // MCP Prompt: answer-question
 // Pre-gathers relevant resources based on question category
@@ -537,6 +584,7 @@ If validation shows value, create MCP prompt:
 ### 4. Semantic Search (Future)
 
 If simple discovery proves insufficient:
+
 - Add semantic search layer
 - Generate embeddings for resources
 - Enable fuzzy question matching

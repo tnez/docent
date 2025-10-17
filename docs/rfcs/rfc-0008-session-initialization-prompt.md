@@ -220,6 +220,7 @@ No custom conventions file. Check guides for project-specific patterns.
 | Resume work | `mcp.getPrompt('resume-work')` |
 
 **Discovery Commands:**
+
 - `mcp.listResources()` - See all available documentation
 - `mcp.listPrompts()` - See all available workflows
 - `mcp.readResource('docent://...')` - Read specific documentation
@@ -227,6 +228,7 @@ No custom conventions file. Check guides for project-specific patterns.
 ---
 
 ✅ **You're ready!** Browse resources as needed, and **remember to capture work before session ends**.
+
 ```
 
 ### Prompt Builder Implementation
@@ -800,11 +802,13 @@ Via GitHub Actions - see `docent://runbook/deploy-production`
 **User Decision:** Enable auto-invocation via agent configuration files (CLAUDE.md, AGENTS.md, etc.)
 
 **Implementation:**
+
 - Users add one line to their agent config: `"At session start, invoke the 'init-session' prompt from docent"`
 - This makes initialization automatic without forcing it into docent itself
 - Keeps docent opt-in while enabling automatic behavior for those who want it
 
 **Example `.claude/CLAUDE.md`:**
+
 ```markdown
 # Project Setup
 
@@ -816,11 +820,13 @@ At the start of each session, invoke the 'init-session' prompt from the docent M
 **User Decision:** Keep prompt concise - "table of contents with quick summaries"
 
 **Rationale:**
+
 - Runs on every startup → context budget matters
 - Should be quick reference, not comprehensive documentation
 - Point to resources, don't duplicate them
 
 **Design:**
+
 - List available resources with one-line descriptions
 - Explain WHERE to find information, not the information itself
 - Clear instructions on HOW to access details when needed
@@ -831,11 +837,13 @@ At the start of each session, invoke the 'init-session' prompt from the docent M
 **User Decision:** Journal capture + resume-work is CRITICAL - make this pattern very clear
 
 **Rationale:**
+
 - "HUGE pain point" when working with agents across multiple projects/sessions
 - Context loss is expensive and frustrating
 - Want agents to follow this pattern consistently
 
 **Implementation:**
+
 - Journal workflow gets prominent placement in init prompt
 - Clear examples of when to capture work
 - Explicit connection between capture-work and resume-work
@@ -846,11 +854,13 @@ At the start of each session, invoke the 'init-session' prompt from the docent M
 **User Decision:** All project-specific config lives in `docs/` using dot-directories
 
 **Rationale:**
+
 - No files outside the main docs/ directory
 - Keep everything human AND agent readable
 - Use standard dotfile conventions (hidden from casual browsing)
 
 **Structure:**
+
 ```
 docs/
 ├── .config/               # Docent configuration
@@ -864,17 +874,17 @@ docs/
 
 **Note:** Dot-directories (`.config`, `.journal`, etc.) are standard practice for configuration/state files that shouldn't clutter the main documentation tree.
 
-3. **Should we cache initialization content?**
+1. **Should we cache initialization content?**
    - Resources might change during session
    - But initialization only happens once
    - **Recommendation:** No caching, rebuild on each invocation (cheap operation)
 
-4. **What about multi-project workspaces?**
+2. **What about multi-project workspaces?**
    - Agent working across multiple projects
    - Need initialization per project?
    - **Recommendation:** Initialization is per MCP server (per project), works naturally
 
-5. **Should initialization include resume-work context?**
+3. **Should initialization include resume-work context?**
    - Could combine init + resume in one prompt
    - Or keep them separate
    - **Recommendation:** Keep separate, allow chaining (init → resume)

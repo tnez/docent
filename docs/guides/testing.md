@@ -9,11 +9,13 @@ This guide covers testing practices for the docent project, including current te
 ### What We Test
 
 **Installation Scripts (Legacy):**
+
 - Shell script tests in `/test/test-install.sh`
 - Tests installation, uninstallation, and edge cases
 - Runs on Ubuntu and macOS in CI
 
 **Build Process:**
+
 - TypeScript compilation (`npm run build`)
 - Linting (`npm run lint`)
 
@@ -62,16 +64,19 @@ Then test via Claude Code or Claude Desktop with docent configured.
 ### What Should Be Tested
 
 **Critical Business Logic** ✅
+
 - Project analysis (detector) - detects languages, frameworks correctly
 - Documentation scanning (agent-audit) - finds all doc files
 - URI parsing - handles security cases (path traversal)
 
 **MCP Integration** ✅
+
 - Tool invocations return correct data
 - Resources resolve to proper content
 - Prompts generate expected output
 
 **Not Testing** ❌
+
 - Template content (validated by usage)
 - Prompt wording (subjective, changes frequently)
 - File system operations (trust Node.js APIs)
