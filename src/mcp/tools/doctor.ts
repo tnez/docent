@@ -428,6 +428,10 @@ async function checkDocsQuality(projectPath: string, docsDir: string): Promise<D
         // Ignore glob errors
       }
     }
+
+    // Gap detection: Check for expected documentation based on project maturity
+    const gapIssues = await detectDocumentationGaps(projectPath, docsPath, analysis)
+    issues.push(...gapIssues)
   } catch {
     // Docs directory doesn't exist
     issues.push({
@@ -437,6 +441,136 @@ async function checkDocsQuality(projectPath: string, docsDir: string): Promise<D
       location: projectPath,
       fix: `Run 'docent init' to create documentation structure`,
     })
+  }
+
+  return issues
+}
+
+/**
+ * Detect documentation gaps based on project maturity and characteristics
+ */
+async function detectDocumentationGaps(
+  projectPath: string,
+  docsPath: string,
+  analysis: Awaited<ReturnType<typeof analyzeProject>>
+): Promise<DoctorIssue[]> {
+  const issues: DoctorIssue[] = []
+
+  try {
+    // Check for ADRs directory when project has multiple decision points
+    const adrPath = path.join(docsPath, 'adr')
+    const hasAdrDir = await fs
+      .access(adrPath)
+      .then(() => true)
+      .catch(() => false)
+
+    if (!hasAdrDir) {
+      // If project is complex (multiple frameworks or languages), suggest ADRs
+      if (analysis.frameworks.length > 0 || analysis.languages.length > 1) {
+        issues.push({
+          type: 'info',
+          category: 'Documentation Gaps',
+          message: 'Complex project without Architecture Decision Records (ADRs)',
+          location: docsPath,
+          fix: 'Consider creating docs/adr/ directory to document architectural decisions',
+        })
+      }
+    }
+
+    // Check for runbooks if project has deployment/operations concerns
+    const runbooksPath = path.join(docsPath, 'runbooks')
+    const hasRunbooks = await fs
+      .access(runbooksPath)
+      .then(() => true)
+      .catch(() => false)
+
+    // Look for deployment-related files as proxy for operational complexity
+    const deploymentIndicators = await glob('**/docker-compose*.{yml,yaml}', {
+      cwd: projectPath,
+      ignore: ['**/node_modules/**'],
+    })
+
+    if (!hasRunbooks && deploymentIndicators.length > 0) {
+      issues.push({
+        type: 'info',
+        category: 'Documentation Gaps',
+        message: 'Project has deployment configuration but no operational runbooks',
+        location: docsPath,
+        fix: 'Consider creating docs/runbooks/ for operational procedures',
+      })
+    }
+
+    // Check for API documentation if project has API endpoints
+    const hasApiDocs = await glob(path.join(docsPath, '**/api*.md'), {
+      ignore: ['**/node_modules/**'],
+    }).then(files => files.length > 0)
+
+    // Look for common API framework indicators
+    const apiIndicators = analysis.frameworks.some(
+      f => f.toLowerCase().includes('express') || f.toLowerCase().includes('fastify') || f.toLowerCase().includes('koa')
+    )
+
+    if (!hasApiDocs && apiIndicators) {
+      issues.push({
+        type: 'warning',
+        category: 'Documentation Gaps',
+        message: 'API framework detected but no API documentation found',
+        location: docsPath,
+        fix: 'Document API endpoints, request/response formats, and authentication',
+      })
+    }
+
+    // Check for onboarding docs for team projects (heuristic: multiple contributors)
+    try {
+      const contributors = execSync('git shortlog -sn --all', {
+        cwd: projectPath,
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      })
+      const contributorCount = contributors.trim().split('\n').length
+
+      if (contributorCount > 2) {
+        const onboardingDocs = await glob(path.join(docsPath, '**/onboard*.md'), {
+          ignore: ['**/node_modules/**'],
+        })
+
+        if (onboardingDocs.length === 0) {
+          issues.push({
+            type: 'info',
+            category: 'Documentation Gaps',
+            message: `Project has ${contributorCount} contributors but no onboarding documentation`,
+            location: docsPath,
+            fix: 'Consider adding onboarding guide for new contributors',
+          })
+        }
+      }
+    } catch {
+      // Git not available or not a repo, skip contributor check
+    }
+
+    // Check for security documentation if handling sensitive data
+    const securityIndicators = await glob('**/{auth,security,crypto,encryption}*.{ts,js,tsx,jsx}', {
+      cwd: projectPath,
+      ignore: ['**/node_modules/**', '**/test/**', '**/dist/**', '**/lib/**'],
+    })
+
+    if (securityIndicators.length > 0) {
+      const securityDocs = await glob(path.join(docsPath, '**/{security,auth}*.md'), {
+        ignore: ['**/node_modules/**'],
+      })
+
+      if (securityDocs.length === 0) {
+        issues.push({
+          type: 'warning',
+          category: 'Documentation Gaps',
+          message: 'Security-related code found but no security documentation',
+          location: docsPath,
+          fix: 'Document authentication, authorization, and security practices',
+        })
+      }
+    }
+  } catch {
+    // Error during gap detection, skip silently
   }
 
   return issues
