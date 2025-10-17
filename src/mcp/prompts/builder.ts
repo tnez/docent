@@ -1,4 +1,5 @@
 import * as path from 'path'
+import * as fs from 'fs/promises'
 import {analyzeProject} from '../../lib/detector.js'
 import {ResourceHandler} from '../resources/handler.js'
 import {WorkflowContextGatherer} from '../workflows/context-gatherer.js'
@@ -42,6 +43,8 @@ export class PromptBuilder {
         return this.buildPlanFeature(args)
       case 'research-topic':
         return this.buildResearchTopic(args)
+      case 'init-session':
+        return this.buildInitSession(args)
       default:
         throw new Error(`Prompt builder not implemented: ${name}`)
     }
@@ -553,6 +556,130 @@ Begin research now!
         },
       ],
     }
+  }
+
+  /**
+   * Build "Initialize Session" prompt
+   */
+  private async buildInitSession(args: Record<string, string>): Promise<{description?: string; messages: PromptMessage[]}> {
+    const {focus} = args
+
+    // Discover all available resources
+    const allResources = await this.resourceHandler.list()
+
+    // Categorize resources by type
+    const guides = allResources.filter((r) => r.uri.startsWith('docent://guide/'))
+    const runbooks = allResources.filter((r) => r.uri.startsWith('docent://runbook/'))
+    const standards = allResources.filter((r) => r.uri.startsWith('docent://standard/'))
+    const templates = allResources.filter((r) => r.uri.startsWith('docent://template/'))
+
+    // Get project analysis
+    const analysis = await analyzeProject(process.cwd())
+
+    // Check for project-specific conventions
+    let projectConventions = ''
+    try {
+      const conventionsPath = path.join(process.cwd(), 'docs', '.config', 'CONVENTIONS.md')
+      projectConventions = await fs.readFile(conventionsPath, 'utf-8')
+    } catch {
+      // No conventions file - that's okay
+    }
+
+    // Build resource list strings
+    const guidesSection = this.buildResourceSection('Guides', 'How-to documentation', guides)
+    const runbooksSection = this.buildResourceSection('Runbooks', 'Step-by-step operational procedures', runbooks)
+    const standardsSection = this.buildResourceSection('Standards', 'Project conventions and patterns', standards)
+
+    const currentDateTime = new Date().toISOString()
+    const currentDate = currentDateTime.split('T')[0]
+
+    const prompt = `# Session Initialization
+
+**Date:** ${currentDate}
+**Project:** ${analysis.languages.join(', ')} | ${analysis.frameworks.join(', ')}
+
+## 🚨 Required Behaviors
+
+Throughout this session, you WILL:
+
+1. **Capture work after completing ANY task** - Call \`capture-work\` tool before responding
+2. **Check guides before modifying code** - Read \`docent://guide/contributing\` first
+3. **Search for runbooks when starting tasks** - Use relevant operational procedures
+4. **Use templates for documentation** - ADRs, RFCs, specs require templates
+
+These are non-negotiable patterns that persist throughout the session.
+
+---
+
+## 📝 Work Capture (Mandatory)
+
+**Trigger:** After completing ANY task involving code, decisions, or documentation.
+
+**Action:** Call \`capture-work\` with:
+- \`summary\`: What was accomplished (1-2 sentences)
+- \`discoveries\`: Key learnings (optional but valuable)
+- \`next_steps\`: What's next (optional)
+
+**Pattern:** Complete task → Capture work → Respond to user
+
+---
+
+## 🔧 Workflow Checkpoints
+
+**Before modifying code:**
+→ Read \`docent://guide/contributing\`${guides.length > 0 ? `\n→ Available guides: ${guides.length}` : ''}
+
+**When user mentions specific tasks:**
+→ Search for relevant runbooks${runbooks.length > 0 ? ` (${runbooks.length} available)` : ''}
+→ Example: CI/CD issues → \`docent://runbook/ci-cd-health-check\`
+
+**When creating ADR/RFC/spec:**
+→ Read appropriate template first (\`readResource('docent://template/adr')\`)
+→ ${templates.length} templates available
+
+---
+
+## 📚 Resources Available
+
+${guides.length > 0 ? `**Guides:** ${guides.map((g) => `\`${g.uri}\``).join(', ')}\n` : ''}${runbooks.length > 0 ? `**Runbooks:** ${runbooks.map((r) => `\`${r.uri}\``).join(', ')}\n` : ''}${standards.length > 0 ? `**Standards:** ${standards.map((s) => `\`${s.uri}\``).join(', ')}\n` : ''}
+**Access:** \`readResource('docent://...')\`
+
+${projectConventions ? `---\n\n## 🎯 Project Conventions\n\n${projectConventions}\n\n` : ''}---
+
+**Session pattern:** Check resources → Work → Capture → Repeat`
+
+    return {
+      description: 'Session initialization with project context',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: prompt,
+          },
+        },
+      ],
+    }
+  }
+
+  /**
+   * Build a resource section with list of resources
+   */
+  private buildResourceSection(title: string, description: string, resources: Array<{uri: string; name: string; description?: string}>): string {
+    if (resources.length === 0) {
+      return `**${title}** - ${description}\n- None available yet`
+    }
+
+    let section = `**${title}** - ${description}\n`
+    for (const resource of resources) {
+      section += `- \`${resource.uri}\``
+      if (resource.description) {
+        section += ` - ${resource.description}`
+      }
+      section += '\n'
+    }
+
+    return section
   }
 
   /**
