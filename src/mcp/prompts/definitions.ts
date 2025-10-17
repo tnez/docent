@@ -67,4 +67,16 @@ export const PROMPTS: Record<string, Prompt> = {
       },
     ],
   },
+
+  'init-session': {
+    name: 'init-session',
+    description: 'Bootstrap work session with project context and docent guidelines',
+    arguments: [
+      {
+        name: 'focus',
+        description: 'Optional focus area: development, operations, documentation',
+        required: false,
+      },
+    ],
+  },
 }

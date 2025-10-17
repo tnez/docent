@@ -5,7 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0] - 2025-01-16
+## [0.5.0] - 2025-10-17
+
+### Added
+
+- **Session Initialization Prompt (RFC-0008)**
+  - `init-session` prompt for bootstrapping agent work sessions
+  - Dynamically discovers and lists available resources (guides, runbooks, standards, templates)
+  - Provides journal workflow instructions with capture → resume pattern
+  - Includes project-specific conventions from `docs/.config/CONVENTIONS.md` if present
+  - Shows project info (languages, frameworks, build tools)
+  - Table of contents format for quick reference without overwhelming context
+- **Session-Based Journal Architecture (RFC-0006)**
+  - Migrated from single `.docent/journal.md` to session-based files in `docs/.journal/`
+  - Session files named: `YYYY-MM-DD-session-NNN.md` for chronological organization
+  - Automatic session detection with 4-hour threshold for natural session boundaries
+  - Worktree isolation - each worktree maintains independent journal state
+  - Migration logic automatically converts old journal format to new structure
+  - `SessionManager` class for session lifecycle management
+  - Resume-work reads last 3 sessions (bounded context, no unbounded growth)
+
+### Changed
+
+- **BREAKING**: Journal location changed from `.docent/journal.md` to `docs/.journal/*.md`
+  - Automatic migration on first use (old journal renamed to `.migrated`)
+  - Gitignored at `docs/.journal/` as ephemeral agent state
+- capture-work tool now uses SessionManager for session-based journaling
+- resume-work prompt now reads last 3 session files instead of single journal
+- All journal operations within `docs/` namespace (removed `.docent/` directory)
+
+### Technical
+
+- Added `SessionManager` class for session file management
+- Session detection based on time threshold (configurable, default 4 hours)
+- Improved context gathering with bounded session history
+- Better git diff handling (new files vs appends to large file)
+
+## [0.4.0] - 2025-10-16
 
 ### Added
 
