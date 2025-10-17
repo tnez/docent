@@ -1,6 +1,6 @@
 # RFC-0004: Work Artifact Capture and Surfacing
 
-**Status:** Draft
+**Status:** Implemented
 **Author:** @tnez (via dogfooding session)
 **Created:** 2025-10-13
 **Updated:** 2025-10-13

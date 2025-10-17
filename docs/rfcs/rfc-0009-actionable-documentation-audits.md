@@ -1,6 +1,6 @@
 # RFC-0009: Actionable Documentation Audits with Progress Tracking
 
-**Status:** Draft
+**Status:** Partially Implemented (see doctor tool)
 **Author:** @tnez
 **Created:** 2025-10-16
 **Updated:** 2025-10-16

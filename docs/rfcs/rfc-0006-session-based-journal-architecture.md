@@ -1,6 +1,6 @@
 # RFC-0006: Session-Based Journal Architecture
 
-**Status:** Draft
+**Status:** Implemented
 **Author:** @tnez
 **Created:** 2025-10-16
 **Updated:** 2025-10-16

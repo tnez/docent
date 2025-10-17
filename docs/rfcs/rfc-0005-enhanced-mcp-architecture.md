@@ -1,6 +1,6 @@
 # RFC-0005: Enhanced MCP Architecture with Resources and Prompts
 
-**Status:** Draft
+**Status:** Implemented
 **Author:** @tnez
 **Created:** 2025-10-13
 **Updated:** 2025-10-13

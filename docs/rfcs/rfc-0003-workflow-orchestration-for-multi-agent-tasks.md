@@ -1,6 +1,6 @@
 # RFC-0003: Workflow Orchestration for Multi-Agent Tasks
 
-**Status:** Draft
+**Status:** Superseded by RFC-0005 (MCP prompts replaced CLI workflows)
 **Author:** @tnez
 **Created:** 2025-10-13
 **Updated:** 2025-10-13

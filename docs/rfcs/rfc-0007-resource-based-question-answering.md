@@ -1,6 +1,6 @@
 # RFC-0007: Resource-Based Question Answering
 
-**Status:** Draft
+**Status:** Implemented (validation pending)
 **Author:** @tnez
 **Created:** 2025-10-16
 **Updated:** 2025-10-16
