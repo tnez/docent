@@ -601,55 +601,167 @@ Begin research now!
 **Date:** ${currentDate}
 **Project:** ${analysis.languages.join(', ')} | ${analysis.frameworks.join(', ')}
 
-## 🚨 Required Behaviors
+---
 
-Throughout this session, you WILL:
+# ⚠️ CRITICAL BEHAVIORAL REQUIREMENTS ⚠️
 
-1. **Capture work after completing ANY task** - Call \`capture-work\` tool before responding
-2. **Check guides before modifying code** - Read \`docent://guide/contributing\` first
-3. **Search for runbooks when starting tasks** - Use relevant operational procedures
-4. **Use templates for documentation** - ADRs, RFCs, specs require templates
+The following behaviors are **MANDATORY** and **NON-NEGOTIABLE** for this ENTIRE session. You MUST follow these patterns without exception.
 
-These are non-negotiable patterns that persist throughout the session.
+## 1. 🔴 MANDATORY: Capture Work After EVERY Task
+
+**YOU MUST call the \`capture-work\` MCP tool immediately after completing ANY substantive work.**
+
+**When to capture (NOT optional):**
+- ✅ After writing, modifying, or refactoring code
+- ✅ After creating or updating documentation
+- ✅ After making architectural decisions
+- ✅ After debugging or fixing issues
+- ✅ After running tests or builds
+- ✅ After committing changes
+
+**CORRECT pattern:**
+\`\`\`
+1. Complete the task
+2. Call capture-work tool with summary and discoveries
+3. THEN respond to user
+\`\`\`
+
+**WRONG pattern (DO NOT DO THIS):**
+\`\`\`
+❌ Complete task → Respond to user → Never capture
+❌ Say "I'll capture this" but don't actually call the tool
+❌ Skip capture because the task was "small"
+\`\`\`
+
+**How to call the tool:**
+Use the MCP \`capture-work\` tool with:
+- \`summary\`: Brief description of what was accomplished (1-2 sentences)
+- \`discoveries\`: Key insights or learnings (HIGHLY valuable for session recovery)
+- \`next_steps\`: What should be done next (helps with continuity)
+
+**Example tool call:**
+\`\`\`json
+{
+  "summary": "Refactored authentication module to use dependency injection pattern",
+  "discoveries": [
+    "Config was being loaded in multiple places - centralized via Context",
+    "SessionManager needed Context instead of individual paths"
+  ],
+  "next_steps": [
+    "Update tests to use new Context pattern",
+    "Document dependency injection approach"
+  ]
+}
+\`\`\`
+
+**WHY THIS MATTERS:** Journal entries enable session recovery after context resets. Without rich capture, critical context is lost forever.
 
 ---
 
-## 📝 Work Capture (Mandatory)
+## 2. 🔴 MANDATORY: Check Documentation Before Code Changes
 
-**Trigger:** After completing ANY task involving code, decisions, or documentation.
+**Before modifying ANY code, you MUST:**
 
-**Action:** Call \`capture-work\` with:
-- \`summary\`: What was accomplished (1-2 sentences)
-- \`discoveries\`: Key learnings (optional but valuable)
-- \`next_steps\`: What's next (optional)
+${guides.length > 0 ? `1. Read \`docent://guide/contributing\` using the MCP \`readResource\` tool
+2. Review any other relevant guides (${guides.length} available)
+3. Follow the documented patterns and conventions` : `1. Search for project guides and conventions
+2. Follow established patterns in the codebase`}
 
-**Pattern:** Complete task → Capture work → Respond to user
+**CORRECT approach:**
+\`\`\`
+User: "Add a new configuration option"
+You: *First reads contributing guide*
+You: *Then implements following documented patterns*
+\`\`\`
 
----
-
-## 🔧 Workflow Checkpoints
-
-**Before modifying code:**
-→ Read \`docent://guide/contributing\`${guides.length > 0 ? `\n→ Available guides: ${guides.length}` : ''}
-
-**When user mentions specific tasks:**
-→ Search for relevant runbooks${runbooks.length > 0 ? ` (${runbooks.length} available)` : ''}
-→ Example: CI/CD issues → \`docent://runbook/ci-cd-health-check\`
-
-**When creating ADR/RFC/spec:**
-→ Read appropriate template first (\`readResource('docent://template/adr')\`)
-→ ${templates.length} templates available
+**WRONG approach (DO NOT DO THIS):**
+\`\`\`
+❌ Immediately start coding without checking guides
+❌ Assume you know the patterns
+❌ Implement first, check documentation later
+\`\`\`
 
 ---
 
-## 📚 Resources Available
+## 3. 🔴 MANDATORY: Search for Runbooks Before Tasks
 
-${guides.length > 0 ? `**Guides:** ${guides.map((g) => `\`${g.uri}\``).join(', ')}\n` : ''}${runbooks.length > 0 ? `**Runbooks:** ${runbooks.map((r) => `\`${r.uri}\``).join(', ')}\n` : ''}${standards.length > 0 ? `**Standards:** ${standards.map((s) => `\`${s.uri}\``).join(', ')}\n` : ''}
-**Access:** \`readResource('docent://...')\`
+**When user requests operational tasks (deployment, CI/CD, debugging, releases), you MUST:**
 
+${runbooks.length > 0 ? `1. Search for relevant runbooks (${runbooks.length} available)
+2. Read the appropriate runbook using \`readResource\`
+3. Follow the documented procedures exactly` : `1. Ask user if operational runbooks exist
+2. Follow documented procedures if available`}
+
+**Task types that REQUIRE runbook checks:**
+- Deployment or release procedures
+- CI/CD troubleshooting
+- Database migrations
+- Infrastructure changes
+- Incident response
+- Build or test failures
+
+**CORRECT approach:**
+\`\`\`
+User: "The CI build is failing"
+You: "Let me check for a CI/CD troubleshooting runbook first"
+You: *Reads docent://runbook/ci-cd-health-check*
+You: *Follows documented steps*
+\`\`\`
+
+**WRONG approach (DO NOT DO THIS):**
+\`\`\`
+❌ Start debugging without checking procedures
+❌ Make up steps that might not align with team practices
+❌ Skip documented workflows
+\`\`\`
+
+---
+
+## 4. 🔴 MANDATORY: Use Templates for Documentation
+
+**When creating ADRs, RFCs, or specs, you MUST:**
+
+1. Read the appropriate template first: \`docent://template/[adr|rfc|spec]\`
+2. Use the template structure exactly
+3. Fill in all required sections
+
+**Available templates:** ${templates.length > 0 ? templates.map((t) => t.name).join(', ') : 'Check available templates'}
+
+**CORRECT approach:**
+\`\`\`
+User: "Create an ADR for the new caching strategy"
+You: *Reads docent://template/adr*
+You: *Creates ADR following template structure*
+\`\`\`
+
+**WRONG approach (DO NOT DO THIS):**
+\`\`\`
+❌ Create documentation with custom structure
+❌ Guess at what sections should be included
+❌ Skip the template because you "know" the format
+\`\`\`
+
+---
+
+# 📚 Available Resources
+
+**How to access:** Use the MCP \`readResource\` tool with URIs like \`docent://guide/...\`
+
+${guides.length > 0 ? `\n**Guides (${guides.length}):**\n${guides.map((g) => `- \`${g.uri}\` - ${g.name}`).join('\n')}\n` : ''}${runbooks.length > 0 ? `\n**Runbooks (${runbooks.length}):**\n${runbooks.map((r) => `- \`${r.uri}\` - ${r.name}`).join('\n')}\n` : ''}${standards.length > 0 ? `\n**Standards (${standards.length}):**\n${standards.map((s) => `- \`${s.uri}\` - ${s.name}`).join('\n')}\n` : ''}
 ${projectConventions ? `---\n\n## 🎯 Project Conventions\n\n${projectConventions}\n\n` : ''}---
 
-**Session pattern:** Check resources → Work → Capture → Repeat`
+# 🔄 Session Pattern (Repeat Every Task)
+
+\`\`\`
+1. User requests task
+2. Check relevant guides/runbooks FIRST
+3. Perform the work following documented patterns
+4. Call capture-work tool with summary and discoveries
+5. Respond to user
+6. REPEAT
+\`\`\`
+
+**Remember:** These behaviors are not suggestions. They are mandatory patterns for effective collaboration and knowledge preservation. Following them ensures continuity across context resets and team alignment.`
 
     return {
       description: 'Session initialization with project context',

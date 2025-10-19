@@ -91,7 +91,7 @@ describe('ResourceHandler', () => {
       expect(content.uri).to.equal('docent://meta/init-session')
       expect(content.mimeType).to.equal('text/markdown')
       expect(content.text).to.include('Session Initialization')
-      expect(content.text).to.include('Required Behaviors')
+      expect(content.text).to.include('CRITICAL BEHAVIORAL REQUIREMENTS')
     })
   })
 
