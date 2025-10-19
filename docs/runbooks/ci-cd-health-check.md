@@ -238,16 +238,14 @@ After completing all steps, verify:
 gh run view --log-failed
 
 # Run tests locally to reproduce
-./test/test-install.sh
+npm test
 
 # Common fixes:
-# 1. Check if scripts are executable
-chmod +x ./test/test-install.sh
-chmod +x ./scripts/install.sh
+# 1. Check if TypeScript compilation works
+npm run build
 
-# 2. Test in clean directory locally
-cd /tmp && mkdir test-install && cd test-install
-/path/to/project/scripts/install.sh --templates=all --non-interactive
+# 2. Verify all test files are valid
+npm test -- --reporter spec
 ```
 
 ---
@@ -334,9 +332,9 @@ gh run view <RUN_ID> --log | grep -A 20 "Test on ubuntu-latest"
 # - File permission differences
 # - Line ending differences (CRLF vs LF)
 
-# Test locally on macOS if available:
-cd /tmp && mkdir test-macos && cd test-macos
-/path/to/project/scripts/install.sh --templates=all --non-interactive
+# Test locally on both platforms if possible:
+npm test
+npm run build
 ```
 
 ---

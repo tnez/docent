@@ -75,11 +75,10 @@ npx markdownlint-cli2 "**/*.md" "!node_modules"
 
 ```bash
 # Run test suite
-./test/test-install.sh
+npm test
 
-# Test installation in clean directory
-cd /tmp && mkdir test-install && cd test-install
-/path/to/docent/scripts/install.sh --templates=all --non-interactive
+# Build to verify TypeScript compilation
+npm run build
 ```
 
 ### 3. Fix Any Issues

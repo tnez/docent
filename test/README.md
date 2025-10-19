@@ -40,27 +40,18 @@ The test suite includes:
 
 For comprehensive testing, also perform manual tests:
 
-1. **Fresh Installation**
+1. **MCP Server Testing**
 
    ```bash
-   cd /tmp/test-project
-   docent/scripts/install.sh
+   # Test MCP server starts correctly
+   node bin/mcp-server.js
    ```
 
-2. **Update Existing Installation**
+2. **Template Access**
 
-   ```bash
-   # After initial install
-   docent/scripts/install.sh --force
-   ```
+   Test that templates are accessible via MCP resources
 
-3. **Selective Installation**
-
-   ```bash
-   docent/scripts/install.sh --templates=adr,rfc
-   ```
-
-4. **Different Platforms**
+3. **Different Platforms**
    - macOS (primary development platform)
    - Ubuntu Linux
    - Windows WSL

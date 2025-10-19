@@ -5,7 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.0] - 2025-10-17
+## [0.6.0] - 2025-10-19
+
+### Added
+
+- **Comprehensive Project Health Tool (`doctor`)**
+  - Automated pre-release health checks with 6 diagnostic categories
+  - Broken link detection in documentation
+  - Debug code detection (console.log, debugger, TODO markers)
+  - Test marker detection (.only/.skip in test files)
+  - Uncommitted changes check
+  - Temporary file detection (Claude Code artifacts, scratch files)
+  - Bidirectional structure reconciliation: detects both documented-but-missing and existing-but-undocumented files
+  - Intelligent documentation gap detection with context-aware suggestions
+  - Quantitative health scoring (0-100) with severity-based deductions
+  - Actionable fixes with file:line references for each issue
+  - Selective check execution via `checks` parameter
+  - Three severity levels: errors (must fix), warnings (should fix), info (suggestions)
+
+### Changed
+
+- Renamed `audit` tool to `doctor` for broader health check scope
+- Updated CI/CD workflow to use npm test instead of script-based testing
+- Improved test suite to focus on MCP server functionality
+
+### Removed
+
+- Obsolete `scripts/install.sh` and `scripts/uninstall.sh` (replaced by `init-project` MCP tool)
+- Script-based installation workflow (superseded by MCP-native approach)
+- Associated test infrastructure for bash scripts
+
+### Technical
+
+- Enhanced doctor tool accuracy with code block detection and self-reference filtering
+- Improved false positive handling in pattern matching
+- Smart grouping in output (limits to 5 files per category, summarizes remaining)
+
+## [0.5.0] - 2025-10-17 (unpublished)
 
 ### Added
 

@@ -76,10 +76,11 @@ git checkout -b feature/your-feature-name
 ### 3. Test Your Changes
 
 ```bash
-# Test installer on dry-run
-./scripts/install.sh --dry-run /tmp/test-project
+# Run the test suite
+npm test
 
-# Test on different platforms if possible
+# Build to verify TypeScript compilation
+npm run build
 ```
 
 ### 4. Commit Your Changes
