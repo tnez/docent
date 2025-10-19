@@ -101,6 +101,36 @@ root: documentation
       const config = loadConfig(testDir)
       expect(config.root).to.equal('docs')
     })
+
+    it('should load custom sessionThresholdMinutes from JSON', () => {
+      const configPath = join(testDir, '.docentrc')
+      writeFileSync(
+        configPath,
+        JSON.stringify({
+          root: 'docs',
+          sessionThresholdMinutes: 60,
+        })
+      )
+
+      const config = loadConfig(testDir)
+      expect(config.sessionThresholdMinutes).to.equal(60)
+    })
+
+    it('should load custom sessionThresholdMinutes from YAML', () => {
+      const configPath = join(testDir, '.docentrc.yaml')
+      writeFileSync(configPath, 'root: docs\nsessionThresholdMinutes: 120')
+
+      const config = loadConfig(testDir)
+      expect(config.sessionThresholdMinutes).to.equal(120)
+    })
+
+    it('should use default sessionThresholdMinutes if not specified', () => {
+      const configPath = join(testDir, '.docentrc')
+      writeFileSync(configPath, JSON.stringify({ root: 'docs' }))
+
+      const config = loadConfig(testDir)
+      expect(config.sessionThresholdMinutes).to.equal(30)
+    })
   })
 
   describe('computed paths', () => {

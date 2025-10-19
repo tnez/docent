@@ -6,6 +6,7 @@ import { resolve, join } from 'path'
  */
 export interface RawConfig {
   root: string
+  sessionThresholdMinutes: number
 }
 
 /**
@@ -18,10 +19,13 @@ export interface DocentConfig {
   docsRoot: string
   /** Absolute path to journal directory */
   journalRoot: string
+  /** Minutes of inactivity before starting a new journal session */
+  sessionThresholdMinutes: number
 }
 
 const DEFAULT_RAW_CONFIG: RawConfig = {
   root: 'docs',
+  sessionThresholdMinutes: 30,
 }
 
 /**
@@ -60,6 +64,7 @@ export function loadConfig(projectPath: string): DocentConfig {
         // Merge with defaults
         rawConfig = {
           root: parsed.root || DEFAULT_RAW_CONFIG.root,
+          sessionThresholdMinutes: parsed.sessionThresholdMinutes || DEFAULT_RAW_CONFIG.sessionThresholdMinutes,
         }
         break
       } catch (error) {
@@ -81,6 +86,7 @@ export function loadConfig(projectPath: string): DocentConfig {
     root: rawConfig.root,
     docsRoot,
     journalRoot,
+    sessionThresholdMinutes: rawConfig.sessionThresholdMinutes,
   }
 }
 
@@ -110,6 +116,8 @@ function parseYaml(content: string): Partial<RawConfig> {
       if (key === 'root') {
         // Remove quotes if present
         config.root = value.replace(/^["']|["']$/g, '')
+      } else if (key === 'sessionThresholdMinutes') {
+        config.sessionThresholdMinutes = parseInt(value, 10)
       }
     }
   }

@@ -11,11 +11,9 @@ export interface SessionInfo {
 
 export class SessionManager {
   private ctx: Context
-  private sessionThresholdHours: number
 
-  constructor(ctx: Context, sessionThresholdHours: number = 4) {
+  constructor(ctx: Context) {
     this.ctx = ctx
-    this.sessionThresholdHours = sessionThresholdHours
   }
 
   /**
@@ -86,9 +84,9 @@ export class SessionManager {
         return false // No entries yet, continue current session
       }
 
-      const hoursSinceLastEntry = (Date.now() - lastEntryTime.getTime()) / (1000 * 60 * 60)
+      const minutesSinceLastEntry = (Date.now() - lastEntryTime.getTime()) / (1000 * 60)
 
-      return hoursSinceLastEntry > this.sessionThresholdHours
+      return minutesSinceLastEntry > this.ctx.config.sessionThresholdMinutes
     } catch (error) {
       // If we can't read the session, start a new one
       return true
