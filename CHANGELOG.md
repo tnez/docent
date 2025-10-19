@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2025-10-19
+
+### Added
+
+- **Configuration System**
+  - Support for `.docentrc`, `.docentrc.yaml`, and `.docentrc.yml` configuration files
+  - `root` option to customize documentation directory (default: `docs`)
+  - `sessionThresholdMinutes` option to control journal session duration (default: 30 minutes)
+  - Simple YAML parser for configuration without external dependencies
+  - Dependency injection pattern with `Context` object throughout codebase
+  - Computed paths for `docsRoot` and `journalRoot` based on configuration
+
+### Changed
+
+- **Journal Sessions**: Default threshold reduced from 4 hours to 30 minutes for shorter, more manageable journal files
+- **Behavioral Instructions**: Completely rewrote init-session prompt with much stronger, more explicit guidance
+  - Changed from soft "Required Behaviors" to forceful "CRITICAL BEHAVIORAL REQUIREMENTS"
+  - Added concrete examples of correct vs incorrect patterns with visual markers (✅ ❌)
+  - Provided detailed JSON example for `capture-work` tool usage
+  - Made all requirements explicit and non-negotiable to improve agent compliance
+  - Emphasized MCP tool usage throughout with specific URIs and call patterns
+  - Added step-by-step session pattern for consistent workflow
+
+### Technical
+
+- Refactored entire codebase to use `Context` pattern for dependency injection
+- `SessionManager` now reads threshold from config instead of constructor parameter
+- All services (ResourceHandler, SessionManager, PromptBuilder, etc.) accept `Context` objects
+- Added 3 new tests for session threshold configuration (30 total tests passing)
+
 ## [0.6.0] - 2025-10-19
 
 ### Added
