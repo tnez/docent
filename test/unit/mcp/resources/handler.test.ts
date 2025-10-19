@@ -1,11 +1,13 @@
 import {expect} from 'chai'
 import * as path from 'path'
-import {ResourceHandler} from '../../../../lib/mcp/resources/handler.js'
+import {ResourceHandler} from '../../../../src/mcp/resources/handler'
+import {createContext} from '../../../../src/lib/context'
 
 describe('ResourceHandler', () => {
   describe('URI parsing and security', () => {
     it('should reject URIs with path traversal attempts', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
 
       try {
         await handler.read('docent://../../../etc/passwd')
@@ -17,7 +19,8 @@ describe('ResourceHandler', () => {
     })
 
     it('should reject URIs with tilde expansion', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
 
       try {
         await handler.read('docent://~/secrets/config')
@@ -29,7 +32,8 @@ describe('ResourceHandler', () => {
     })
 
     it('should reject malformed URIs', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
 
       try {
         await handler.read('not-a-valid-uri')
@@ -45,17 +49,19 @@ describe('ResourceHandler', () => {
     it('should use project path for user documentation', async () => {
       const projectPath = '/test/project'
       const packagePath = '/test/package'
-      const handler = new ResourceHandler(projectPath, packagePath)
+      const ctx = createContext(projectPath, packagePath)
+      const handler = new ResourceHandler(ctx)
 
       // Verify paths are set correctly
-      expect((handler as any).projectPath).to.equal(projectPath)
-      expect((handler as any).packagePath).to.equal(packagePath)
+      expect(ctx.projectPath).to.equal(projectPath)
+      expect(ctx.packagePath).to.equal(packagePath)
     })
 
     it('should use package path for templates', async () => {
       const projectPath = '/test/project'
       // Use actual package path so templates can be found
-      const handler = new ResourceHandler(projectPath)
+      const ctx = createContext(projectPath)
+      const handler = new ResourceHandler(ctx)
 
       // List templates - should look in package path
       const templates = await handler.list()
@@ -68,7 +74,8 @@ describe('ResourceHandler', () => {
 
   describe('Meta resources', () => {
     it('should list init-session meta resource', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
       const resources = await handler.list()
 
       const initSession = resources.find((r) => r.uri === 'docent://meta/init-session')
@@ -77,7 +84,8 @@ describe('ResourceHandler', () => {
     })
 
     it('should read init-session resource and return content', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
       const content = await handler.read('docent://meta/init-session')
 
       expect(content.uri).to.equal('docent://meta/init-session')
@@ -89,7 +97,8 @@ describe('ResourceHandler', () => {
 
   describe('Template resources', () => {
     it('should list all bundled templates', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
       const resources = await handler.list()
 
       const templates = resources.filter((r) => r.uri.startsWith('docent://template/'))
@@ -108,7 +117,8 @@ describe('ResourceHandler', () => {
     })
 
     it('should read template content', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
       const content = await handler.read('docent://template/adr')
 
       expect(content.uri).to.equal('docent://template/adr')
@@ -120,7 +130,8 @@ describe('ResourceHandler', () => {
 
   describe('Resource listing', () => {
     it('should not crash when project directories do not exist', async () => {
-      const handler = new ResourceHandler('/nonexistent/project')
+      const ctx = createContext('/nonexistent/project')
+      const handler = new ResourceHandler(ctx)
       const resources = await handler.list()
 
       // Should still return meta and template resources
@@ -131,7 +142,8 @@ describe('ResourceHandler', () => {
     })
 
     it('should include all resource types', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
       const resources = await handler.list()
 
       // Check that we get different resource types
@@ -145,7 +157,8 @@ describe('ResourceHandler', () => {
 
   describe('Error handling', () => {
     it('should throw error for unknown meta resource', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
 
       try {
         await handler.read('docent://meta/nonexistent')
@@ -157,7 +170,8 @@ describe('ResourceHandler', () => {
     })
 
     it('should throw error for unknown template', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
 
       try {
         await handler.read('docent://template/nonexistent')
@@ -170,7 +184,8 @@ describe('ResourceHandler', () => {
     })
 
     it('should throw error for unknown resource type', async () => {
-      const handler = new ResourceHandler(process.cwd())
+      const ctx = createContext(process.cwd())
+      const handler = new ResourceHandler(ctx)
 
       try {
         await handler.read('docent://invalid-type/foo')

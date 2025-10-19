@@ -1,17 +1,20 @@
 import * as path from 'path'
 import * as fs from 'fs/promises'
-import {analyzeProject} from '../../lib/detector.js'
-import {ResourceHandler} from '../resources/handler.js'
-import {WorkflowContextGatherer} from '../workflows/context-gatherer.js'
-import type {PromptMessage} from './types.js'
-import {PROMPTS} from './definitions.js'
+import {analyzeProject} from '../../lib/detector'
+import {ResourceHandler} from '../resources/handler'
+import {WorkflowContextGatherer} from '../workflows/context-gatherer'
+import {createContext, type Context} from '../../lib/context'
+import type {PromptMessage} from './types'
+import {PROMPTS} from './definitions'
 
 export class PromptBuilder {
+  private ctx: Context
   private resourceHandler: ResourceHandler
   private contextGatherer: WorkflowContextGatherer
 
   constructor(basePath: string = process.cwd()) {
-    this.resourceHandler = new ResourceHandler(basePath)
+    this.ctx = createContext(basePath)
+    this.resourceHandler = new ResourceHandler(this.ctx)
     this.contextGatherer = new WorkflowContextGatherer(basePath)
   }
 

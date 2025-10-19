@@ -25,6 +25,7 @@ import {initProjectToolDefinition, handleInitProjectTool} from './tools/init-pro
 import {ResourceHandler} from './resources/handler.js'
 import {PromptBuilder} from './prompts/builder.js'
 import {PROMPTS} from './prompts/definitions.js'
+import {createContext} from '../lib/context.js'
 
 // Get version from package.json
 import * as fs from 'fs'
@@ -47,8 +48,12 @@ const server = new Server(
   }
 )
 
+// Create application context
+const packagePath = path.join(__dirname, '..', '..')
+const ctx = createContext(process.cwd(), packagePath)
+
 // Initialize resource and prompt handlers
-const resourceHandler = new ResourceHandler()
+const resourceHandler = new ResourceHandler(ctx)
 const promptBuilder = new PromptBuilder()
 
 // Register all available tools

@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises'
 import {SessionManager} from '../../lib/journal/session-manager.js'
+import {createContext} from '../../lib/context.js'
 
 export const captureWorkToolDefinition = {
   name: 'capture-work',
@@ -51,8 +52,9 @@ export async function handleCaptureWorkTool(args: {
 }) {
   const {summary, discoveries, next_steps, questions, new_session = false} = args
 
-  // Initialize session manager
-  const sessionManager = new SessionManager()
+  // Create context and initialize session manager
+  const ctx = createContext()
+  const sessionManager = new SessionManager(ctx)
 
   // Run migration if needed (checks for old .docent/journal.md)
   await migrateOldJournal(sessionManager)

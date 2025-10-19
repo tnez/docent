@@ -2,21 +2,17 @@ import * as fs from 'fs/promises'
 import * as fsSync from 'fs'
 import * as path from 'path'
 import type {ParsedUri, Resource, ResourceContent, ResourceType} from './types.js'
+import type {Context} from '../../lib/context.js'
 
 export class ResourceHandler {
-  private projectPath: string
-  private packagePath: string
+  private ctx: Context
 
-  constructor(projectPath: string = process.cwd(), packagePath?: string) {
-    this.projectPath = projectPath
-    // Resolve package directory (where templates are bundled)
-    // In dev: /Users/tnez/Code/tnez/docent
-    // In npm: /Users/bob/myproject/node_modules/@tnezdev/docent
-    if (packagePath) {
-      this.packagePath = packagePath
-    } else {
+  constructor(ctx: Context) {
+    this.ctx = ctx
+    // Ensure packagePath is set
+    if (!ctx.packagePath) {
       // From /path/to/docent/lib/mcp/resources/handler.js -> /path/to/docent
-      this.packagePath = path.resolve(__dirname, '..', '..', '..')
+      ctx.packagePath = path.resolve(__dirname, '..', '..', '..')
     }
   }
 
@@ -135,7 +131,7 @@ export class ResourceHandler {
     ]
 
     // Check if docs/ directory exists - if not, add setup-needed resource
-    const docsPath = path.join(this.projectPath, 'docs')
+    const docsPath = this.ctx.config.docsRoot
     try {
       fsSync.accessSync(docsPath)
       // docs/ exists - no setup needed
@@ -157,7 +153,7 @@ export class ResourceHandler {
    */
   private async listJournalResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const journalDir = path.join(this.projectPath, 'docs', '.journal')
+    const journalDir = this.ctx.config.journalRoot
 
     try {
       const files = await fs.readdir(journalDir)
@@ -193,7 +189,7 @@ export class ResourceHandler {
    */
   private async listTemplateResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const templatesDir = path.join(this.packagePath, 'templates')
+    const templatesDir = path.join(this.ctx.packagePath!, 'templates')
 
     try {
       const files = await fs.readdir(templatesDir)
@@ -220,7 +216,7 @@ export class ResourceHandler {
    */
   private async listRunbookResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const runbooksDir = path.join(this.projectPath, 'docs', 'runbooks')
+    const runbooksDir = path.join(this.ctx.config.docsRoot, 'runbooks')
 
     const files = await fs.readdir(runbooksDir)
     const runbookFiles = files.filter((f) => f.endsWith('.md'))
@@ -259,7 +255,7 @@ export class ResourceHandler {
    */
   private async listGuideResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const guidesDir = path.join(this.projectPath, 'docs', 'guides')
+    const guidesDir = path.join(this.ctx.config.docsRoot, 'guides')
 
     const files = await fs.readdir(guidesDir)
     const guideFiles = files.filter((f) => f.endsWith('.md'))
@@ -298,7 +294,7 @@ export class ResourceHandler {
    */
   private async listStandardResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const standardsDir = path.join(this.projectPath, 'docs', 'standards')
+    const standardsDir = path.join(this.ctx.config.docsRoot, 'standards')
 
     const files = await fs.readdir(standardsDir)
     const standardFiles = files.filter((f) => f.endsWith('.md'))
@@ -331,7 +327,7 @@ export class ResourceHandler {
    */
   private async listAdrResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const adrDir = path.join(this.projectPath, 'docs', 'adr')
+    const adrDir = path.join(this.ctx.config.docsRoot, 'adr')
 
     const files = await fs.readdir(adrDir)
     const adrFiles = files.filter((f) => f.endsWith('.md'))
@@ -366,7 +362,7 @@ export class ResourceHandler {
    */
   private async listRfcResources(): Promise<Resource[]> {
     const resources: Resource[] = []
-    const rfcDir = path.join(this.projectPath, 'docs', 'rfcs')
+    const rfcDir = path.join(this.ctx.config.docsRoot, 'rfcs')
 
     const files = await fs.readdir(rfcDir)
     const rfcFiles = files.filter((f) => f.endsWith('.md'))
@@ -402,8 +398,8 @@ export class ResourceHandler {
   private async readMeta(identifier: string): Promise<ResourceContent> {
     if (identifier === 'init-session') {
       // Import PromptBuilder to generate init-session content
-      const {PromptBuilder} = await import('../prompts/builder.js')
-      const promptBuilder = new PromptBuilder(this.projectPath)
+      const {PromptBuilder} = await import('../prompts/builder')
+      const promptBuilder = new PromptBuilder(this.ctx.projectPath)
       const result = await promptBuilder.build('init-session', {})
 
       // Extract text from messages
@@ -478,7 +474,7 @@ Run \`init-project\` now to get started!
    * Read runbook resource
    */
   private async readRunbook(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.projectPath, 'docs', 'runbooks', `${identifier}.md`)
+    const filePath = path.join(this.ctx.config.docsRoot, 'runbooks', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -492,7 +488,7 @@ Run \`init-project\` now to get started!
    * Read template resource
    */
   private async readTemplate(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.packagePath, 'templates', `${identifier}-template.md`)
+    const filePath = path.join(this.ctx.packagePath!, 'templates', `${identifier}-template.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -506,7 +502,7 @@ Run \`init-project\` now to get started!
    * Read standard resource
    */
   private async readStandard(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.projectPath, 'docs', 'standards', `${identifier}.md`)
+    const filePath = path.join(this.ctx.config.docsRoot, 'standards', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -520,7 +516,7 @@ Run \`init-project\` now to get started!
    * Read guide resource
    */
   private async readGuide(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.projectPath, 'docs', 'guides', `${identifier}.md`)
+    const filePath = path.join(this.ctx.config.docsRoot, 'guides', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -534,7 +530,7 @@ Run \`init-project\` now to get started!
    * Read ADR resource
    */
   private async readAdr(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.projectPath, 'docs', 'adr', `${identifier}.md`)
+    const filePath = path.join(this.ctx.config.docsRoot, 'adr', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -548,7 +544,7 @@ Run \`init-project\` now to get started!
    * Read RFC resource
    */
   private async readRfc(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.projectPath, 'docs', 'rfcs', `${identifier}.md`)
+    const filePath = path.join(this.ctx.config.docsRoot, 'rfcs', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -563,7 +559,7 @@ Run \`init-project\` now to get started!
    */
   private async readDoc(identifier: string): Promise<ResourceContent> {
     // identifier is a path like "architecture/overview"
-    const filePath = path.join(this.projectPath, 'docs', `${identifier}.md`)
+    const filePath = path.join(this.ctx.config.docsRoot, `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {
@@ -577,7 +573,7 @@ Run \`init-project\` now to get started!
    * Read journal resource
    */
   private async readJournal(identifier: string): Promise<ResourceContent> {
-    const journalDir = path.join(this.projectPath, 'docs', '.journal')
+    const journalDir = this.ctx.config.journalRoot
 
     if (identifier === 'current') {
       // Return latest session

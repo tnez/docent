@@ -1,20 +1,23 @@
 import * as fs from 'fs/promises'
 import {execSync} from 'child_process'
-import {analyzeProject} from '../../lib/detector.js'
-import {ResourceHandler} from '../resources/handler.js'
-import {SessionManager} from '../../lib/journal/session-manager.js'
+import {analyzeProject} from '../../lib/detector'
+import {ResourceHandler} from '../resources/handler'
+import {SessionManager} from '../../lib/journal/session-manager'
+import {createContext, type Context} from '../../lib/context'
 
 /**
  * Context gatherer for workflow tools and prompts
  * Single source of truth for context gathering logic
  */
 export class WorkflowContextGatherer {
+  private ctx: Context
   private resourceHandler: ResourceHandler
   private sessionManager: SessionManager
 
   constructor(basePath: string = process.cwd()) {
-    this.resourceHandler = new ResourceHandler(basePath)
-    this.sessionManager = new SessionManager(basePath)
+    this.ctx = createContext(basePath)
+    this.resourceHandler = new ResourceHandler(this.ctx)
+    this.sessionManager = new SessionManager(this.ctx)
   }
 
   /**

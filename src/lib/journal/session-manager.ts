@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises'
 import * as path from 'path'
+import type {Context} from '../context.js'
 
 export interface SessionInfo {
   file: string
@@ -9,13 +10,11 @@ export interface SessionInfo {
 }
 
 export class SessionManager {
-  private basePath: string
-  private journalDir: string
+  private ctx: Context
   private sessionThresholdHours: number
 
-  constructor(basePath: string = process.cwd(), sessionThresholdHours: number = 4) {
-    this.basePath = basePath
-    this.journalDir = path.join(basePath, 'docs', '.journal')
+  constructor(ctx: Context, sessionThresholdHours: number = 4) {
+    this.ctx = ctx
     this.sessionThresholdHours = sessionThresholdHours
   }
 
@@ -45,7 +44,7 @@ export class SessionManager {
    */
   async listSessions(): Promise<SessionInfo[]> {
     try {
-      const files = await fs.readdir(this.journalDir)
+      const files = await fs.readdir(this.ctx.config.journalRoot)
 
       const sessions = files
         .filter((file) => this.isSessionFile(file))
@@ -133,7 +132,7 @@ export class SessionManager {
     const paddedNum = String(nextNum).padStart(3, '0')
 
     const filename = `${today}-session-${paddedNum}.md`
-    const fullPath = path.join(this.journalDir, filename)
+    const fullPath = path.join(this.ctx.config.journalRoot, filename)
 
     // Create with header
     const header = `# Session ${today}-${paddedNum}
@@ -153,7 +152,7 @@ export class SessionManager {
    * Ensure the journal directory exists
    */
   private async ensureJournalDir(): Promise<void> {
-    await fs.mkdir(this.journalDir, {recursive: true})
+    await fs.mkdir(this.ctx.config.journalRoot, {recursive: true})
   }
 
   /**
@@ -177,7 +176,7 @@ export class SessionManager {
       file: filename,
       date: match[1],
       sessionNumber: parseInt(match[2], 10),
-      fullPath: path.join(this.journalDir, filename),
+      fullPath: path.join(this.ctx.config.journalRoot, filename),
     }
   }
 
