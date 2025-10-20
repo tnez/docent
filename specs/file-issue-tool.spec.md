@@ -215,7 +215,7 @@ This will authenticate gh CLI with your GitHub account.
 - [x] Tool applies appropriate labels based on issue type
 - [x] Tool returns issue URL on success
 - [x] Tool uses templates from `/templates/github-issues/`
-- [ ] Tool is tested with real `gh` CLI (end-to-end test)
+- [x] Tool is tested with real `gh` CLI (end-to-end test)
 - [ ] Tool handles network errors gracefully
 - [ ] Tool validates required parameters before gathering context
 
