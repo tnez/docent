@@ -137,6 +137,7 @@ git grep "BREAKING:" CHANGELOG.md && echo "⚠ Breaking changes found in CHANGEL
 **Decision Point:**
 
 Choose version bump type:
+
 - `patch` - Bug fixes only (0.5.0 → 0.5.1)
 - `minor` - New features, no breaking changes (0.5.0 → 0.6.0)
 - `major` - Breaking changes (0.5.0 → 1.0.0)
@@ -708,6 +709,7 @@ echo "npm Package: https://www.npmjs.com/package/@tnezdev/docent/v/${VERSION}"
 #### Issue: Publish Workflow Test Failures
 
 **Symptoms:**
+
 - GitHub Actions workflow fails at test step
 - Tests were passing locally
 
@@ -728,6 +730,7 @@ echo "npm Package: https://www.npmjs.com/package/@tnezdev/docent/v/${VERSION}"
 #### Issue: npm Publish Permission Denied
 
 **Symptoms:**
+
 - Workflow fails at publish step with 403 or permission error
 - Error: "You do not have permission to publish"
 
@@ -747,6 +750,7 @@ echo "npm Package: https://www.npmjs.com/package/@tnezdev/docent/v/${VERSION}"
 #### Issue: Version Already Published
 
 **Symptoms:**
+
 - Workflow fails with "cannot publish over existing version"
 
 **Resolution:**
@@ -754,6 +758,7 @@ echo "npm Package: https://www.npmjs.com/package/@tnezdev/docent/v/${VERSION}"
 This means the version was already published (possibly from previous attempt).
 
 **Option 1: Skip npm publish (if version is correct)**
+
 ```bash
 # Version is already on npm - just verify
 npm view @tnezdev/docent version
@@ -764,6 +769,7 @@ gh release create "v${VERSION}" --title "Release v${VERSION}" --notes "See CHANG
 ```
 
 **Option 2: Bump version again (if version was wrong)**
+
 ```bash
 # Delete remote tag
 git push origin :refs/tags/vX.Y.Z
@@ -784,6 +790,7 @@ git push origin main --follow-tags --force-with-lease
 #### Issue: GitHub Release Creation Fails
 
 **Symptoms:**
+
 - npm publish succeeds but GitHub release fails
 - Workflow completes with partial success
 
@@ -811,6 +818,7 @@ rm /tmp/release-notes.md
 #### Issue: Breaking Change in Patch Release
 
 **Symptoms:**
+
 - Realized after publishing that a breaking change was in a patch release
 - Semantic versioning was violated
 
@@ -879,6 +887,7 @@ Escalate if:
 - Breaking changes accidentally published
 
 **Escalation Contact:**
+
 - npm support (for registry issues)
 - GitHub support (for Actions issues)
 - Security team (for vulnerabilities)
@@ -971,6 +980,7 @@ npm install @tnezdev/docent
 ## Notes
 
 **Important:**
+
 - Pushing a version tag triggers automatic npm publishing
 - Cannot unpublish from npm after 72 hours
 - Always verify locally before pushing
@@ -978,6 +988,7 @@ npm install @tnezdev/docent
 - GitHub Actions needs valid NPM_TOKEN secret
 
 **Gotchas:**
+
 - `--follow-tags` only pushes annotated tags (created with `-a`)
 - npm propagation can take 30-60 seconds
 - GitHub Actions has ~30 second startup delay
@@ -985,6 +996,7 @@ npm install @tnezdev/docent
 - Tag format must be `vX.Y.Z` (lowercase v prefix)
 
 **Related Procedures:**
+
 - [CI/CD Health Check](./ci-cd-health-check.md) - if CI is failing
 - [Fix Markdown Lint](./fix-markdown-lint.md) - if linting blocks release
 

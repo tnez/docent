@@ -42,6 +42,23 @@ This installs all required development tools including:
 - `typescript` - TypeScript compiler
 - `mocha` & `chai` - Testing framework
 
+### Optional: Git Hooks (Recommended)
+
+Git hooks automatically run quality checks before committing. This is **optional but recommended** to catch issues early.
+
+```bash
+# Install git hooks (one-time setup)
+scripts/install-git-hooks.sh
+```
+
+This installs a pre-commit hook that:
+
+- Lints staged markdown files before each commit
+- Prevents commits with linting errors
+- Can be bypassed with `git commit --no-verify` if needed
+
+**To uninstall:** `rm .git/hooks/pre-commit`
+
 ## Development Workflow
 
 ### 1. Make Your Changes
@@ -68,7 +85,7 @@ npm run lint
 shellcheck ./scripts/*.sh ./test/*.sh
 
 # Markdown linting
-npx markdownlint-cli2 "**/*.md" "!node_modules"
+scripts/lint-markdown.sh
 ```
 
 #### Tests
@@ -98,10 +115,14 @@ Most markdown issues can be auto-fixed:
 
 ```bash
 # Auto-fix all markdown files
-npx markdownlint-cli2 --fix
+scripts/lint-markdown.sh --fix
 
-# Auto-fix specific file
-npx markdownlint-cli2 --fix path/to/file.md
+# Auto-fix specific files
+scripts/lint-markdown.sh --fix path/to/file.md
+
+# Lint without fixing
+scripts/lint-markdown.sh
+scripts/lint-markdown.sh path/to/file.md
 ```
 
 **Auto-fixable rules** (enabled):

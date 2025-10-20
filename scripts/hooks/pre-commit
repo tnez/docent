@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Pre-commit hook for docent
+#
+# This hook runs markdown linting on staged .md files before allowing a commit.
+# If linting fails, the commit is blocked.
+#
+# To bypass this hook, use: git commit --no-verify
+#
+
+# Get the project root (where .git directory is)
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+
+# Get list of staged markdown files
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep '\.md$' || true)
+
+# If no markdown files are staged, skip linting
+if [ -z "$STAGED_MD" ]; then
+    exit 0
+fi
+
+echo "Running markdown linting on staged files..."
+
+# Convert relative paths to absolute paths from project root
+# and pass them to the lint script
+cd "$PROJECT_ROOT"
+
+# Run lint script with staged files
+# shellcheck disable=SC2086
+if ! "$PROJECT_ROOT/scripts/lint-markdown.sh" $STAGED_MD; then
+    echo ""
+    echo "❌ Markdown linting failed"
+    echo ""
+    echo "Options:"
+    echo "  1. Fix errors manually and re-commit"
+    echo "  2. Run: scripts/lint-markdown.sh --fix <file>"
+    echo "  3. Bypass hook: git commit --no-verify (not recommended)"
+    echo ""
+    exit 1
+fi
+
+echo "✓ Markdown linting passed"
+exit 0

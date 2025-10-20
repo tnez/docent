@@ -12,6 +12,7 @@ implemented_in: /Users/tnez/Code/tnez/docent/src/mcp/tools/doctor.ts
 ## Overview
 
 Enhance the doctor tool's structure reconciliation check to be bidirectional, detecting both:
+
 1. **Forward check**: Files documented but missing from filesystem (current behavior)
 2. **Inverse check**: Files existing but not documented (new behavior)
 
@@ -60,6 +61,7 @@ When the doctor tool runs structure reconciliation check
 Then it detects the directory and all its contents as undocumented
 
 **Example:**
+
 ```json
 // Input - Project structure
 {
@@ -94,6 +96,7 @@ When documentation states test files should be in `test/` directory
 Then the tool detects this as a structure violation
 
 **Example:**
+
 ```json
 // Input
 {
@@ -125,6 +128,7 @@ When the doctor tool analyzes the project
 Then it flags this as high-priority for documentation
 
 **Example:**
+
 ```json
 // Input
 {
@@ -155,6 +159,7 @@ When the doctor tool runs structure reconciliation
 Then these are automatically ignored and not reported
 
 **Example:**
+
 ```json
 // Input
 {
@@ -183,6 +188,7 @@ When the doctor tool analyzes the project
 Then it suggests documenting the containerization setup
 
 **Example:**
+
 ```json
 // Output
 {
@@ -205,6 +211,7 @@ When the doctor tool runs
 Then it reports both categories clearly
 
 **Example:**
+
 ```json
 // Output
 {

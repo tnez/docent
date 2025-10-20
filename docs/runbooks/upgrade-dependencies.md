@@ -10,6 +10,7 @@
 This runbook provides a manual, controlled process for upgrading project dependencies. Unlike automated tools (Renovate, Dependabot), this approach gives maintainers full control over timing, grouping, and testing of upgrades.
 
 **Why manual upgrades:**
+
 - **Control** - Choose when and what to upgrade
 - **Grouping** - Upgrade related dependencies together
 - **Testing** - Thorough validation before committing
@@ -542,6 +543,7 @@ open https://nodejs.org/en/about/previous-releases
 **Upgrade steps:**
 
 1. **Update package.json engines:**
+
    ```json
    {
      "engines": {
@@ -551,6 +553,7 @@ open https://nodejs.org/en/about/previous-releases
    ```
 
 2. **Update GitHub Actions workflows:**
+
    ```yaml
    # .github/workflows/*.yml
    - uses: actions/setup-node@v6
@@ -559,11 +562,13 @@ open https://nodejs.org/en/about/previous-releases
    ```
 
 3. **Update type definitions:**
+
    ```bash
    npm install --save-dev @types/node@^22.0.0
    ```
 
 4. **Test locally with new Node version:**
+
    ```bash
    nvm install 22
    nvm use 22
@@ -718,29 +723,37 @@ git log --oneline -10
 After completing all upgrades:
 
 1. **Local validation:**
+
    ```bash
    npm run build && npm test && npm run lint
    npm audit
    ```
+
    All should pass with 0 errors, 0 vulnerabilities
 
 2. **CI validation:**
+
    ```bash
    git push origin main
    gh run watch
    ```
+
    All CI workflows should pass
 
 3. **Package health:**
+
    ```bash
    npm outdated
    ```
+
    Should show fewer outdated packages than before (or none)
 
 4. **Version tracking:**
+
    ```bash
    git log --oneline --grep="chore(deps)" -10
    ```
+
    Should see organized upgrade commits
 
 ## Rollback
@@ -793,6 +806,7 @@ git push origin main
 #### Issue 1: Package Installation Fails
 
 **Symptoms:**
+
 - `npm install <package>` fails with error
 - Dependency resolution conflicts
 
@@ -817,6 +831,7 @@ npm view <package> peerDependencies
 #### Issue 2: Tests Fail After Upgrade
 
 **Symptoms:**
+
 - Tests passed before upgrade
 - Tests fail after upgrading test framework or dependencies
 
@@ -843,6 +858,7 @@ npm view <package> --json | jq '.homepage'
 #### Issue 3: TypeScript Errors After Upgrade
 
 **Symptoms:**
+
 - Build fails with type errors
 - Worked before upgrading TypeScript or @types packages
 
@@ -867,6 +883,7 @@ npm ls @types/node @types/mocha @types/chai
 #### Issue 4: GitHub Actions Fail After Upgrade
 
 **Symptoms:**
+
 - CI worked before
 - Failing after upgrading action versions
 

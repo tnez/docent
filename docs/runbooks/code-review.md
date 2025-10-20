@@ -15,6 +15,7 @@ This runbook provides procedures for reviewing code in two scenarios:
 The review process ensures code quality, maintainability, adherence to project standards, and alignment with architectural decisions (ADRs).
 
 **Expected duration:**
+
 - PR Review: 15-30 minutes per PR
 - Pre-Commit Review: 5-10 minutes for local changes
 
@@ -674,6 +675,7 @@ gh pr view <PR_NUMBER> --web
 #### Issue 1: Can't Reproduce Bug Fix Locally
 
 **Symptoms:**
+
 - PR claims to fix bug
 - Can't reproduce bug locally
 - Tests pass but unclear what was fixed
@@ -695,6 +697,7 @@ This will help validate the fix and prevent regressions."
 #### Issue 2: PR is Too Large to Review
 
 **Symptoms:**
+
 - 1000+ lines changed
 - Multiple unrelated changes
 - Difficult to understand scope
@@ -716,6 +719,7 @@ Large PRs are harder to review thoroughly and more likely to introduce issues."
 #### Issue 3: Conflicting Feedback from Multiple Reviewers
 
 **Symptoms:**
+
 - Different reviewers suggest different approaches
 - Author is confused about which direction to take
 
@@ -787,6 +791,7 @@ After reviewing a batch of PRs:
 **Review Philosophy:**
 
 docent values:
+
 - **Code quality over speed** - Take time for thorough review
 - **Maintainability over cleverness** - Prefer clear code
 - **Testing as documentation** - Tests should express intent

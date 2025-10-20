@@ -263,6 +263,7 @@ docent analyze
 **Strategic Fit Evaluation (for features not in roadmap):**
 
 Ask:
+
 1. Does this align with docent's core mission? (Documentation intelligence for AI agents)
 2. Would this benefit multiple users or one specific use case?
 3. Is this a reasonable scope expansion or feature creep?
@@ -424,9 +425,11 @@ gh issue comment <ISSUE_NUMBER> --body "CC @username - this relates to the work 
 After completing triage for an issue, verify:
 
 1. **Labels Applied:**
+
    ```bash
    gh issue view <ISSUE_NUMBER> --json labels --jq '.labels[].name'
    ```
+
    Should include:
    - Type label (bug/enhancement/question/documentation)
    - 'triaged' label
@@ -618,6 +621,7 @@ After triaging a batch of issues:
 **Integration with RFC-0010:**
 
 This runbook complements [RFC-0010 (GitHub Issue Filing MCP Tool)](../rfcs/rfc-0010-github-issue-filing-mcp-tool.md). Issues filed via the `file-issue` tool will:
+
 - Include rich context (version, OS, etc.) automatically
 - Follow templates for better structure
 - Have preliminary labels applied
