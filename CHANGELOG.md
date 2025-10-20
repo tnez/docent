@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Doctor Tool Output**: Concise mode by default for better agent readability
+  - Default output now shows only failed checks with grouped issues (max 5 per category)
+  - **83% reduction in output** (from ~174 lines to ~29 lines for typical projects)
+  - New `verbose` parameter to show all details when needed
+  - Optimized for agent token efficiency while maintaining actionable insights
+  - Addresses issue #2 - reduces cognitive load and token usage during MCP sessions
+
 ## [0.7.0] - 2025-10-19
 
 ### Added

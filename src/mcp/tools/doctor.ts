@@ -30,6 +30,11 @@ export const doctorToolDefinition: Tool = {
           enum: ['links', 'debug-code', 'test-markers', 'docs-quality', 'uncommitted', 'temp-files', 'structure'],
         },
       },
+      verbose: {
+        type: 'boolean',
+        description: 'Show detailed output for all checks. Default is false (concise output for agent readability)',
+        default: false,
+      },
     },
   },
 }
@@ -38,6 +43,7 @@ interface DoctorArgs {
   path?: string
   docsDir?: string
   checks?: string[]
+  verbose?: boolean
 }
 
 interface DoctorIssue {
@@ -115,11 +121,13 @@ export async function handleDoctorTool(args: DoctorArgs): Promise<{content: Text
 
   const summary = buildSummary({healthy, score, issues, summary: ''})
 
+  const verbose = args.verbose ?? false
+
   return {
     content: [
       {
         type: 'text' as const,
-        text: formatDoctorReport({healthy, score, issues, summary}),
+        text: formatDoctorReport({healthy, score, issues, summary}, verbose),
       },
     ],
   }
@@ -943,7 +951,7 @@ function buildSummary(result: DoctorResult): string {
 /**
  * Format doctor report as markdown
  */
-function formatDoctorReport(result: DoctorResult): string {
+function formatDoctorReport(result: DoctorResult, verbose: boolean): string {
   const {healthy, score, issues} = result
 
   let report = '# Project Health Check\n\n'
@@ -974,10 +982,8 @@ function formatDoctorReport(result: DoctorResult): string {
   }
 
   report += `**Status:** ${healthy ? '✓ Healthy' : '✗ Issues Found'}\n`
-  report += `**Health Score:** ${scoreEmoji} ${score}/100 (${scoreLabel})\n\n`
-  report += `- **Errors:** ${errors.length} (must fix)\n`
-  report += `- **Warnings:** ${warnings.length} (should fix)\n`
-  report += `- **Info:** ${infos.length} (suggestions)\n\n`
+  report += `**Health Score:** ${scoreEmoji} ${score}/100 (${scoreLabel})\n`
+  report += `**Found:** ${errors.length} errors, ${warnings.length} warnings, ${infos.length} suggestions\n\n`
 
   if (issues.length === 0) {
     report += '🎉 No issues found! Project is ready for release.\n'
@@ -992,7 +998,24 @@ function formatDoctorReport(result: DoctorResult): string {
     byCategory.set(issue.category, existing)
   }
 
-  // Report each category
+  if (verbose) {
+    // Verbose mode: show all details
+    report += formatVerboseReport(byCategory, errors)
+  } else {
+    // Concise mode: group and limit
+    report += formatConciseReport(byCategory, errors)
+  }
+
+  return report
+}
+
+/**
+ * Format verbose report showing all details
+ */
+function formatVerboseReport(byCategory: Map<string, DoctorIssue[]>, errors: DoctorIssue[]): string {
+  let report = ''
+
+  // Report each category in full detail
   for (const [category, categoryIssues] of byCategory) {
     report += `## ${category}\n\n`
 
@@ -1017,6 +1040,60 @@ function formatDoctorReport(result: DoctorResult): string {
     report += '2. Address **warnings** if possible\n'
     report += '3. Consider **info** suggestions for future improvements\n'
     report += '4. Run `docent doctor` again to verify fixes\n'
+  }
+
+  return report
+}
+
+/**
+ * Format concise report with smart grouping and limits
+ */
+function formatConciseReport(byCategory: Map<string, DoctorIssue[]>, errors: DoctorIssue[]): string {
+  let report = '## Issues Found\n\n'
+
+  const MAX_ISSUES_PER_CATEGORY = 5
+
+  // Report each category concisely
+  for (const [category, categoryIssues] of byCategory) {
+    const errorCount = categoryIssues.filter(i => i.type === 'error').length
+    const warningCount = categoryIssues.filter(i => i.type === 'warning').length
+    const infoCount = categoryIssues.filter(i => i.type === 'info').length
+
+    // Category header with counts
+    const counts: string[] = []
+    if (errorCount > 0) counts.push(`${errorCount} error${errorCount > 1 ? 's' : ''}`)
+    if (warningCount > 0) counts.push(`${warningCount} warning${warningCount > 1 ? 's' : ''}`)
+    if (infoCount > 0) counts.push(`${infoCount} suggestion${infoCount > 1 ? 's' : ''}`)
+
+    report += `### ${category} (${counts.join(', ')})\n\n`
+
+    // Show first N issues
+    const issuesToShow = categoryIssues.slice(0, MAX_ISSUES_PER_CATEGORY)
+    const remaining = categoryIssues.length - issuesToShow.length
+
+    for (const issue of issuesToShow) {
+      const icon = issue.type === 'error' ? '❌' : issue.type === 'warning' ? '⚠️' : 'ℹ️'
+      report += `${icon} ${issue.message}`
+      if (issue.location) {
+        report += ` (\`${issue.location}\`)`
+      }
+      report += '\n'
+    }
+
+    if (remaining > 0) {
+      report += `... and ${remaining} more ${category.toLowerCase()} issue${remaining > 1 ? 's' : ''}\n`
+    }
+
+    report += '\n'
+  }
+
+  // Quick action summary
+  if (errors.length > 0) {
+    report += '## Quick Actions\n\n'
+    report += `Fix ${errors.length} error${errors.length > 1 ? 's' : ''} before release. `
+    report += 'Run with `verbose: true` to see all details.\n'
+  } else {
+    report += '✓ No errors found. Address warnings and suggestions as needed.\n'
   }
 
   return report
