@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **File Issue Tool**: New MCP tool for filing GitHub issues directly from agent sessions
+  - Seamless issue reporting without context switching
+  - Auto-gathers environment context (docent version, Node version, OS, architecture)
+  - Includes docent configuration and project type when available
+  - Uses GitHub CLI (`gh`) - no token management needed
+  - Graceful fallback with installation instructions if `gh` not available
+  - Four issue types supported: bug, feature, question, documentation
+  - Implements RFC-0010 for reducing feedback friction
+
 ### Changed
 
 - **Doctor Tool Output**: Concise mode by default for better agent readability

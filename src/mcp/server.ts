@@ -20,6 +20,7 @@ import {captureWorkToolDefinition, handleCaptureWorkTool} from './tools/capture-
 import {resumeWorkToolDefinition, handleResumeWorkTool} from './tools/resume-work.js'
 import {reviewRfcToolDefinition, handleReviewRfcTool} from './tools/review-rfc.js'
 import {initProjectToolDefinition, handleInitProjectTool} from './tools/init-project.js'
+import {fileIssueToolDefinition, handleFileIssueTool} from './tools/file-issue.js'
 
 // Import resource and prompt handlers
 import {ResourceHandler} from './resources/handler.js'
@@ -67,6 +68,7 @@ const tools = [
   captureWorkToolDefinition,
   resumeWorkToolDefinition,
   reviewRfcToolDefinition,
+  fileIssueToolDefinition,
 ]
 
 // Handle tools/list request
@@ -102,6 +104,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await handleResumeWorkTool()
       case 'review-rfc':
         return await handleReviewRfcTool(args as {rfc_path: string; perspective?: string})
+      case 'file-issue':
+        return await handleFileIssueTool(
+          args as {
+            title: string
+            type: 'bug' | 'feature' | 'question' | 'documentation'
+            description: string
+            reproductionSteps?: string
+            expectedBehavior?: string
+            actualBehavior?: string
+            useCase?: string
+            suggestion?: string
+          }
+        )
       default:
         throw new Error(`Unknown tool: ${name}`)
     }
