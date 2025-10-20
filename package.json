@@ -35,7 +35,7 @@
     "build": "tsc -b",
     "prepare": "npm run build",
     "lint": "echo 'Linting skipped - TypeScript compiler handles type checking'",
-    "lint:md": "markdownlint-cli2 '**/*.md' '!node_modules' '!lib'",
+    "lint:md": "markdownlint-cli2 '**/*.md' '!node_modules' '!lib' '!docs/.journal'",
     "test": "mocha --require ts-node/register 'test/**/*.test.ts'",
     "test:watch": "mocha --require ts-node/register --watch 'test/**/*.test.ts'"
   },

@@ -35,7 +35,7 @@ done
 # If no files specified, lint all markdown files (using npm script pattern)
 if [ -z "$FILES" ]; then
     echo "Linting all markdown files..."
-    npx markdownlint-cli2 '**/*.md' '!node_modules' '!lib' $FIX_FLAG
+    npx markdownlint-cli2 '**/*.md' '!node_modules' '!lib' '!docs/.journal' $FIX_FLAG
 else
     echo "Linting specified markdown files..."
     # shellcheck disable=SC2086
