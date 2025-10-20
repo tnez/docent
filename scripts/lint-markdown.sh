@@ -38,8 +38,10 @@ if [ -z "$FILES" ]; then
     npx markdownlint-cli2 '**/*.md' '!node_modules' '!lib' '!docs/.journal' $FIX_FLAG
 else
     echo "Linting specified markdown files..."
+    # When specific files are provided, use --no-globs to avoid config globs
+    # This prevents journal files from being scanned when linting specific files
     # shellcheck disable=SC2086
-    npx markdownlint-cli2 $FIX_FLAG $FILES
+    npx markdownlint-cli2 --no-globs $FIX_FLAG $FILES
 fi
 
 exit $?
