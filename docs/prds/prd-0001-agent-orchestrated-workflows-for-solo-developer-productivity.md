@@ -649,9 +649,9 @@ docent workflow rfc "Should we add behavioral specs?"
 
 **Directly supports this vision:**
 
-- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Technical foundation for MCP workflows
-- [RFC-0002: Behavioral Specifications](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Workflows create specs
-- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md) - Why CLI-first matters
+- [RFC-0001: MCP Server Integration](../rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Technical foundation for MCP workflows
+- [RFC-0002: Behavioral Specifications](../rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Workflows create specs
+- [ADR-0003: Agent-Agnostic Architecture](../adr/adr-0003-agent-agnostic-architecture.md) - Why CLI-first matters
 
 **Will reference this PRD:**
 

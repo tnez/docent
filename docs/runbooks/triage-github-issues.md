@@ -35,7 +35,7 @@ This runbook guides maintainers through triaging new GitHub issues, ensuring the
 
 ### Required Knowledge
 
-- Familiarity with docent's PRDs (in `/Users/tnez/Code/tnez/docent/docs/prds/`)
+- Familiarity with docent's PRDs (in `../prds/`)
 - Understanding of RFC → ADR → Implementation workflow
 - Knowledge of existing features and roadmap
 

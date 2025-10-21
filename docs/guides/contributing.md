@@ -185,7 +185,7 @@ Unified workflow that runs on Ubuntu and macOS:
 
 ### Viewing CI/CD Status
 
-See [CI/CD Health Check Runbook](/Users/tnez/Code/tnez/docent/docs/runbooks/ci-cd-health-check.md) for:
+See [CI/CD Health Check Runbook](../runbooks/ci-cd-health-check.md) for:
 
 - How to check workflow status with `gh` CLI
 - Troubleshooting common failures
@@ -221,11 +221,11 @@ The `scripts/` directory contains utility scripts for development and maintenanc
 - **`lint-markdown.sh`** - Lints markdown files using markdownlint-cli2
   - Supports `--fix` flag for auto-fixing errors
   - Can lint specific files or all markdown files
-  - See [Fix Markdown Linting Runbook](/Users/tnez/Code/tnez/docent/docs/runbooks/fix-markdown-lint.md)
+  - See [Fix Markdown Linting Runbook](../runbooks/fix-markdown-lint.md)
 
 - **`install-git-hooks.sh`** - Installs pre-commit git hooks
   - Sets up automatic markdown linting on commit
-  - See [Install Git Hooks Runbook](/Users/tnez/Code/tnez/docent/docs/runbooks/install-git-hooks.md)
+  - See [Install Git Hooks Runbook](../runbooks/install-git-hooks.md)
 
 ### Specification Tracking
 

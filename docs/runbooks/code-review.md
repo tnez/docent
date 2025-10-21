@@ -36,7 +36,7 @@ The review process ensures code quality, maintainability, adherence to project s
 
 ### Required Knowledge
 
-- Familiarity with project ADRs in `/Users/tnez/Code/tnez/docent/docs/adr/`
+- Familiarity with project ADRs in `../adr/`
 - Understanding of project coding standards
 - Knowledge of TypeScript and Node.js (for this project)
 

@@ -2,12 +2,12 @@
 
 ## Metadata
 
-- **Status:** draft
+- **Status:** implemented
 - **Created:** 2025-10-13
-- **Updated:** 2025-10-13
+- **Updated:** 2025-10-20
 - **Related:**
-  - Implementation: `/Users/tnez/Code/tnez/docent/src/mcp/tools/analyze.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/detector.ts`
+  - Implementation: `../../src/mcp/tools/analyze.ts`
+  - Core logic: `../../src/lib/detector.ts`
 
 ## Context
 

@@ -1072,11 +1072,11 @@ This RFC focuses on basic workflow orchestration with RFC review as first use ca
 
 ### Related Docent Documentation
 
-- [PRD-0001: Agent-Orchestrated Workflows](/Users/tnez/Code/tnez/docent/docs/prds/prd-0001-agent-orchestrated-workflows-for-solo-developer-productivity.md) - Product vision
-- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Agent integration (Phase 2 dependency)
-- [RFC-0002: Behavioral Specifications](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Spec validation workflow use case
-- [Research: RFC Review Workflow Pain Points](/Users/tnez/Code/tnez/docent/docs/research/rfc-review-workflow-pain-points.md) - Motivation and requirements
-- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md) - Design principles
+- [PRD-0001: Agent-Orchestrated Workflows](../prds/prd-0001-agent-orchestrated-workflows-for-solo-developer-productivity.md) - Product vision
+- [RFC-0001: MCP Server Integration](../rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Agent integration (Phase 2 dependency)
+- [RFC-0002: Behavioral Specifications](../rfcs/rfc-0002-add-behavioral-specification-support-for-agent-driven-development.md) - Spec validation workflow use case
+- [Research: RFC Review Workflow Pain Points](../research/rfc-review-workflow-pain-points.md) - Motivation and requirements
+- [ADR-0003: Agent-Agnostic Architecture](../adr/adr-0003-agent-agnostic-architecture.md) - Design principles
 
 ### External Resources
 

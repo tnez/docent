@@ -9,7 +9,7 @@
 
 This runbook provides the procedure for installing git hooks in your local docent repository. Git hooks automatically run quality checks before committing, helping catch markdown linting errors early in the development process.
 
-**Script Reference:** `/Users/tnez/Code/tnez/docent/scripts/install-git-hooks.sh`
+**Script Reference:** `../../scripts/install-git-hooks.sh`
 
 **Expected duration:** 1-2 minutes
 
@@ -375,7 +375,7 @@ scripts/lint-markdown.sh
 **Related Procedures:**
 
 - [Fix Markdown Linting](./fix-markdown-lint.md) - for fixing linting errors the hook finds
-- [Contributing Guide](/Users/tnez/Code/tnez/docent/docs/guides/contributing.md) - general development workflow
+- [Contributing Guide](../guides/contributing.md) - general development workflow
 
 ## Revision History
 

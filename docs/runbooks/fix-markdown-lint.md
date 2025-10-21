@@ -9,7 +9,7 @@
 
 This runbook provides procedures for fixing markdown linting errors using `markdownlint-cli2`. Our CI/CD runs markdown linting on all `*.md` files, and errors will block merges to main.
 
-**Script Reference:** `/Users/tnez/Code/tnez/docent/scripts/lint-markdown.sh`
+**Script Reference:** `../../scripts/lint-markdown.sh`
 
 **Expected duration:** 5-10 minutes for most fixes (auto-fix handles ~95% of errors)
 

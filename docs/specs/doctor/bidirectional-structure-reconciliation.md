@@ -4,7 +4,7 @@ status: implemented
 version: 1.0.0
 dependencies: []
 priority: critical
-implemented_in: /Users/tnez/Code/tnez/docent/src/mcp/tools/doctor.ts
+implemented_in: ../../src/mcp/tools/doctor.ts
 ---
 
 # Bidirectional Structure Reconciliation for Doctor Tool

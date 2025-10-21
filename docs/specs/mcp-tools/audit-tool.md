@@ -2,12 +2,12 @@
 
 ## Metadata
 
-- **Status:** draft
+- **Status:** implemented
 - **Created:** 2025-10-13
-- **Updated:** 2025-10-13
+- **Updated:** 2025-10-20
 - **Related:**
-  - Implementation: `/Users/tnez/Code/tnez/docent/src/mcp/tools/audit.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/auditor.ts`
+  - Implementation: `../../src/mcp/tools/audit.ts`
+  - Core logic: `../../src/lib/agent-audit.ts`
   - Depends on: analyze tool for project analysis
 
 ## Context

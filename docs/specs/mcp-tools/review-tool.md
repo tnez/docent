@@ -2,12 +2,12 @@
 
 ## Metadata
 
-- **Status:** draft (tool not yet implemented)
+- **Status:** draft (not implemented)
 - **Created:** 2025-10-13
-- **Updated:** 2025-10-13
+- **Updated:** 2025-10-20
 - **Related:**
-  - Future Implementation: `/Users/tnez/Code/tnez/docent/src/mcp/tools/review.ts`
-  - Core logic: `/Users/tnez/Code/tnez/docent/src/lib/reviewer.ts`
+  - Planned implementation: `../../src/mcp/tools/review.ts` (not yet created)
+  - Planned core logic: `../../src/lib/reviewer.ts` (not yet created)
   - Depends on: analyze tool for project analysis
 
 ## Context

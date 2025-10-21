@@ -182,7 +182,7 @@ Suggested test cases or testing approaches (optional).
 ## Metadata
 - **Status:** implemented
 - **Created:** 2025-10-12
-- **Related:** [ADR-0003](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md), [detector.ts](/Users/tnez/Code/tnez/docent/src/lib/detector.ts)
+- **Related:** [ADR-0003](../adr/adr-0003-agent-agnostic-architecture.md), [detector.ts](../../src/lib/detector.ts)
 
 ## Context
 The analyze command examines a project directory to detect programming languages, frameworks, and project structure. It provides JSON output for agent consumption.
@@ -962,9 +962,9 @@ This RFC focuses on basic behavioral specification support, but future work coul
 
 ### Related Docent Documentation
 
-- [ADR-0003: Agent-Agnostic Architecture](/Users/tnez/Code/tnez/docent/docs/adr/adr-0003-agent-agnostic-architecture.md) - Why JSON output and protocol matter
-- [RFC-0001: MCP Server Integration](/Users/tnez/Code/tnez/docent/docs/rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Future richer agent integration
-- [Research: Behavioral Specifications Investigation](/Users/tnez/Code/tnez/docent/docs/research/behavioral-specifications-investigation.md) - Comprehensive format analysis
+- [ADR-0003: Agent-Agnostic Architecture](../adr/adr-0003-agent-agnostic-architecture.md) - Why JSON output and protocol matter
+- [RFC-0001: MCP Server Integration](../rfcs/rfc-0001-mcp-server-for-agent-integration.md) - Future richer agent integration
+- [Research: Behavioral Specifications Investigation](../research/behavioral-specifications-investigation.md) - Comprehensive format analysis
 
 ### External Resources
 
