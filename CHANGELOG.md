@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2025-10-21
+
 ### Added
 
 - **File Issue Tool**: New MCP tool for filing GitHub issues directly from agent sessions
@@ -17,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Graceful fallback with installation instructions if `gh` not available
   - Four issue types supported: bug, feature, question, documentation
   - Implements RFC-0010 for reducing feedback friction
+- **Enhanced Pre-commit Hook**: Comprehensive quality checks before commits
+  - Tests, build, and markdown linting
+  - Debug code detection
+  - Temporary file cleanup
+  - All CI checks run locally before push
+- **Quick Mode for Doctor Tool**: New `--quick` flag for fast mechanical checks only
+  - Skips semantic documentation analysis for faster results
+  - Ideal for quick health checks during development
 
 ### Changed
 
@@ -26,6 +36,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New `verbose` parameter to show all details when needed
   - Optimized for agent token efficiency while maintaining actionable insights
   - Addresses issue #2 - reduces cognitive load and token usage during MCP sessions
+- **MCP Tool Naming**: Improved clarity with backward compatibility
+  - `init-project` → `bootstrap` (with deprecation warning)
+  - `audit` → merged into `doctor` (with deprecation warning)
+  - `init-session` resource → `context` resource (with deprecation warning)
+  - All old names still work with guidance to update
+
+### Fixed
+
+- **Doctor Tool False Positives**: Resolved incorrect warnings for documented scripts (#4)
+  - Now recognizes scripts documented by basename (e.g., "script.sh" vs "scripts/script.sh")
+  - Checks common directories (scripts/, bin/, tools/) for bare filenames
+  - Eliminates spurious "undocumented file" warnings
+- **Publish Workflow**: Added all CI checks to prevent broken releases
+  - Tests, build, and linting run before npm publish
+  - Ensures release quality matches CI standards
+- **Journal Linting**: Prevented journal files from triggering markdown lint on unrelated commits
+
+### Technical
+
+- Consolidated test and lint workflows into unified CI workflow
+- Updated all documentation to reflect MCP tool naming changes
+- Improved structure reconciliation logic in doctor tool
+- Enhanced basename recognition for documented paths
 
 ## [0.7.0] - 2025-10-19
 
