@@ -9,6 +9,8 @@
 
 This runbook provides procedures for fixing markdown linting errors using `markdownlint-cli2`. Our CI/CD runs markdown linting on all `*.md` files, and errors will block merges to main.
 
+**Script Reference:** `/Users/tnez/Code/tnez/docent/scripts/lint-markdown.sh`
+
 **Expected duration:** 5-10 minutes for most fixes (auto-fix handles ~95% of errors)
 
 ## Prerequisites
@@ -41,12 +43,14 @@ Before starting, ensure:
 ```bash
 # Run markdown linter (shows all errors)
 npm run lint:md
+# Or use the script directly:
+scripts/lint-markdown.sh
 
 # Count total errors
 npm run lint:md 2>&1 | grep -c "MD0"
 
 # See errors for specific file
-npx markdownlint-cli2 docs/guides/getting-started.md
+scripts/lint-markdown.sh docs/guides/getting-started.md
 ```
 
 **Validation:**
@@ -71,6 +75,8 @@ npx markdownlint-cli2 docs/guides/getting-started.md
 ```bash
 # Auto-fix all fixable errors
 npm run lint:md -- --fix
+# Or use the script directly:
+scripts/lint-markdown.sh --fix
 
 # Check remaining errors
 npm run lint:md

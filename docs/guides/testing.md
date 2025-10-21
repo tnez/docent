@@ -187,11 +187,11 @@ Tests run automatically on:
 - **Push to main** - Full test suite
 - **Pull requests** - Full test suite + build verification
 
-See `.github/workflows/test.yml` for current CI configuration.
+See `.github/workflows/ci.yml` for current CI configuration.
 
 ### Adding New CI Checks
 
-When unit tests are added, update `.github/workflows/test.yml`:
+When unit tests are added, update `.github/workflows/ci.yml`:
 
 ```yaml
 - name: Run unit tests

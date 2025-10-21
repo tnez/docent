@@ -169,17 +169,19 @@ Commit types:
 
 Our GitHub Actions workflows run automatically on push and pull requests:
 
-### Test Workflow (`test.yml`)
+### CI Workflow (`ci.yml`)
 
-- Runs on Ubuntu and macOS
-- Executes `./test/test-install.sh`
-- Tests installation in clean directory
-- Tests uninstallation
+Unified workflow that runs on Ubuntu and macOS:
 
-### Lint Workflow (`lint.yml`)
+- Build: Compiles TypeScript (`npm run build`)
+- Tests: Runs test suite (`npm test`)
+- ShellCheck: Lints shell scripts in `./scripts` and `./test` directories
+- Markdown linting: Lints all `*.md` files
 
-- Runs ShellCheck on `./scripts` and `./test` directories
-- Runs Markdown linting on all `*.md` files
+### Publish Workflow (`publish.yml`)
+
+- Publishes package to npm when new version is tagged
+- Runs all CI checks before publishing
 
 ### Viewing CI/CD Status
 
@@ -198,14 +200,62 @@ docent/
 ├── src/              # TypeScript source code
 ├── templates/        # Documentation templates
 ├── scripts/          # Installation/maintenance scripts
+│   ├── lint-markdown.sh      # Markdown linting utility
+│   └── install-git-hooks.sh  # Git hooks installation
 ├── test/             # Test scripts
+├── specs/            # Feature specifications
+│   └── manifest.yaml # Spec implementation tracking
 ├── docs/             # Project documentation
 │   ├── guides/       # How-to guides (like this one)
 │   ├── runbooks/     # Operational procedures
 │   ├── adr/          # Architecture Decision Records
-│   └── rfcs/         # Request for Comments
+│   ├── rfcs/         # Request for Comments
+│   └── specs/        # MCP tool specifications
 └── package.json      # Node.js dependencies and scripts
 ```
+
+### Scripts Directory
+
+The `scripts/` directory contains utility scripts for development and maintenance:
+
+- **`lint-markdown.sh`** - Lints markdown files using markdownlint-cli2
+  - Supports `--fix` flag for auto-fixing errors
+  - Can lint specific files or all markdown files
+  - See [Fix Markdown Linting Runbook](/Users/tnez/Code/tnez/docent/docs/runbooks/fix-markdown-lint.md)
+
+- **`install-git-hooks.sh`** - Installs pre-commit git hooks
+  - Sets up automatic markdown linting on commit
+  - See [Install Git Hooks Runbook](/Users/tnez/Code/tnez/docent/docs/runbooks/install-git-hooks.md)
+
+### Specification Tracking
+
+The `specs/manifest.yaml` file tracks implementation status of feature specifications:
+
+**Purpose:** Maintain a single source of truth for which features are approved, implemented, tested, and passing.
+
+**Example entry:**
+
+```yaml
+specs:
+  mcp-tools/file-issue:
+    version: 1.0.0
+    status: implemented
+    spec_file: specs/file-issue-tool.spec.md
+    implementation: src/mcp/tools/file-issue.ts
+    tests: test/unit/mcp/tools/file-issue.test.ts
+    last_verified: 2025-10-20
+    passing: true
+    notes: "GitHub issue filing via MCP"
+```
+
+**Spec Statuses:**
+
+- `draft` - Spec is being written
+- `approved` - Spec is approved but not implemented
+- `implemented` - Code exists but may not be fully tested
+- `verified` - Implementation complete and tests passing
+
+When adding new features, update the manifest to track progress from specification through implementation and testing.
 
 ## MCP Development
 

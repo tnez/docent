@@ -363,7 +363,7 @@ open https://github.com/actions/setup-node
 
 ```bash
 # Edit workflow files
-vim .github/workflows/test.yml
+vim .github/workflows/ci.yml
 vim .github/workflows/lint.yml
 vim .github/workflows/publish.yml
 

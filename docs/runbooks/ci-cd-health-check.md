@@ -7,10 +7,9 @@
 
 ## Overview
 
-This runbook provides procedures for checking the health of our CI/CD pipeline, which runs on GitHub Actions. Our CI/CD includes two main workflows:
+This runbook provides procedures for checking the health of our CI/CD pipeline, which runs on GitHub Actions. Our CI/CD includes:
 
-- **Test workflow** (`test.yml`): Runs installation tests on Ubuntu and macOS
-- **Lint workflow** (`lint.yml`): Runs ShellCheck and Markdown linting
+- **CI workflow** (`ci.yml`): Runs build, tests, ShellCheck, and Markdown linting on Ubuntu and macOS
 
 **Expected duration:** 5-10 minutes for status check; additional time for troubleshooting
 
@@ -136,13 +135,13 @@ gh run download <RUN_ID> --dir ./ci-logs
 
 ```bash
 # List runs for test workflow
-gh run list --workflow=test.yml --limit 10
+gh run list --workflow=ci.yml --limit 10
 
 # List runs for lint workflow
 gh run list --workflow=lint.yml --limit 10
 
 # View status of both workflows for current branch
-gh run list --workflow=test.yml --branch $(git branch --show-current)
+gh run list --workflow=ci.yml --branch $(git branch --show-current)
 gh run list --workflow=lint.yml --branch $(git branch --show-current)
 ```
 
@@ -205,7 +204,7 @@ After completing all steps, verify:
 2. **Both Workflows Passing:**
 
    ```bash
-   gh run list --workflow=test.yml --status success --limit 1
+   gh run list --workflow=ci.yml --status success --limit 1
    gh run list --workflow=lint.yml --status success --limit 1
    ```
 
@@ -350,7 +349,7 @@ npm run build
 
 ```bash
 # Check workflow configuration
-cat .github/workflows/test.yml | grep -A 5 "on:"
+cat .github/workflows/ci.yml | grep -A 5 "on:"
 cat .github/workflows/lint.yml | grep -A 5 "on:"
 
 # Verify branch is configured to trigger workflows
