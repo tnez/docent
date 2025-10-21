@@ -35,6 +35,21 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Run ShellCheck on scripts
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './scripts'
+          severity: warning
+
+      - name: Run ShellCheck on test scripts
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './test'
+          severity: warning
+
+      - name: Lint markdown files
+        uses: DavidAnson/markdownlint-cli2-action@v16
+
       - name: Publish to npm
         run: npm publish --access public --provenance
 
