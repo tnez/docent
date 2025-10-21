@@ -3,8 +3,8 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 import {analyzeProject} from '../../lib/detector.js'
 
-export const initProjectToolDefinition: Tool = {
-  name: 'init-project',
+export const bootstrapToolDefinition: Tool = {
+  name: 'bootstrap',
   description:
     'Bootstrap docent in a project by creating docs/ structure and generating initial documentation based on project analysis',
   inputSchema: {
@@ -22,12 +22,12 @@ export const initProjectToolDefinition: Tool = {
   },
 }
 
-interface InitProjectArgs {
+interface BootstrapArgs {
   path?: string
   force?: boolean
 }
 
-export async function handleInitProjectTool(args: InitProjectArgs): Promise<{content: TextContent[]}> {
+export async function handleBootstrapTool(args: BootstrapArgs): Promise<{content: TextContent[]}> {
   const projectPath = args.path || process.cwd()
   const docsPath = path.join(projectPath, 'docs')
 
@@ -356,7 +356,7 @@ This project uses [docent](https://github.com/tnez/docent) for documentation int
 
 **Initialization Command:**
 
-Run \`docent init\` or explicitly: "read the docent://meta/init-session resource"
+Run \`docent context\` or explicitly: "read the docent://meta/context resource"
 
 **When to Initialize:**
 - At the beginning of a new session (context window is empty)
@@ -403,7 +403,7 @@ async function setupAgentConfig(projectPath: string): Promise<string> {
     let content = await fs.readFile(configPath, 'utf-8')
 
     // Check if docent instructions already exist
-    if (content.includes('## Docent Integration') || content.includes('docent://meta/init-session')) {
+    if (content.includes('## Docent Integration') || content.includes('docent://meta/context')) {
       return `Found existing agent config: ${existingConfig} (already includes docent instructions)`
     }
 

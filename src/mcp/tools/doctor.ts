@@ -4,11 +4,13 @@ import * as path from 'path'
 import {glob} from 'glob'
 import {execSync} from 'child_process'
 import {analyzeProject} from '../../lib/detector.js'
+import {prepareAgentAuditContext} from '../../lib/agent-audit.js'
+import {buildAuditPrompt} from '../../lib/prompt-builder.js'
 
 export const doctorToolDefinition: Tool = {
   name: 'doctor',
   description:
-    'Run comprehensive project health checks including broken links, debug code, test markers, and documentation quality. Use anytime to get actionable insights about project health. Especially useful before releases.',
+    'Run comprehensive project health checks including mechanical checks (broken links, debug code, test markers) and semantic documentation analysis. Use --quick flag for fast mechanical checks only. Especially useful before releases.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -35,6 +37,11 @@ export const doctorToolDefinition: Tool = {
         description: 'Show detailed output for all checks. Default is false (concise output for agent readability)',
         default: false,
       },
+      quick: {
+        type: 'boolean',
+        description: 'Skip semantic documentation analysis (fast mechanical checks only). Default is false (runs full analysis).',
+        default: false,
+      },
     },
   },
 }
@@ -44,6 +51,7 @@ interface DoctorArgs {
   docsDir?: string
   checks?: string[]
   verbose?: boolean
+  quick?: boolean
 }
 
 interface DoctorIssue {
@@ -122,12 +130,30 @@ export async function handleDoctorTool(args: DoctorArgs): Promise<{content: Text
   const summary = buildSummary({healthy, score, issues, summary: ''})
 
   const verbose = args.verbose ?? false
+  const quick = args.quick ?? false
+
+  // Generate main doctor report
+  let reportText = formatDoctorReport({healthy, score, issues, summary}, verbose, quick)
+
+  // Add semantic analysis prompt if not in quick mode
+  if (!quick) {
+    try {
+      const analysis = await analyzeProject(projectPath)
+      const auditContext = await prepareAgentAuditContext(projectPath, docsDir, analysis)
+      const auditPrompt = buildAuditPrompt(auditContext)
+
+      reportText += `\n\n---\n\n${auditPrompt}\n\n---\n\n**Note:** The above prompt provides semantic documentation analysis. Execute it to get a comprehensive quality assessment of your documentation.`
+    } catch (error) {
+      // If audit context fails, just skip it
+      reportText += `\n\n---\n\n**Note:** Semantic documentation analysis unavailable. Use --quick flag for mechanical checks only.`
+    }
+  }
 
   return {
     content: [
       {
         type: 'text' as const,
-        text: formatDoctorReport({healthy, score, issues, summary}, verbose),
+        text: reportText,
       },
     ],
   }
@@ -951,7 +977,7 @@ function buildSummary(result: DoctorResult): string {
 /**
  * Format doctor report as markdown
  */
-function formatDoctorReport(result: DoctorResult, verbose: boolean): string {
+function formatDoctorReport(result: DoctorResult, verbose: boolean, quick: boolean): string {
   const {healthy, score, issues} = result
 
   let report = '# Project Health Check\n\n'
@@ -983,7 +1009,8 @@ function formatDoctorReport(result: DoctorResult, verbose: boolean): string {
 
   report += `**Status:** ${healthy ? '✓ Healthy' : '✗ Issues Found'}\n`
   report += `**Health Score:** ${scoreEmoji} ${score}/100 (${scoreLabel})\n`
-  report += `**Found:** ${errors.length} errors, ${warnings.length} warnings, ${infos.length} suggestions\n\n`
+  report += `**Found:** ${errors.length} errors, ${warnings.length} warnings, ${infos.length} suggestions\n`
+  report += `**Mode:** ${quick ? 'Quick (mechanical checks only)' : 'Full (mechanical + semantic analysis)'}\n\n`
 
   if (issues.length === 0) {
     report += '🎉 No issues found! Project is ready for release.\n'

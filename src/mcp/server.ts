@@ -19,7 +19,7 @@ import {getTemplateToolDefinition, handleGetTemplateTool} from './tools/get-temp
 import {captureWorkToolDefinition, handleCaptureWorkTool} from './tools/capture-work.js'
 import {resumeWorkToolDefinition, handleResumeWorkTool} from './tools/resume-work.js'
 import {reviewRfcToolDefinition, handleReviewRfcTool} from './tools/review-rfc.js'
-import {initProjectToolDefinition, handleInitProjectTool} from './tools/init-project.js'
+import {bootstrapToolDefinition, handleBootstrapTool} from './tools/bootstrap.js'
 import {fileIssueToolDefinition, handleFileIssueTool} from './tools/file-issue.js'
 
 // Import resource and prompt handlers
@@ -59,7 +59,7 @@ const promptBuilder = new PromptBuilder()
 
 // Register all available tools
 const tools = [
-  initProjectToolDefinition,
+  bootstrapToolDefinition,
   analyzeToolDefinition,
   auditToolDefinition,
   doctorToolDefinition,
@@ -84,14 +84,29 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   try {
     switch (name) {
-      case 'init-project':
-        return await handleInitProjectTool(args as {path?: string; force?: boolean})
+      case 'bootstrap':
+        return await handleBootstrapTool(args as {path?: string; force?: boolean})
+      case 'init-project': {
+        // Backward compatibility - deprecated
+        const result = await handleBootstrapTool(args as {path?: string; force?: boolean})
+        // Prepend deprecation warning to result
+        result.content[0].text = `⚠️  DEPRECATION: 'init-project' has been renamed to 'bootstrap'. Please update your scripts.\n\n${result.content[0].text}`
+        return result
+      }
       case 'analyze':
         return await handleAnalyzeTool(args as {path: string})
-      case 'audit':
-        return await handleAuditTool(args as {path: string; docsDir?: string})
       case 'doctor':
-        return await handleDoctorTool(args as {path?: string; docsDir?: string; checks?: string[]})
+        return await handleDoctorTool(args as {path?: string; docsDir?: string; checks?: string[]; quick?: boolean})
+      case 'audit': {
+        // Backward compatibility - deprecated, now merged into doctor
+        const result = await handleDoctorTool({
+          ...args as {path: string; docsDir?: string},
+          quick: false, // Always include semantic analysis for audit
+        })
+        // Prepend deprecation warning
+        result.content[0].text = `⚠️ DEPRECATION: 'audit' has been merged into 'doctor'. Use 'doctor' for full analysis or 'doctor --quick' for fast checks.\n\n${result.content[0].text}`
+        return result
+      }
       case 'list-templates':
         return await handleListTemplatesTool()
       case 'get-template':

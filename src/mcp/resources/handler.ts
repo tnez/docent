@@ -123,8 +123,8 @@ export class ResourceHandler {
   private listMetaResources(): Resource[] {
     const resources: Resource[] = [
       {
-        uri: 'docent://meta/init-session',
-        name: 'Session Initialization',
+        uri: 'docent://meta/context',
+        name: 'Session Context',
         description: 'Bootstrap work session with project context, available resources, journal workflow, and docent usage guidelines. Invoke this at the start of a session to get oriented.',
         mimeType: 'text/markdown',
       },
@@ -140,7 +140,7 @@ export class ResourceHandler {
       resources.push({
         uri: 'docent://meta/setup-needed',
         name: '⚠️ Docent Setup Required',
-        description: 'This project needs docent initialization. Run the init-project tool to create docs/ structure and generate initial documentation based on project analysis.',
+        description: 'This project needs docent initialization. Run the bootstrap tool to create docs/ structure and generate initial documentation based on project analysis.',
         mimeType: 'text/markdown',
       })
     }
@@ -396,22 +396,27 @@ export class ResourceHandler {
    * Read meta resource (prompts exposed as resources)
    */
   private async readMeta(identifier: string): Promise<ResourceContent> {
-    if (identifier === 'init-session') {
-      // Import PromptBuilder to generate init-session content
+    if (identifier === 'context' || identifier === 'init-session') {
+      // Import PromptBuilder to generate session context
       const {PromptBuilder} = await import('../prompts/builder')
       const promptBuilder = new PromptBuilder(this.ctx.projectPath)
       const result = await promptBuilder.build('init-session', {})
 
       // Extract text from messages
-      const text = result.messages.map((m) => {
+      let text = result.messages.map((m) => {
         if (m.content.type === 'text') {
           return m.content.text
         }
         return ''
       }).join('\n\n')
 
+      // Add deprecation warning if using old identifier
+      if (identifier === 'init-session') {
+        text = `⚠️ DEPRECATION: 'docent://meta/init-session' has been renamed to 'docent://meta/context'. Please update your references.\n\n${text}`
+      }
+
       return {
-        uri: 'docent://meta/init-session',
+        uri: `docent://meta/${identifier}`,
         mimeType: 'text/markdown',
         text,
       }
@@ -424,22 +429,22 @@ This project has not been initialized with docent yet.
 
 ## What You Need to Do
 
-Run the \`init-project\` tool to bootstrap docent:
+Run the \`bootstrap\` tool to bootstrap docent:
 
 \`\`\`typescript
 // Via MCP tool call
-mcp.callTool('init-project', {})
+mcp.callTool('bootstrap', {})
 
 // Or with custom path
-mcp.callTool('init-project', {path: '/path/to/project'})
+mcp.callTool('bootstrap', {path: '/path/to/project'})
 
 // Force reinitialize (if docs/ already exists)
-mcp.callTool('init-project', {force: true})
+mcp.callTool('bootstrap', {force: true})
 \`\`\`
 
 ## What This Will Create
 
-The \`init-project\` tool will:
+The \`bootstrap\` tool will:
 
 1. **Analyze your project** - Detect languages, frameworks, and build tools
 2. **Create docs/ structure** - Set up guides/, runbooks/, adr/, rfcs/, specs/, architecture/
@@ -457,7 +462,7 @@ Once initialized, you can:
 - Resume sessions via \`resume-work\` tool
 - Run documentation audits via \`audit\` tool
 
-Run \`init-project\` now to get started!
+Run \`bootstrap\` now to get started!
 `
 
       return {
