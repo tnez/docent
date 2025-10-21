@@ -726,8 +726,8 @@ async function checkStructureReconciliation(projectPath: string, docsDir: string
         const content = await fs.readFile(file, 'utf-8')
 
         // Extract file/directory paths from inline code
-        // Matches: /path/to/file.ext, path/to/file.ext, ./relative/path
-        const pathRegex = /`([./][\w\-./]+\.(ts|js|tsx|jsx|json|md|toml|yaml|yml|lock|sh|bash))`/g
+        // Matches: /path/to/file.ext, path/to/file.ext, ./relative/path, filename.ext
+        const pathRegex = /`([./]?[\w\-/]+\.(ts|js|tsx|jsx|json|md|toml|yaml|yml|lock|sh|bash))`/g
         let match
 
         while ((match = pathRegex.exec(content)) !== null) {
@@ -740,6 +740,9 @@ async function checkStructureReconciliation(projectPath: string, docsDir: string
         // Skip files we can't read
       }
     }
+
+    // Debug: log documented paths for troubleshooting
+    // console.log('Documented paths:', Array.from(documentedPaths))
 
     // Forward check: documented paths that don't exist
     for (const docPath of documentedPaths) {
@@ -756,6 +759,28 @@ async function checkStructureReconciliation(projectPath: string, docsDir: string
         await fs.access(fullPath)
         // File exists - all good
       } catch {
+        // If it's a bare filename (no directory separator), check if it exists in common directories
+        // This handles cases where docs mention "script.sh" and the file is at "scripts/script.sh"
+        if (!cleanPath.includes('/')) {
+          const commonDirs = ['scripts', 'bin', 'tools']
+          let foundInCommonDir = false
+
+          for (const dir of commonDirs) {
+            try {
+              await fs.access(path.join(projectPath, dir, cleanPath))
+              foundInCommonDir = true
+              break
+            } catch {
+              // Continue checking other directories
+            }
+          }
+
+          if (foundInCommonDir) {
+            // File exists in a common directory - skip reporting as missing
+            continue
+          }
+        }
+
         // File doesn't exist - report mismatch
         issues.push({
           type: 'warning',
@@ -901,6 +926,13 @@ async function checkUndocumentedFiles(
     for (const file of allFiles) {
       // Skip if this exact path is documented
       if (documentedPaths.has(file) || documentedPaths.has(`/${file}`) || documentedPaths.has(`./${file}`)) {
+        continue
+      }
+
+      // Also check if basename (filename without directory) is documented
+      // This handles cases where docs mention "script.sh" in context of scripts/ directory
+      const basename = path.basename(file)
+      if (documentedPaths.has(basename) || documentedPaths.has(`/${basename}`) || documentedPaths.has(`./${basename}`)) {
         continue
       }
 
