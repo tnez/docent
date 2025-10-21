@@ -83,8 +83,10 @@ Docent exposes three types of MCP capabilities:
 
 ### Tools
 
+- **`bootstrap`** - Initialize docent in a project
 - **`analyze`** - Project structure, languages, frameworks
-- **`audit`** - Semantic documentation assessment
+- **`doctor`** - Comprehensive health checks (mechanical + semantic analysis)
+  - Use `--quick` flag for fast mechanical checks only
 - **`list-templates`** - Available documentation templates
 - **`get-template`** - Fetch a specific template
 - **`capture-work`** - Append to work journal

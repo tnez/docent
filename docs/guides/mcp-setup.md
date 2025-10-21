@@ -60,9 +60,10 @@ In Claude Desktop, ask:
 
 You should see:
 
+- `bootstrap` - Initialize docent in a project
 - `analyze` - Project structure analysis
-- `audit` - Agent-driven documentation quality assessment
-- `audit` - Heuristic documentation audit (fast, for CI/CD)
+- `doctor` - Comprehensive health checks (mechanical + semantic analysis)
+  - Use `--quick` flag for fast mechanical checks only
 
 ## Available Tools
 
@@ -90,68 +91,63 @@ Analyzes project structure, languages, frameworks, and build tools.
 }
 ```
 
-### audit
+### bootstrap
 
-Generates an agent-driven documentation quality assessment prompt with full project context.
+Initializes docent in a project by creating docs/ structure and initial documentation.
 
 **Input:**
 
 ```json
 {
   "path": "/path/to/project",
-  "docsDir": "docs"  // optional, defaults to "docs"
+  "force": false  // optional, force reinit if docs/ exists
 }
 ```
 
 **Output:**
-A comprehensive prompt (13,000+ characters) including:
+Creates documentation structure and returns confirmation with next steps.
 
-- Project context (languages, frameworks, tests, APIs)
-- Documentation metadata (files, sizes, headings, timestamps)
-- Heuristic baseline (for comparison)
-- Assessment guidelines (semantic analysis, context-aware scoring)
-- Expected JSON response format
+### doctor
 
-**Usage:**
-When an agent receives this prompt, it analyzes the documentation semantically and returns a structured assessment with:
+Runs comprehensive project health checks including mechanical checks and semantic documentation analysis.
 
-- Overall quality score (0-100) with rationale
-- Critical gaps with actionable suggestions
-- Prioritized recommendations (high/medium/low)
-- Strengths to acknowledge
+**Input:**
+
+```json
+{
+  "path": "/path/to/project",
+  "docsDir": "docs",  // optional, defaults to "docs"
+  "quick": false      // optional, skip semantic analysis for speed
+}
+```
+
+**Output:**
+A comprehensive health report including:
+
+**Mechanical Checks:**
+
+- Broken links in documentation
+- Debug code in source files
+- Test markers (.only, .skip)
+- Uncommitted changes
+- Temporary files
+- Structure reconciliation
+
+**Semantic Analysis (unless --quick):**
+
+- Documentation quality assessment prompt
+- Context-aware scoring guidelines
+- Project-specific recommendations
+
+**Modes:**
+
+- **Full (default):** Mechanical checks + semantic analysis prompt
+- **Quick (`quick: true`):** Mechanical checks only (fast, for pre-commit)
 
 **Performance:**
 
-- Agent analysis: ~73/100 (contextual, semantic understanding)
-- Heuristic baseline: ~21/100 (pattern matching, 87% false positive rate)
-- **3.5x improvement** with agent reasoning
-
-### audit
-
-Performs fast heuristic-based documentation audit (legacy, for CI/CD).
-
-**Input:**
-
-```json
-{
-  "path": "/path/to/project",
-  "docsDir": "docs"  // optional
-}
-```
-
-**Output:**
-
-```json
-{
-  "score": 21,
-  "gaps": [{category, severity, description, suggestion}],
-  "coverage": {hasArchitecture, hasADRs, ...},
-  "recommendations": ["..."],
-  "timestamp": "2025-10-13T..."
-}
-```
-
-**Note:** Use `audit` for deep analysis. This tool is for quick CI/CD checks.
+- Quick mode: ~0.5s (mechanical checks only)
+- Full mode: ~1s mechanical + semantic prompt for agent analysis
 
 ## Example Workflow
 
@@ -161,22 +157,22 @@ Performs fast heuristic-based documentation audit (legacy, for CI/CD).
 
 Agent calls `analyze` and gets project structure.
 
-### 2. Deep Documentation Audit
+### 2. Run Health Check
 
-> "Use audit to assess the documentation in /Users/me/my-project"
+> "Run doctor on /Users/me/my-project"
 
 Agent:
 
-1. Calls `audit` to get the prompt
-2. Reads the context (project type, doc files, heuristic baseline)
-3. Analyzes semantically (not just pattern matching)
-4. Returns structured assessment with score, gaps, recommendations
+1. Calls `doctor` (full mode by default)
+2. Gets mechanical check results (links, debug code, etc.)
+3. Receives semantic analysis prompt
+4. Analyzes documentation quality and provides recommendations
 
-### 3. Quick Heuristic Check
+### 3. Quick Pre-Commit Check
 
-> "Run a quick audit on /Users/me/my-project for CI"
+> "Run a quick health check on /Users/me/my-project"
 
-Agent calls `audit` and gets fast heuristic results.
+Agent calls `doctor` with `quick: true` for fast mechanical checks only.
 
 ## Architecture
 
@@ -192,9 +188,9 @@ Agent calls `audit` and gets fast heuristic results.
 │  (lib/mcp/server.js)│
 └──────────┬──────────┘
            │
+           ├─→ bootstrap tool → bootstrap.ts
            ├─→ analyze tool → detector.ts
-           ├─→ audit → agent-audit.ts + prompt-builder.ts
-           └─→ audit tool → auditor.ts (heuristic)
+           └─→ doctor tool → doctor.ts + agent-audit.ts
 ```
 
 ## Troubleshooting
@@ -243,9 +239,9 @@ Docent originally planned dual CLI+MCP interfaces (see [RFC-0001](../rfcs/rfc-00
 
 ```typescript
 // Agent code
-const audit = await mcp.callTool('audit', {path: '.'})
-// Returns structured prompt + context
-// Agent analyzes and responds with JSON
+const healthCheck = await mcp.callTool('doctor', {path: '.'})
+// Returns mechanical checks + semantic analysis prompt
+// Agent analyzes and provides recommendations
 ```
 
 **Why MCP-only:**
@@ -254,7 +250,7 @@ const audit = await mcp.callTool('audit', {path: '.'})
 - Structured data built for agents
 - Works in sandboxed environments
 - Persistent connection (fast)
-- Agents required anyway (heuristics insufficient)
+- Agent-driven analysis outperforms heuristics
 
 ## Next Steps
 

@@ -11,11 +11,11 @@ When Claude Code's context window resets (via `/compact` or automatic compaction
 - Work journal continuity
 - Template and tool awareness
 
-Manually running `docent init` after every compaction is tedious and easy to forget.
+Manually running `docent context` after every compaction is tedious and easy to forget.
 
 ## The Solution: CLAUDE.md Instructions
 
-The recommended approach is to add initialization instructions to `.claude/CLAUDE.md` (or `CLAUDE.md` at project root) that instruct Claude to run `docent init` as its first action in every session.
+The recommended approach is to add initialization instructions to `.claude/CLAUDE.md` (or `CLAUDE.md` at project root) that instruct Claude to run `docent context` as its first action in every session.
 
 **Why not SessionStart hooks?** MCP servers initialize asynchronously and may not be ready when SessionStart hooks execute. Instructions in CLAUDE.md are processed after MCP servers are available.
 
@@ -35,10 +35,10 @@ Add the following to `.claude/CLAUDE.md` (or create it at project root as `CLAUD
 Immediately run:
 
 \`\`\`
-docent init
+docent context
 \`\`\`
 
-Or explicitly: "read the docent://meta/init-session resource"
+Or explicitly: "read the docent://meta/context resource"
 
 ### When to Initialize
 
@@ -78,8 +78,8 @@ Optionally create `.claude/hooks/SessionStart.md` as a reminder (but NOT to exec
 
 After this hook and your first message:
 
-1. Check if docent init content is already in context (look earlier in conversation)
-2. If NOT present AND MCP is available: Run `docent init`
+1. Check if docent context content is already in context (look earlier in conversation)
+2. If NOT present AND MCP is available: Run `docent context`
 3. If MCP not available: Inform user to check MCP server status
 
 **Note:** When resuming with `--continue`, init content is already present - no need to reinitialize.
@@ -103,7 +103,7 @@ To verify the hook is working:
 2. Check if docent resources are automatically available (the agent should have immediate awareness of your project docs)
 3. Try `/compact` and verify context is restored
 
-You shouldn't need to manually run `docent init` anymore.
+You shouldn't need to manually run `docent context` anymore.
 
 ## How It Works
 
@@ -113,7 +113,7 @@ When Claude Code starts a session:
 2. MCP servers initialize asynchronously
 3. User sends first message (or warmup occurs)
 4. Claude checks for MCP availability
-5. Claude runs `docent init` to read `docent://meta/init-session`
+5. Claude runs `docent context` to read `docent://meta/context`
 6. Resource dynamically gathers current project state:
    - Available documentation (guides, runbooks, ADRs, RFCs)
    - Recent journal entries
@@ -125,13 +125,13 @@ After compaction:
 
 1. CLAUDE.md instructions are still in context
 2. MCP servers are already initialized
-3. Claude runs `docent init` at start of resumed session
+3. Claude runs `docent context` at start of resumed session
 4. Fresh context is loaded
 5. Agent maintains continuity despite context window reset
 
 ## Benefits
 
-- **Zero friction**: No manual `docent init` needed
+- **Zero friction**: No manual `docent context` needed
 - **Post-compact recovery**: Context automatically restored
 - **Always current**: Pulls latest docs/journal state
 - **Transparent**: User doesn't see the initialization
@@ -141,8 +141,8 @@ After compaction:
 If you prefer not to use hooks, you can still manually initialize:
 
 ```
-User: "docent init"
-Assistant: [reads docent://meta/init-session]
+User: "docent context"
+Assistant: [reads docent://meta/context]
 ```
 
 This works but requires remembering to do it after each compaction.
@@ -167,14 +167,14 @@ The SessionStart hook is Claude Code's dynamic solution for post-compaction cont
 
 **Solutions**:
 
-- Wait a moment and manually run `docent init`
+- Wait a moment and manually run `docent context`
 - Check MCP server status: `/mcp status`
 - Verify docent is configured in `~/.claude.json` or project settings
 - Restart Claude Code if MCP servers fail to initialize
 
 ### Context Not Applied After Init
 
-**Symptoms**: Agent runs `docent init` but doesn't seem to have documentation awareness
+**Symptoms**: Agent runs `docent context` but doesn't seem to have documentation awareness
 
 **Solutions**:
 
@@ -186,7 +186,7 @@ The SessionStart hook is Claude Code's dynamic solution for post-compaction cont
 
 ### Initialization Slows Down Session Start
 
-**Symptoms**: Noticeable delay when running `docent init`
+**Symptoms**: Noticeable delay when running `docent context`
 
 **Solutions**:
 

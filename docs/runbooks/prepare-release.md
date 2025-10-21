@@ -252,7 +252,7 @@ npm install /path/to/docent/tnezdev-docent-X.Y.Z.tgz
 ./node_modules/.bin/docent --version 2>/dev/null || echo "Binary check"
 
 # Test in MCP client if available
-# (Manual verification - test basic tools: analyze, list-templates, init-project)
+# (Manual verification - test basic tools: analyze, list-templates, bootstrap)
 
 # Cleanup
 cd /path/to/docent
