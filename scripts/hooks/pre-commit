@@ -2,42 +2,102 @@
 #
 # Pre-commit hook for docent
 #
-# This hook runs markdown linting on staged .md files before allowing a commit.
-# If linting fails, the commit is blocked.
+# This hook runs comprehensive checks before allowing a commit:
+# - TypeScript compilation (build)
+# - Unit tests
+# - ShellCheck on staged .sh files
+# - Markdown linting on staged .md files
 #
-# To bypass this hook, use: git commit --no-verify
+# To bypass this hook, use: git commit --no-verify (not recommended)
 #
+
+set -e
 
 # Get the project root (where .git directory is)
 PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+cd "$PROJECT_ROOT" || exit 1
 
-# Get list of staged markdown files
+echo "Running pre-commit checks..."
+echo ""
+
+# Get list of staged files
+STAGED_SH=$(git diff --cached --name-only --diff-filter=ACM | grep '\.sh$' || true)
 STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep '\.md$' || true)
+STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|js)$' || true)
 
-# If no markdown files are staged, skip linting
-if [ -z "$STAGED_MD" ]; then
-    exit 0
+FAILED=0
+
+# 1. Build TypeScript (catches compilation errors)
+if [ -n "$STAGED_TS" ]; then
+    echo "→ Running TypeScript build..."
+    if ! npm run build > /dev/null 2>&1; then
+        echo "❌ TypeScript compilation failed"
+        echo "   Run: npm run build"
+        FAILED=1
+    else
+        echo "✓ TypeScript build passed"
+    fi
+    echo ""
 fi
 
-echo "Running markdown linting on staged files..."
+# 2. Run tests
+echo "→ Running unit tests..."
+if ! npm test > /dev/null 2>&1; then
+    echo "❌ Tests failed"
+    echo "   Run: npm test"
+    FAILED=1
+else
+    echo "✓ Tests passed"
+fi
+echo ""
 
-# Convert relative paths to absolute paths from project root
-# and pass them to the lint script
-cd "$PROJECT_ROOT"
+# 3. ShellCheck on staged shell scripts
+if [ -n "$STAGED_SH" ]; then
+    echo "→ Running ShellCheck on staged shell scripts..."
+    SHELLCHECK_FAILED=0
+    for file in $STAGED_SH; do
+        if ! shellcheck "$file" 2>&1; then
+            SHELLCHECK_FAILED=1
+        fi
+    done
 
-# Run lint script with staged files
-# shellcheck disable=SC2086
-if ! "$PROJECT_ROOT/scripts/lint-markdown.sh" $STAGED_MD; then
+    if [ $SHELLCHECK_FAILED -eq 1 ]; then
+        echo "❌ ShellCheck failed"
+        echo "   Fix issues above or run: shellcheck <file>"
+        FAILED=1
+    else
+        echo "✓ ShellCheck passed"
+    fi
     echo ""
-    echo "❌ Markdown linting failed"
+fi
+
+# 4. Markdown linting on staged files
+if [ -n "$STAGED_MD" ]; then
+    echo "→ Running markdown linting on staged files..."
+    # shellcheck disable=SC2086
+    if ! "$PROJECT_ROOT/scripts/lint-markdown.sh" $STAGED_MD > /dev/null 2>&1; then
+        echo "❌ Markdown linting failed"
+        echo "   Run: scripts/lint-markdown.sh --fix <file>"
+        FAILED=1
+    else
+        echo "✓ Markdown linting passed"
+    fi
+    echo ""
+fi
+
+# Final result
+if [ $FAILED -eq 1 ]; then
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "❌ Pre-commit checks failed"
     echo ""
     echo "Options:"
-    echo "  1. Fix errors manually and re-commit"
-    echo "  2. Run: scripts/lint-markdown.sh --fix <file>"
-    echo "  3. Bypass hook: git commit --no-verify (not recommended)"
-    echo ""
+    echo "  1. Fix the errors above and re-commit"
+    echo "  2. Bypass hook: git commit --no-verify (not recommended)"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     exit 1
 fi
 
-echo "✓ Markdown linting passed"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✓ All pre-commit checks passed"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 exit 0
