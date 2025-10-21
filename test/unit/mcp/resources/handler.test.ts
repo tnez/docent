@@ -73,22 +73,22 @@ describe('ResourceHandler', () => {
   })
 
   describe('Meta resources', () => {
-    it('should list init-session meta resource', async () => {
+    it('should list context meta resource', async () => {
       const ctx = createContext(process.cwd())
       const handler = new ResourceHandler(ctx)
       const resources = await handler.list()
 
-      const initSession = resources.find((r) => r.uri === 'docent://meta/init-session')
-      expect(initSession).to.exist
-      expect(initSession?.name).to.equal('Session Initialization')
+      const context = resources.find((r) => r.uri === 'docent://meta/context')
+      expect(context).to.exist
+      expect(context?.name).to.equal('Session Context')
     })
 
-    it('should read init-session resource and return content', async () => {
+    it('should read context resource and return content', async () => {
       const ctx = createContext(process.cwd())
       const handler = new ResourceHandler(ctx)
-      const content = await handler.read('docent://meta/init-session')
+      const content = await handler.read('docent://meta/context')
 
-      expect(content.uri).to.equal('docent://meta/init-session')
+      expect(content.uri).to.equal('docent://meta/context')
       expect(content.mimeType).to.equal('text/markdown')
       expect(content.text).to.include('Session Initialization')
       expect(content.text).to.include('CRITICAL BEHAVIORAL REQUIREMENTS')
