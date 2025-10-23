@@ -2,6 +2,16 @@ import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 import {analyzeProject} from '../../lib/detector.js'
+import {
+  parseTemplateUrl,
+  cloneTemplate,
+  copyLocalTemplate,
+  validateTemplate,
+  createTempDir,
+  cleanupTempDir,
+  copyTemplateDocs,
+  backupExistingDocs,
+} from '../../lib/template.js'
 
 export const bootstrapToolDefinition: Tool = {
   name: 'bootstrap',
@@ -18,6 +28,11 @@ export const bootstrapToolDefinition: Tool = {
         type: 'boolean',
         description: 'Force initialization even if docs/ already exists',
       },
+      template: {
+        type: 'string',
+        description:
+          'Git repository URL or local path to a template. Supports GitHub/GitLab URLs with branch/tag (e.g., https://github.com/user/repo#v1.0)',
+      },
     },
   },
 }
@@ -25,6 +40,7 @@ export const bootstrapToolDefinition: Tool = {
 interface BootstrapArgs {
   path?: string
   force?: boolean
+  template?: string
 }
 
 export async function handleBootstrapTool(args: BootstrapArgs): Promise<{content: TextContent[]}> {
@@ -49,25 +65,88 @@ export async function handleBootstrapTool(args: BootstrapArgs): Promise<{content
       }
     }
 
+    // Handle template if provided
+    let templateInfo: string | undefined
+    let backupInfo: string | undefined
+    let tempDir: string | undefined
+
+    if (args.template) {
+      try {
+        const parsed = parseTemplateUrl(args.template)
+        tempDir = await createTempDir()
+
+        // Clone or copy template
+        if (parsed.isLocal) {
+          await copyLocalTemplate(parsed.gitUrl, tempDir)
+          templateInfo = `Applied local template: ${parsed.gitUrl}`
+        } else {
+          await cloneTemplate(parsed, tempDir)
+          templateInfo = `Applied template: ${parsed.name}${parsed.ref ? ` (${parsed.ref})` : ' (main branch)'}`
+        }
+
+        // Validate template
+        const validation = await validateTemplate(tempDir)
+        if (!validation.valid) {
+          throw new Error(
+            `Template validation failed:\n  ${validation.errors.join('\n  ')}\n\n` +
+              `Valid templates must have:\n` +
+              `  - docs/ directory at repository root\n` +
+              `  - At least one file or subdirectory in docs/`,
+          )
+        }
+
+        // Backup existing docs if force flag is used
+        if (docsExists && args.force) {
+          backupInfo = await backupExistingDocs(docsPath)
+          await fs.rm(docsPath, {recursive: true, force: true})
+        }
+
+        // Copy template docs/ to project
+        await copyTemplateDocs(tempDir, docsPath)
+      } finally {
+        // Always clean up temp directory
+        if (tempDir) {
+          await cleanupTempDir(tempDir)
+        }
+      }
+    } else {
+      // Create directory structure (standard bootstrap without template)
+      await createDirectoryStructure(docsPath)
+    }
+
     // Analyze project for context
     const analysis = await analyzeProject(projectPath)
 
-    // Create directory structure
-    await createDirectoryStructure(docsPath)
+    // Generate or update files based on whether template was used
+    if (!args.template) {
+      // Standard bootstrap: generate all files
+      const readme = generateReadme(analysis)
+      await fs.writeFile(path.join(docsPath, 'README.md'), readme, 'utf-8')
 
-    // Generate README.md
-    const readme = generateReadme(analysis)
-    await fs.writeFile(path.join(docsPath, 'README.md'), readme, 'utf-8')
+      const gettingStarted = generateGettingStartedGuide(analysis)
+      await fs.mkdir(path.join(docsPath, 'guides'), {recursive: true})
+      await fs.writeFile(path.join(docsPath, 'guides', 'getting-started.md'), gettingStarted, 'utf-8')
+    } else {
+      // With template: only generate getting-started if it doesn't exist
+      const gettingStartedPath = path.join(docsPath, 'guides', 'getting-started.md')
+      const gettingStartedExists = await fs
+        .access(gettingStartedPath)
+        .then(() => true)
+        .catch(() => false)
 
-    // Generate getting-started guide
-    const gettingStarted = generateGettingStartedGuide(analysis)
-    await fs.mkdir(path.join(docsPath, 'guides'), {recursive: true})
-    await fs.writeFile(path.join(docsPath, 'guides', 'getting-started.md'), gettingStarted, 'utf-8')
+      if (!gettingStartedExists) {
+        const gettingStarted = generateGettingStartedGuide(analysis)
+        await fs.mkdir(path.join(docsPath, 'guides'), {recursive: true})
+        await fs.writeFile(gettingStartedPath, gettingStarted, 'utf-8')
+      }
+    }
 
     // Setup agent configuration
     const agentConfigResult = await setupAgentConfig(projectPath)
 
     const summary = `✓ Initialized docent in ${projectPath}
+${templateInfo ? `\n${templateInfo}` : ''}
+${backupInfo ? `\nBackup created: ${backupInfo}` : ''}
 
 Created structure:
   docs/

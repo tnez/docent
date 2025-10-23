@@ -18,3 +18,13 @@ specs:
     last_verified: 2025-10-20
     passing: true
     notes: "GitHub issue filing via MCP"
+
+  bootstrap-templates:
+    version: 1.0.0
+    status: implemented
+    spec_file: specs/bootstrap-templates.md
+    implementation: src/lib/template.ts, src/mcp/tools/bootstrap.ts
+    tests: test/unit/lib/template.test.ts
+    last_verified: 2025-10-23
+    passing: true
+    notes: "Git-based bootstrap templates with GitHub/GitLab/local support, branch/tag refs, .docentrc.yaml config"
