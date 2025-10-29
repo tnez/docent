@@ -4,657 +4,226 @@ Comprehensive reference for docent's Model Context Protocol (MCP) server capabil
 
 ## Overview
 
-Docent exposes three types of MCP capabilities:
+Docent provides four natural language MCP tools that enable AI agents to:
 
-- **Tools** - Functions agents invoke with parameters to perform actions
-- **Resources** - Content agents can read via URIs (templates, docs, journal)
-- **Prompts** - Pre-defined prompt templates for common workflows
+- **start** - Initialize sessions and discover available resources
+- **ask** - Search documentation to answer questions
+- **act** - Execute runbooks and create from templates
+- **tell** - Capture knowledge in natural language
+
+All tools accept natural language input - no rigid command syntax required.
 
 ## Tools
 
-Tools perform actions and return data to agents.
+### start
 
-### `analyze`
-
-Analyze project structure, languages, frameworks, and build tools.
+Initialize docent session and list available resources.
 
 **Parameters:**
 
 ```typescript
 {
-  path: string  // Path to project directory (required)
+  path?: string  // Optional project path (defaults to current directory)
 }
 ```
 
 **Returns:**
 
-```json
-{
-  "languages": ["TypeScript", "JavaScript"],
-  "frameworks": ["MCP", "Express"],
-  "buildTools": ["npm"],
-  "structure": {
-    "hasTests": true,
-    "hasDocs": true,
-    "sourceDir": "src"
-  }
-}
-```
+Markdown-formatted response including:
+
+- Available templates (adr, rfc, runbook, etc.)
+- Available runbooks (bootstrap, health-check, git-commit, etc.)
+- Project information
+- Usage instructions
 
 **Example Usage:**
 
 ```typescript
 // Via MCP
-const result = await client.callTool('analyze', {
+const result = await client.callTool('start', {
   path: '/path/to/project'
 })
 
 // Via Claude Code
-"Use docent to analyze this project"
+"Initialize docent"
+"Start docent in this project"
 ```
+
+**Use Cases:**
+
+- Beginning a new session
+- Discovering what's available
+- Getting quick reference information
 
 ---
 
-### `audit`
+### ask
 
-Assess documentation quality using agent-driven semantic analysis. Returns a structured prompt for deep evaluation.
+Search all documentation to answer questions.
 
 **Parameters:**
 
 ```typescript
 {
-  path: string       // Path to project directory (required)
-  docsDir?: string   // Documentation directory name (default: "docs")
+  query: string      // Your question in natural language (required)
+  path?: string      // Project path (defaults to current directory)
+  limit?: number     // Max results to return (default: 10)
 }
 ```
 
 **Returns:**
 
-A comprehensive assessment prompt including:
+Markdown-formatted search results with:
 
-- Project context (languages, frameworks, structure)
-- Documentation inventory (all markdown files found)
-- Quality assessment criteria (completeness, accuracy, coherence, depth)
-- Scoring guidance
+- Matching documentation excerpts
+- File paths and context
+- Relevance-ranked results
 
 **Example Usage:**
 
 ```typescript
 // Via MCP
-const prompt = await client.callTool('audit', {
-  path: '/path/to/project',
-  docsDir: 'documentation'  // optional
+const result = await client.callTool('ask', {
+  query: 'how do I run tests',
+  limit: 5
 })
 
 // Via Claude Code
-"Use docent to audit our documentation"
+"How do I run tests in this project?"
+"What's our authentication approach?"
+"Search docs for API documentation"
 ```
+
+**Use Cases:**
+
+- Answering questions about the project
+- Finding relevant documentation
+- Understanding implementation details
+- Discovering existing patterns
 
 ---
 
-### `list-templates`
+### act
 
-List all available documentation templates.
-
-**Parameters:** None
-
-**Returns:**
-
-```json
-{
-  "templates": [
-    {
-      "type": "adr",
-      "name": "Architecture Decision Record",
-      "description": "Document significant architectural decisions"
-    },
-    {
-      "type": "rfc",
-      "name": "Request for Comments",
-      "description": "Propose and discuss significant changes"
-    }
-    // ... 10 total templates
-  ]
-}
-```
-
-**Available Templates:**
-
-- `adr` - Architecture Decision Records
-- `rfc` - Request for Comments
-- `prd` - Product Requirements Documents
-- `architecture-overview` - System architecture
-- `api-documentation` - API reference
-- `onboarding` - Developer onboarding
-- `testing` - Testing philosophy
-- `runbook` - Operational procedures
-- `standards` - Coding standards
-- `spec` - Behavioral specifications
-- `patterns` - Design patterns
-- `troubleshooting` - Troubleshooting guides
-- `writing-software` - Software writing guide
-
-**Example Usage:**
-
-```typescript
-// Via MCP
-const templates = await client.callTool('list-templates', {})
-
-// Via Claude Code
-"Show me available docent templates"
-```
-
----
-
-### `get-template`
-
-Retrieve a specific documentation template.
+Execute runbooks or create files from templates.
 
 **Parameters:**
 
 ```typescript
 {
-  type: string  // Template type (e.g., "adr", "rfc", "spec")
+  directive: string  // What to do, in natural language (required)
+  path?: string      // Project path (defaults to current directory)
 }
 ```
+
+**Recognizes Two Types of Actions:**
+
+1. **Runbook execution** - Follows operational procedures
+   - "bootstrap" - Set up .docent directory
+   - "health-check" - Run project health checks
+   - "git-commit" - Create professional commits
+   - "file-issue" - File GitHub issues
+   - Custom runbooks in `.docent/runbooks/`
+
+2. **Template creation** - Creates files from templates
+   - "create adr [title]" - Architecture Decision Record
+   - "create rfc [title]" - Request for Comments
+   - "create runbook [title]" - Operational procedure
+   - Other templates: prd, journal-entry, meeting-notes, etc.
 
 **Returns:**
 
-```json
-{
-  "content": "# [Template Title]\n\n[Template content...]",
-  "type": "adr",
-  "name": "Architecture Decision Record"
-}
-```
+- For runbooks: Markdown-formatted instructions to follow
+- For templates: Confirmation with file path created
 
 **Example Usage:**
 
 ```typescript
-// Via MCP
-const template = await client.callTool('get-template', {
-  type: 'adr'
+// Via MCP - Runbooks
+await client.callTool('act', {
+  directive: 'bootstrap'
+})
+await client.callTool('act', {
+  directive: 'health-check'
+})
+
+// Via MCP - Templates
+await client.callTool('act', {
+  directive: 'create adr use-postgresql-over-mongodb'
 })
 
 // Via Claude Code
-"Get the ADR template from docent"
-```
-
----
-
-### `capture-work`
-
-Append an entry to the work journal for session recovery.
-
-**Parameters:**
-
-```typescript
-{
-  summary: string           // Brief summary of work completed (required)
-  discoveries?: string[]    // Key discoveries or insights (optional)
-  next_steps?: string[]     // What should be done next (optional)
-  questions?: string[]      // Open questions or ideas to explore (optional)
-}
-```
-
-**Returns:**
-
-Confirmation message with timestamp and entry preview.
-
-**Example Usage:**
-
-```typescript
-// Via MCP
-await client.callTool('capture-work', {
-  summary: "Implemented MCP resource discovery",
-  discoveries: [
-    "Dynamic resource listing scales better than hard-coded lists",
-    "Agents need contextual descriptions to choose resources"
-  ],
-  next_steps: [
-    "Test reading specific resources",
-    "Create example runbook"
-  ],
-  questions: [
-    "Should we add metadata tags for filtering?"
-  ]
-})
-
-// Via Claude Code
-"Use docent to capture today's work"
-```
-
-## Resources
-
-Resources provide read-only access to project documentation via URIs.
-
-### URI Scheme
-
-All resources use the `docent://` URI scheme:
-
-```
-docent://<type>/<identifier>
-```
-
-### Resource Types
-
-#### Journal
-
-**URI:** `docent://journal/current`
-
-**Description:** Active work journal capturing session context, discoveries, and rationale.
-
-**When to Use:**
-
-- Session recovery (resume work after interruption)
-- Understanding recent project decisions
-- Finding partially explored ideas
-
-**Example:**
-
-```typescript
-// Via MCP
-const journal = await client.readResource('docent://journal/current')
-
-// Via Claude Code
-"Read the docent journal to see what we've been working on"
-```
-
----
-
-#### Templates
-
-**URI Pattern:** `docent://template/<type>`
-
-**Available Types:**
-
-- `adr`, `rfc`, `prd`, `architecture-overview`, `api-documentation`
-- `onboarding`, `testing`, `runbook`, `standards`, `spec`
-- `patterns`, `troubleshooting`, `writing-software`
-
-**Example:**
-
-```typescript
-// Via MCP
-const adrTemplate = await client.readResource('docent://template/adr')
-
-// Via Claude Code
-"Read the ADR template resource"
-```
-
----
-
-#### Runbooks
-
-**URI Pattern:** `docent://runbook/<name>`
-
-Operational procedures and troubleshooting guides.
-
-**Example Runbooks:**
-
-- `docent://runbook/ci-cd-health-check` - Check GitHub Actions status
-
-**When to Use:**
-
-- Need step-by-step operational procedures
-- Troubleshooting common issues
-- Understanding deployment processes
-
-**Example:**
-
-```typescript
-// Via MCP
-const runbook = await client.readResource('docent://runbook/ci-cd-health-check')
-
-// Via Claude Code
-"How do I check CI/CD health? Read the docent runbook"
-```
-
----
-
-#### Guides
-
-**URI Pattern:** `docent://guide/<name>`
-
-Developer guides and setup instructions.
-
-**Available Guides:**
-
-- `docent://guide/contributing` - Contributing to docent
-- `docent://guide/mcp-setup` - MCP server setup
-- `docent://guide/neovim-markdown-setup` - Neovim configuration
-- `docent://guide/testing` - Testing guide
-
-**Example:**
-
-```typescript
-// Via MCP
-const guide = await client.readResource('docent://guide/testing')
-
-// Via Claude Code
-"Read the testing guide from docent"
-```
-
----
-
-#### ADRs (Architecture Decision Records)
-
-**URI Pattern:** `docent://adr/<filename>`
-
-**Available ADRs:**
-
-- `docent://adr/adr-0001-cli-platform-over-templates-only` (Superseded)
-- `docent://adr/adr-0002-oclif-for-cli-framework` (Superseded)
-- `docent://adr/adr-0003-agent-agnostic-architecture` (Accepted)
-- `docent://adr/adr-0004-mcp-only-architecture` (Accepted)
-
-**Example:**
-
-```typescript
-// Via MCP
-const adr = await client.readResource('docent://adr/adr-0004-mcp-only-architecture')
-
-// Via Claude Code
-"Read ADR-0004 from docent"
-```
-
----
-
-#### RFCs (Requests for Comments)
-
-**URI Pattern:** `docent://rfc/<filename>`
-
-**Available RFCs:**
-
-- `docent://rfc/rfc-0001-mcp-server-for-agent-integration` (Superseded)
-- `docent://rfc/rfc-0002-add-behavioral-specification-support-for-agent-driven-development` (In Review)
-- `docent://rfc/rfc-0003-workflow-orchestration-for-multi-agent-tasks` (Draft)
-- `docent://rfc/rfc-0004-work-artifact-capture-and-surfacing` (Draft)
-- `docent://rfc/rfc-0005-enhanced-mcp-architecture` (Draft)
-
-**Example:**
-
-```typescript
-// Via MCP
-const rfc = await client.readResource('docent://rfc/rfc-0005-enhanced-mcp-architecture')
-
-// Via Claude Code
-"Read RFC-0005 from docent"
-```
-
-### Security
-
-**Path Traversal Protection:** All resource URIs are validated to prevent directory traversal attacks. Attempts to use `..`, `~`, or absolute paths will be blocked.
-
-```typescript
-// ❌ Blocked
-docent://template/../../../etc/passwd
-docent://runbook/~/sensitive-file
-
-// ✅ Allowed
-docent://template/adr
-docent://runbook/ci-cd-health-check
-```
-
-## Prompts
-
-Prompts provide pre-defined workflows that agents can invoke.
-
-### `resume-work`
-
-Session recovery: analyze recent work and provide context to continue.
-
-**Arguments:** None
-
-**What It Does:**
-
-1. Reads work journal
-2. Gets recent git commits
-3. Checks git status
-4. Scans for TODOs in code
-5. Suggests health checks
-6. Generates comprehensive continuation prompt
-
-**When to Use:**
-
-- Returning to work after a break
-- Context window reset
-- New agent joining session
-- Understanding current project state
-
-**Example:**
-
-```typescript
-// Via MCP
-const prompt = await client.getPrompt('resume-work', {})
-
-// Via Claude Code
-"Use docent's resume-work prompt to catch me up"
-```
-
----
-
-### `review-rfc`
-
-Conduct multi-perspective RFC review with context gathering.
-
-**Arguments:**
-
-```typescript
-{
-  rfc_path: string        // Path to RFC file (required)
-  perspective?: string    // "architecture", "security", "implementation", "all" (optional)
-}
-```
-
-**What It Does:**
-
-1. Reads RFC content
-2. Analyzes project context
-3. Provides review criteria for chosen perspective
-4. Generates structured review prompt
-
-**When to Use:**
-
-- Reviewing proposed changes
-- Getting feedback on RFCs
-- Multi-perspective analysis
-
-**Example:**
-
-```typescript
-// Via MCP
-const prompt = await client.getPrompt('review-rfc', {
-  rfc_path: 'docs/rfcs/rfc-0005-enhanced-mcp-architecture.md',
-  perspective: 'architecture'
-})
-
-// Via Claude Code
-"Review RFC-0005 from an architecture perspective using docent"
-```
-
----
-
-### `create-adr`
-
-Create new Architecture Decision Record with guided process.
-
-**Arguments:**
-
-```typescript
-{
-  title: string  // ADR title (required)
-}
-```
-
-**What It Does:**
-
-1. Retrieves ADR template
-2. Guides through ADR sections (context, decision, consequences, alternatives)
-3. Prompts for necessary information
-4. Generates structured ADR
-
-**When to Use:**
-
-- Documenting architectural decisions
-- Creating formal decision records
-
-**Example:**
-
-```typescript
-// Via MCP
-const prompt = await client.getPrompt('create-adr', {
-  title: 'Use PostgreSQL for primary datastore'
-})
-
-// Via Claude Code
+"Set up the .docent directory"
+"Check project health"
 "Create an ADR for using PostgreSQL"
+"Run the git commit workflow"
 ```
+
+**Use Cases:**
+
+- Following operational procedures
+- Creating structured documentation
+- Automating common workflows
+- Maintaining consistency
 
 ---
 
-### `plan-feature`
+### tell
 
-Research and plan new feature through research → design → spec phases.
+Write or update documentation using natural language.
 
-**Arguments:**
+**Parameters:**
 
 ```typescript
 {
-  description: string  // Feature description (required)
+  statement: string  // What you want to document (required)
+  path?: string      // Project path (defaults to current directory)
 }
 ```
 
-**What It Does:**
+**Behavior:**
 
-1. Analyzes project context
-2. Guides through research phase (requirements, existing patterns)
-3. Guides through design phase (architecture, components)
-4. Guides through specification phase (acceptance criteria, implementation steps)
+The `tell` tool uses AI to understand your statement and determine:
 
-**When to Use:**
+- What type of documentation to update
+- Where to write it (.docent/journals/ or .docent/notes/)
+- How to format the content
 
-- Planning new features
-- Breaking down complex work
-- Creating implementation specs
+**Returns:**
 
-**Example:**
+Confirmation with:
+
+- Where the documentation was written
+- What was captured
+- When it was recorded
+
+**Example Usage:**
 
 ```typescript
 // Via MCP
-const prompt = await client.getPrompt('plan-feature', {
-  description: 'Add real-time collaboration to the editor'
+await client.callTool('tell', {
+  statement: 'I learned that Redis requires AOF persistence for write durability'
+})
+
+await client.callTool('tell', {
+  statement: 'Completed JWT authentication with refresh tokens'
 })
 
 // Via Claude Code
-"Plan the real-time collaboration feature using docent"
+"I learned that Redis needs AOF for durability"
+"We decided to use PostgreSQL over MongoDB for transactions"
+"Finished implementing the auth module with JWT"
 ```
+
+**Use Cases:**
+
+- Capturing learnings during development
+- Recording decisions and rationale
+- Documenting work completion
+- Tracking discoveries
+- Creating knowledge base
 
 ---
-
-### `research-topic`
-
-Conduct structured research on a topic and create documentation.
-
-**Arguments:**
-
-```typescript
-{
-  topic: string      // Research topic or question (required)
-  context?: string   // Additional context (optional)
-}
-```
-
-**What It Does:**
-
-1. Provides 3-phase research workflow (Discovery → Synthesis → Documentation)
-2. Guides WebSearch and WebFetch usage
-3. Includes document template with required sections
-4. Generates filename from topic
-5. Adds project context for relevance
-
-**When to Use:**
-
-- Investigating technical topics
-- Researching implementation options
-- Creating knowledge base articles
-- Exploring best practices
-
-**Example:**
-
-```typescript
-// Via MCP
-const prompt = await client.getPrompt('research-topic', {
-  topic: 'WebSocket vs Server-Sent Events for real-time updates',
-  context: 'We need sub-second latency and support for 1000+ concurrent users'
-})
-
-// Via Claude Code
-"Research WebSocket vs SSE using docent"
-```
-
-## Common Patterns
-
-### Session Recovery
-
-```typescript
-// 1. Resume work
-const resumePrompt = await client.getPrompt('resume-work', {})
-
-// 2. Read journal for details
-const journal = await client.readResource('docent://journal/current')
-
-// 3. Continue work
-```
-
-### Feature Development Workflow
-
-```typescript
-// 1. Plan feature
-const planPrompt = await client.getPrompt('plan-feature', {
-  description: 'Add user authentication'
-})
-
-// 2. Create spec
-// (agent creates spec based on plan)
-
-// 3. Review design
-// (agent or human reviews)
-
-// 4. Document decision
-const adrPrompt = await client.getPrompt('create-adr', {
-  title: 'Use JWT for authentication tokens'
-})
-
-// 5. Capture work
-await client.callTool('capture-work', {
-  summary: 'Planned authentication feature',
-  next_steps: ['Implement JWT middleware', 'Add login endpoint']
-})
-```
-
-### Documentation Workflow
-
-```typescript
-// 1. Analyze project
-const analysis = await client.callTool('analyze', {
-  path: '.'
-})
-
-// 2. Audit documentation
-const auditPrompt = await client.callTool('audit', {
-  path: '.',
-  docsDir: 'docs'
-})
-
-// 3. Get template for missing docs
-const template = await client.callTool('get-template', {
-  type: 'testing'
-})
-
-// 4. Create documentation
-// (agent creates docs based on template)
-```
 
 ## Configuration
 
@@ -705,9 +274,61 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
+## Common Workflows
+
+### Session Start
+
+```typescript
+// 1. Initialize
+const init = await client.callTool('start', {})
+// Returns available resources and commands
+
+// 2. Bootstrap if needed
+await client.callTool('act', {
+  directive: 'bootstrap'
+})
+// Creates .docent/ structure
+```
+
+### Documentation Q&A
+
+```typescript
+// Ask questions
+const answer = await client.callTool('ask', {
+  query: 'how do I deploy this application'
+})
+// Returns relevant docs about deployment
+```
+
+### Create Documentation
+
+```typescript
+// Create an ADR
+await client.callTool('act', {
+  directive: 'create adr switch-to-microservices'
+})
+// Creates docs/adr/adr-000N-switch-to-microservices.md
+
+// Capture knowledge
+await client.callTool('tell', {
+  statement: 'Microservices deployment uses Docker Compose for local dev'
+})
+// Appends to .docent/journals/YYYY-MM-DD.md
+```
+
+### Run Health Checks
+
+```typescript
+// Check project health
+await client.callTool('act', {
+  directive: 'health-check'
+})
+// Returns checklist of project health indicators
+```
+
 ## Error Handling
 
-All tools return errors in a standard format:
+All tools return errors in standard MCP format:
 
 ```json
 {
@@ -721,12 +342,36 @@ All tools return errors in a standard format:
 }
 ```
 
-Common errors:
+**Common Errors:**
 
-- **Path not found** - Verify project path exists
-- **Resource not found** - Check URI syntax and resource availability
-- **Invalid template type** - Use `list-templates` to see available types
-- **Permission denied** - Check file permissions
+- **"Path not found"** - Verify project path exists
+- **"Directive not understood"** - Rephrase your request
+- **"No results found"** - Try different search terms
+- **"Template not found"** - Use `start` to list available templates
+
+## Natural Language Tips
+
+Docent understands natural language, so you don't need to memorize exact syntax:
+
+**Good examples:**
+
+- ✅ "Set up docent" → `act('bootstrap')`
+- ✅ "How do I test?" → `ask('how do I test')`
+- ✅ "Make an ADR for Postgres" → `act('create adr postgres')`
+- ✅ "I learned X does Y" → `tell('I learned X does Y')`
+
+**The agent translates your intent to appropriate tool calls.**
+
+## Philosophy
+
+Docent embraces **conversation over commands**:
+
+1. **No rigid syntax** - Speak naturally to your agent
+2. **Intent-based** - Agent understands what you want
+3. **Context-aware** - Docent adapts to your project
+4. **Knowledge capture** - Easy to document as you work
+
+See [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) for the architectural rationale.
 
 ## Version Information
 
@@ -736,11 +381,11 @@ To check docent version:
 npm list @tnezdev/docent
 ```
 
-Or inspect the MCP server info when connecting.
+Current MCP server version is reported on connection.
 
 ## Further Reading
 
-- [MCP Setup Guide](./mcp-setup.md) - Detailed configuration
-- [Contributing Guide](./contributing.md) - Development setup
-- [Testing Guide](./testing.md) - Testing docent
+- [MCP Setup Guide](./mcp-setup.md) - Configuration instructions
+- [Architecture Overview](../architecture/overview.md) - System design
+- [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) - Why MCP-only
 - [MCP Protocol Specification](https://modelcontextprotocol.io/) - Official MCP docs

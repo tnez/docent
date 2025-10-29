@@ -42,24 +42,27 @@ Docent is documentation intelligence for AI agents. It provides MCP tools for pr
 
 ## Using Docent
 
-Docent integrates with AI agents through MCP (Model Context Protocol):
+Docent integrates with AI agents through MCP (Model Context Protocol). Just talk naturally:
 
-```typescript
-// Ask your AI agent to:
-"Analyze this project using docent's analyze tool"
-"Assess documentation quality using audit"
-"Generate a new ADR using the adr template"
+```
+// Ask your AI agent:
+"Initialize docent"
+"How do I run tests?" (uses ask)
+"Check project health" (uses act)
+"Create an ADR for PostgreSQL" (uses act)
+"I learned Redis needs AOF for durability" (uses tell)
 ```
 
 See [MCP Setup Guide](./guides/mcp-setup.md) for configuration instructions.
 
 ## Available MCP Tools
 
-- **analyze** - Project structure and technology stack analysis
-- **audit** - Agent-driven documentation quality assessment
-- **audit** - Fast heuristic documentation audit
-- **list-templates** - List available documentation templates
-- **get-template** - Retrieve a template by type
+Docent provides four natural language tools:
+
+- **start** - Initialize session and discover resources
+- **ask** - Search documentation to answer questions
+- **act** - Execute runbooks and create from templates
+- **tell** - Capture knowledge in natural language
 
 ## Documentation Philosophy
 

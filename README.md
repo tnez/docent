@@ -55,119 +55,109 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
-### 2. Talk to Your Agent
+### 2. Initialize in Your Project
 
-That's it. Just ask about documentation:
+First time in a project:
 
-- "How's my documentation?"
-- "Set up documentation structure"
-- "Create an ADR for switching to PostgreSQL"
-- "What should I document for this feature?"
+```
+"Set up docent in this project"
+```
 
-Your agent will use docent automatically.
+Your agent will run `docent act bootstrap` to create the `.docent/` directory structure.
+
+### 3. Use Naturally
+
+Then just ask your agent about documentation:
+
+- "How do I run tests?" - searches all docs
+- "Check project health" - runs health-check runbook
+- "Create an ADR for PostgreSQL" - generates from template
+- "I finished the auth module" - captures to journal
+
+Docent works behind the scenes through natural conversation.
 
 ## How It Works
 
-When you ask your agent about documentation, it:
+Docent gives your AI agent four capabilities:
 
-1. Uses docent to analyze your project
-2. Gathers context about what exists
-3. Reasons semantically (not pattern matching)
-4. Provides contextual recommendations
+1. **Ask** - Search documentation to answer questions
+2. **Act** - Execute runbooks and create from templates
+3. **Tell** - Capture knowledge in natural language
+4. **Start** - Initialize sessions and discover resources
 
-You never invoke docent directly—it just makes your agent smarter.
+The agent translates your natural language requests into appropriate tool calls. You never invoke docent directly—it just makes your agent smarter about documentation.
 
-## MCP Capabilities
+## MCP Tools
 
-Docent exposes three types of MCP capabilities:
+Docent provides four core MCP tools for documentation intelligence:
 
-### Tools
+- **`start`** - Initialize session and list available resources (templates, runbooks, commands)
+- **`ask`** - Search all documentation to answer questions
+- **`act`** - Execute runbooks and create files from templates
+- **`tell`** - Write or update documentation using natural language
 
-- **`bootstrap`** - Initialize docent in a project
-- **`analyze`** - Project structure, languages, frameworks
-- **`doctor`** - Comprehensive health checks (mechanical + semantic analysis)
-  - Use `--quick` flag for fast mechanical checks only
-- **`list-templates`** - Available documentation templates
-- **`get-template`** - Fetch a specific template
-- **`capture-work`** - Append to work journal
+### Natural Language Interface
 
-### Resources
+All tools accept natural language. No rigid syntax to learn:
 
-Discoverable content via URI (`docent://type/identifier`):
-
-- **`docent://journal/current`** - Work journal for session continuity
-- **`docent://template/{type}`** - Documentation templates (adr, rfc, etc.)
-- **`docent://runbook/{name}`** - Operational procedures
-- **`docent://guide/{name}`** - Development guides
-- **`docent://standard/{type}`** - Project standards
-- **`docent://adr/{name}`** - Architecture decisions
-- **`docent://rfc/{name}`** - RFCs
-
-### Prompts
-
-Pre-defined workflows agents can invoke:
-
-- **`resume-work`** - Session recovery with git, journal, TODOs
-- **`review-rfc`** - Multi-perspective RFC review
-- **`create-adr`** - Guided ADR creation
-- **`plan-feature`** - Feature planning workflow
-- **`research-topic`** - Structured research
+```
+"How do I configure the build process?"        → ask
+"Set up the .docent directory"                 → act bootstrap
+"Create an ADR for using PostgreSQL"           → act create adr
+"I learned that Redis requires AOF for writes" → tell
+```
 
 ## Example Workflows
 
-### Session Recovery
+### Getting Started
 
 ```
-You: "Help me resume work"
+You: "Initialize docent"
 
-Agent: [invokes docent prompt 'resume-work']
-Agent: [gathers journal, git status, commits, TODOs]
-Agent: "You were implementing RFC-0005 (Enhanced MCP Architecture).
-       Resources and prompts are complete. Next: update docs.
-       3 uncommitted files. Ready to continue?"
+Agent: [calls docent start]
+Agent: "Session initialized. Available templates: adr, rfc, runbook...
+       Available runbooks: bootstrap, health-check, git-commit..."
 ```
 
-### RFC Review
+### Asking Questions
 
 ```
-You: "Review RFC-0005 from architecture perspective"
+You: "How do I run tests in this project?"
 
-Agent: [invokes docent prompt 'review-rfc']
-Agent: [reads RFC, analyzes project, applies criteria]
-Agent: "APPROVE_WITH_CHANGES. Strong design but missing
-       performance benchmarks. Recommend Phase 0 testing."
+Agent: [calls docent ask with "how to run tests"]
+Agent: "Based on your docs: npm test runs Mocha tests.
+       Use npm run test:watch for development."
 ```
 
-### Assess Documentation Quality
-
-```
-You: "How's my documentation?"
-
-Agent: [uses docent audit]
-Agent: "Your documentation is solid (73/100).
-       Strong architectural docs, missing testing guide.
-       Want me to draft one based on your test structure?"
-```
-
-### Follow Operational Runbooks
-
-```
-You: "Check CI/CD health"
-
-Agent: [discovers docent://runbook/ci-cd-health-check]
-Agent: [follows runbook procedures]
-Agent: "CI/CD check complete. Test workflow passing.
-       Lint workflow has 2 markdown errors. Fix them?"
-```
-
-### Create New Documentation
+### Creating Documentation
 
 ```
 You: "Document the decision to use PostgreSQL"
 
-Agent: [uses docent get-template with type 'adr']
-Agent: [creates docs/adr/adr-0004-postgresql.md]
-Agent: "I've documented the PostgreSQL decision. Review?"
+Agent: [calls docent act create adr]
+Agent: "I'll create an ADR for the PostgreSQL decision..."
+Agent: [creates docs/adr/adr-000N-postgresql.md]
+```
+
+### Following Runbooks
+
+```
+You: "Check project health"
+
+Agent: [calls docent act health-check]
+Agent: [follows runbook procedures]
+Agent: "Health check complete. Git status clean,
+       tests passing, 2 TODO comments found."
+```
+
+### Capturing Work
+
+```
+You: "Finished implementing auth module"
+
+Agent: [calls docent tell with context]
+Agent: "Documented: Completed JWT-based authentication
+       with refresh tokens and role-based access."
 ```
 
 ## Target Audience

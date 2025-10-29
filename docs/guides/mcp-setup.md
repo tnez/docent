@@ -1,19 +1,59 @@
 # Docent MCP Server Setup
 
-This guide shows how to integrate docent's MCP (Model Context Protocol) server with AI agents like Claude Desktop.
+This guide shows how to integrate docent's MCP (Model Context Protocol) server with AI agents like Claude Code and Claude Desktop.
 
 ## What is the MCP Server?
 
-The docent MCP server exposes docent's functionality through native tool calling instead of shell commands. This enables:
+The docent MCP server provides documentation intelligence through four natural language tools:
 
-- **Agent-driven analysis** - Agents can use semantic reasoning instead of brittle heuristics
-- **Seamless integration** - No shell command parsing required
-- **Rich context** - Structured data and prompts optimized for agents
-- **Tool discovery** - Agents automatically discover available tools
+- **start** - Initialize session and discover available resources
+- **ask** - Search documentation to answer questions
+- **act** - Execute runbooks and create from templates
+- **tell** - Capture knowledge in natural language
+
+This enables agents to understand and improve your documentation through natural conversation rather than rigid commands.
 
 ## Quick Start
 
-### 1. Build Docent
+### Option 1: Use Published Package (Recommended)
+
+**Claude Code:**
+
+Add to `~/.claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "docent": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@tnezdev/docent"],
+      "env": {}
+    }
+  }
+}
+```
+
+**Claude Desktop:**
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "docent": {
+      "command": "npx",
+      "args": ["-y", "@tnezdev/docent"]
+    }
+  }
+}
+```
+
+Then restart your agent. Docent will be automatically available.
+
+### Option 2: Local Development
+
+For developing docent locally:
 
 ```bash
 cd /path/to/docent
@@ -21,22 +61,22 @@ npm install
 npm run build
 ```
 
-### 2. Configure Claude Desktop
-
-Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+**Claude Code** (`~/.claude.json`):
 
 ```json
 {
   "mcpServers": {
     "docent": {
-      "command": "node",
-      "args": ["/absolute/path/to/docent/lib/mcp/server.js"]
+      "type": "stdio",
+      "command": "/absolute/path/to/docent/bin/mcp-server.js",
+      "args": [],
+      "env": {}
     }
   }
 }
 ```
 
-Or use the docent-mcp command:
+**Claude Desktop:**
 
 ```json
 {
@@ -48,229 +88,208 @@ Or use the docent-mcp command:
 }
 ```
 
-### 3. Restart Claude Desktop
+### Verify Setup
 
-Close and reopen Claude Desktop. The docent MCP server will now be available.
+After restarting your agent, try:
 
-### 4. Verify Setup
+> "Initialize docent"
 
-In Claude Desktop, ask:
-
-> "What MCP tools do you have available from docent?"
-
-You should see:
-
-- `bootstrap` - Initialize docent in a project
-- `analyze` - Project structure analysis
-- `doctor` - Comprehensive health checks (mechanical + semantic analysis)
-  - Use `--quick` flag for fast mechanical checks only
+You should see docent respond with available templates and runbooks.
 
 ## Available Tools
 
-### analyze
+Docent provides four core tools that accept natural language:
 
-Analyzes project structure, languages, frameworks, and build tools.
+### start
 
-**Input:**
+Initialize session and list available resources (templates, runbooks, commands).
 
-```json
-{
-  "path": "/path/to/project"
-}
+**Usage:** "Initialize docent" or "Start docent session"
+
+**Returns:** Available templates, runbooks, project info, and usage instructions.
+
+### ask
+
+Search all documentation to answer questions.
+
+**Parameters:**
+
+- `query` - Your question in natural language
+- `limit` - Optional max results (default: 10)
+
+**Usage Examples:**
+
+- "How do I run tests?"
+- "What's our authentication approach?"
+- "Search docs for API endpoints"
+
+**Returns:** Relevant documentation excerpts with context.
+
+### act
+
+Execute runbooks or create files from templates.
+
+**Parameters:**
+
+- `directive` - What to do in natural language
+
+**Usage Examples:**
+
+- "Set up the .docent directory" (runs bootstrap runbook)
+- "Check project health" (runs health-check runbook)
+- "Create an ADR for PostgreSQL" (creates from template)
+- "Run git commit workflow" (follows git-commit runbook)
+
+**Returns:** Runbook instructions or created file confirmation.
+
+### tell
+
+Write or update documentation using natural language.
+
+**Parameters:**
+
+- `statement` - What you want to document
+
+**Usage Examples:**
+
+- "I learned that Redis requires AOF for durability"
+- "We decided to use PostgreSQL over MongoDB"
+- "Completed the authentication module with JWT"
+
+**Returns:** Documentation update confirmation with location.
+
+## Example Workflows
+
+### Getting Started
+
+```
+You: "Initialize docent in this project"
+Agent: [calls docent start]
+Agent: "Session initialized. Available templates: adr, rfc...
+       Available runbooks: bootstrap, health-check, git-commit..."
+
+You: "Set up the .docent directory"
+Agent: [calls docent act with "bootstrap"]
+Agent: [follows bootstrap runbook to create structure]
 ```
 
-**Output:**
+### Asking Questions
 
-```json
-{
-  "languages": [{"name": "TypeScript", "fileCount": 42, ...}],
-  "frameworks": [{"name": "React", "type": "web", ...}],
-  "structure": {...},
-  "buildTools": ["TypeScript", "Webpack"],
-  "packageManagers": ["npm"]
-}
+```
+You: "How do I run tests in this project?"
+Agent: [calls docent ask with "how to run tests"]
+Agent: "Based on docs/guides/testing.md: Use npm test for Mocha..."
 ```
 
-### bootstrap
+### Following Runbooks
 
-Initializes docent in a project by creating docs/ structure and initial documentation.
-
-**Input:**
-
-```json
-{
-  "path": "/path/to/project",
-  "force": false  // optional, force reinit if docs/ exists
-}
+```
+You: "Check project health"
+Agent: [calls docent act with "health-check"]
+Agent: [runs health checks following runbook]
+Agent: "Health check complete. Git status clean, tests passing..."
 ```
 
-**Output:**
-Creates documentation structure and returns confirmation with next steps.
+### Capturing Work
 
-### doctor
-
-Runs comprehensive project health checks including mechanical checks and semantic documentation analysis.
-
-**Input:**
-
-```json
-{
-  "path": "/path/to/project",
-  "docsDir": "docs",  // optional, defaults to "docs"
-  "quick": false      // optional, skip semantic analysis for speed
-}
 ```
-
-**Output:**
-A comprehensive health report including:
-
-**Mechanical Checks:**
-
-- Broken links in documentation
-- Debug code in source files
-- Test markers (.only, .skip)
-- Uncommitted changes
-- Temporary files
-- Structure reconciliation
-
-**Semantic Analysis (unless --quick):**
-
-- Documentation quality assessment prompt
-- Context-aware scoring guidelines
-- Project-specific recommendations
-
-**Modes:**
-
-- **Full (default):** Mechanical checks + semantic analysis prompt
-- **Quick (`quick: true`):** Mechanical checks only (fast, for pre-commit)
-
-**Performance:**
-
-- Quick mode: ~0.5s (mechanical checks only)
-- Full mode: ~1s mechanical + semantic prompt for agent analysis
-
-## Example Workflow
-
-### 1. Analyze a Project
-
-> "Use the analyze tool on /Users/me/my-project"
-
-Agent calls `analyze` and gets project structure.
-
-### 2. Run Health Check
-
-> "Run doctor on /Users/me/my-project"
-
-Agent:
-
-1. Calls `doctor` (full mode by default)
-2. Gets mechanical check results (links, debug code, etc.)
-3. Receives semantic analysis prompt
-4. Analyzes documentation quality and provides recommendations
-
-### 3. Quick Pre-Commit Check
-
-> "Run a quick health check on /Users/me/my-project"
-
-Agent calls `doctor` with `quick: true` for fast mechanical checks only.
+You: "I just finished the auth module"
+Agent: [calls docent tell with context]
+Agent: "Documented in .docent/journals/2025-10-29.md:
+       Completed JWT-based authentication..."
+```
 
 ## Architecture
 
 ```
-┌─────────────────────┐
-│  Claude Desktop     │
-│  (MCP Client)       │
-└──────────┬──────────┘
+┌─────────────────────────┐
+│  AI Agent (User)        │
+│  Claude Code/Desktop    │
+└──────────┬──────────────┘
            │ MCP Protocol (JSON-RPC via stdio)
            ▼
-┌─────────────────────┐
-│  Docent MCP Server  │
-│  (lib/mcp/server.js)│
-└──────────┬──────────┘
+┌─────────────────────────┐
+│  Docent MCP Server      │
+│  (bin/mcp-server.js)    │
+└──────────┬──────────────┘
            │
-           ├─→ bootstrap tool → bootstrap.ts
-           ├─→ analyze tool → detector.ts
-           └─→ doctor tool → doctor.ts + agent-audit.ts
+           ├─→ start  → Session initialization
+           ├─→ ask    → Search documentation
+           ├─→ act    → Execute runbooks/templates
+           └─→ tell   → Capture knowledge
+                │
+                ▼
+     ┌─────────────────────┐
+     │ .docent/ directory  │
+     ├─────────────────────┤
+     │ /templates          │
+     │ /runbooks           │
+     │ /journals           │
+     │ /sessions           │
+     └─────────────────────┘
 ```
 
 ## Troubleshooting
 
 ### MCP Server Not Showing Up
 
-1. Check Claude Desktop config path:
-   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-   - Linux: `~/.config/Claude/claude_desktop_config.json`
+**Check config file locations:**
 
-2. Verify absolute paths (not relative):
+- Claude Code: `~/.claude.json`
+- Claude Desktop (macOS): `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Claude Desktop (Windows): `%APPDATA%\Claude\claude_desktop_config.json`
+- Claude Desktop (Linux): `~/.config/Claude/claude_desktop_config.json`
 
-   ```json
-   "args": ["/absolute/path/to/docent/lib/mcp/server.js"]
-   ```
+**For local development, verify:**
 
-3. Check build succeeded:
+1. Build succeeded: `ls /path/to/docent/bin/mcp-server.js`
+2. Path is absolute (not relative)
+3. File is executable: `chmod +x /path/to/docent/bin/mcp-server.js`
 
-   ```bash
-   ls /path/to/docent/lib/mcp/server.js  # Should exist
-   ```
+**Test manually:**
 
-4. Test manually:
-
-   ```bash
-   node /path/to/docent/test-mcp.js
-   ```
-
-### Tools Not Working
-
-Check for errors in Claude Desktop logs:
-
-- macOS: `~/Library/Logs/Claude/mcp*.log`
-- Look for docent-related errors
-
-## Architecture History: MCP-Only Decision
-
-Docent originally planned dual CLI+MCP interfaces (see [RFC-0001](../rfcs/rfc-0001-mcp-server-for-agent-integration.md)). However, [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) chose MCP-only architecture after validating that:
-
-1. Agent-driven analysis (73/100) significantly outperforms heuristics (21/100)
-2. All target users are AI agents (solo devs using AI as coding partners)
-3. Simpler architecture: one interface instead of two
-
-### MCP Approach (Current)
-
-```typescript
-// Agent code
-const healthCheck = await mcp.callTool('doctor', {path: '.'})
-// Returns mechanical checks + semantic analysis prompt
-// Agent analyzes and provides recommendations
+```bash
+node /path/to/docent/bin/mcp-server.js
+# Should start MCP server and log to stderr
 ```
 
-**Why MCP-only:**
+### Tools Not Responding
 
-- Native tool calling (no shell execution)
-- Structured data built for agents
-- Works in sandboxed environments
-- Persistent connection (fast)
-- Agent-driven analysis outperforms heuristics
+Check logs for errors:
+
+- Claude Desktop: `~/Library/Logs/Claude/mcp*.log`
+- Look for "docent" related errors
+
+Common issues:
+
+- **"Tool not found"** - Restart agent after config changes
+- **"Path not found"** - Verify project path exists
+- **"Permission denied"** - Check file permissions
+
+## How It Works
+
+Docent uses natural language understanding:
+
+1. **Agent receives request** - "Check project health"
+2. **Agent translates to tool call** - `act("health-check")`
+3. **Docent interprets directive** - Matches to health-check runbook
+4. **Runbook executes** - Follows defined procedures
+5. **Agent presents results** - Formats output for user
+
+This ask/act/tell paradigm replaces rigid tool APIs with flexible natural language.
+
+## Philosophy
+
+**Documentation as conversation** - Rather than learning commands, you talk to your agent naturally. The agent uses docent to:
+
+- Answer questions about your docs (ask)
+- Follow operational procedures (act)
+- Capture your knowledge (tell)
+
+See [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) for the architectural evolution.
 
 ## Next Steps
 
-- See [RFC-0001](../rfcs/rfc-0001-mcp-server-for-agent-integration.md) for architecture details
-- Check [Audit Tool Spec](../specs/mcp-tools/audit-tool.md) for behavior documentation
-- Read [MCP API Reference](./mcp-api-reference.md) for integration patterns
-
-## Performance
-
-### Startup Time
-
-- MCP: ~500ms once, then instant tool calls
-- CLI: ~100ms per command invocation
-
-### Memory
-
-- MCP: ~50MB (persistent Node.js process)
-- CLI: Released after each command
-
-### Best For
-
-- MCP: Multiple operations, agent integration, sandboxed environments
-- CLI: One-off commands, CI/CD, human use
+- Read [MCP API Reference](./mcp-api-reference.md) for detailed tool documentation
+- See [Architecture Overview](../architecture/overview.md) for system design
+- Check [ADR-0004](../adr/adr-0004-mcp-only-architecture.md) for architectural context
