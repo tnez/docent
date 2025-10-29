@@ -12,6 +12,9 @@ import {
 
 // Import tool definitions and handlers
 import {startToolDefinition, handleStartTool} from './tools/start.js'
+import {actToolDefinition, handleActTool} from './tools/act.js'
+import {askToolDefinition, handleAskTool} from './tools/ask.js'
+import {tellToolDefinition, handleTellTool} from './tools/tell.js'
 import {analyzeToolDefinition, handleAnalyzeTool} from './tools/analyze.js'
 import {auditToolDefinition, handleAuditTool} from './tools/audit.js'
 import {doctorToolDefinition, handleDoctorTool} from './tools/doctor.js'
@@ -61,6 +64,9 @@ const promptBuilder = new PromptBuilder()
 // Register all available tools
 const tools = [
   startToolDefinition, // NEW: docent 2.0 session initialization
+  actToolDefinition, // NEW: docent 2.0 runbook execution
+  askToolDefinition, // NEW: docent 2.0 documentation search
+  tellToolDefinition, // NEW: docent 2.0 documentation write
   bootstrapToolDefinition,
   analyzeToolDefinition,
   auditToolDefinition,
@@ -88,6 +94,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (name) {
       case 'start':
         return await handleStartTool(args as {path?: string})
+      case 'act':
+        return await handleActTool(args as {directive: string; path?: string})
+      case 'ask':
+        return await handleAskTool(args as {query: string; path?: string; limit?: number})
+      case 'tell':
+        return await handleTellTool(args as {statement: string; path?: string})
       case 'bootstrap':
         return await handleBootstrapTool(args as {path?: string; force?: boolean})
       case 'init-project': {
