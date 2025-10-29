@@ -247,9 +247,66 @@ After completion:
 - README.md contains correct information
 - User can run `/docent:start` successfully
 
+## Session Initialization for AI Agents
+
+After bootstrapping docent, you may want to configure your AI agent to automatically initialize docent at the start of each session. This ensures agents always have access to project context.
+
+### For Claude Code Users
+
+Add the following section to your project's `.claude/CLAUDE.md` file:
+
+```markdown
+## Session Initialization
+
+**CRITICAL:** At the start of NEW sessions and after COMPACTION, you MUST initialize docent context as your FIRST ACTION before any other work.
+
+### Initialization Command
+
+Immediately run:
+
+\`\`\`
+docent context
+\`\`\`
+
+Or explicitly request: "read the docent://meta/context resource"
+
+### When to Initialize
+
+- At the beginning of a new session (context window is empty)
+- After a `/compact` operation (context was reset)
+- When the user explicitly requests it
+
+### When NOT to Initialize
+
+- When resuming with `claude --continue` (init content is already in context)
+- When init content is visible earlier in the conversation
+
+### What This Provides
+
+- Available resources (guides, runbooks, standards, templates)
+- Journal workflow instructions (capture → resume pattern)
+- Project info and conventions
+- Quick reference for common tasks
+```
+
+### Alternative: User-Level Configuration
+
+For user-level initialization (applies to all projects), add the same instructions to `~/.claude/CLAUDE.md` instead of `.claude/CLAUDE.md`.
+
+### For Other AI Agents
+
+Different agents have different initialization mechanisms. Consult your agent's documentation for:
+
+- Session hooks or startup scripts
+- Custom system prompts
+- Configuration files for automatic tool invocation
+
+The key concept: Invoke `/docent:start` at the beginning of each session to load project context.
+
 ## Notes
 
 - This runbook creates minimal structure - templates are applied separately
 - Journals and sessions are gitignored by default (personal artifacts)
 - Config can be edited manually after bootstrap
 - Safe to re-run with force flag to reset structure
+- Session initialization ensures agents have consistent access to project knowledge

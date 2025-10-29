@@ -1,6 +1,6 @@
 import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
-import {loadConfig} from '../../lib/config.js'
-import {createRegistry} from '../../lib/resource-registry.js'
+import {loadConfig} from '../../core/config.js'
+import {createRegistry} from '../../core/resource-registry.js'
 import {join} from 'path'
 
 export const startToolDefinition: Tool = {
@@ -113,6 +113,24 @@ function buildStartOutput(templates: any[], runbooks: any[], config: any): strin
   output += '2. **Run a health check:** `/docent:act health check`\n'
   output += '3. **Create documentation:** `/docent:tell I learned that X does Y`\n'
   output += '4. **Bootstrap project:** `/docent:act bootstrap` (if not already initialized)\n\n'
+
+  // Proactive Capture (for agents)
+  output += '## Proactive Capture: Keep Documentation Current\n\n'
+  output += '**IMPORTANT for AI agents:** Use `/docent:tell` frequently throughout your work to maintain an up-to-date knowledge base.\n\n'
+  output += '**When to capture:**\n\n'
+  output += '- ✅ **After completing work** - Document what you accomplished\n'
+  output += '- ✅ **When making decisions** - Record architectural or implementation choices\n'
+  output += '- ✅ **Upon discovering insights** - Capture important learnings or findings\n'
+  output += '- ✅ **When encountering blockers** - Note problems, questions, or uncertainties\n'
+  output += '- ✅ **At natural breakpoints** - Summarize progress when switching context\n\n'
+  output += '**Examples:**\n'
+  output += '- `/docent:tell I completed the authentication module with JWT tokens`\n'
+  output += '- `/docent:tell I decided to use Postgres over MongoDB because we need transactions`\n'
+  output += '- `/docent:tell I learned that Redis requires AOF persistence for durability`\n'
+  output += '- `/docent:tell I\'m blocked on the API integration - need OAuth credentials`\n'
+  output += '- `/docent:tell Session summary: Fixed 3 bugs, refactored user service, all tests passing`\n\n'
+  output += '**Why this matters:** Frequent capture ensures the next agent (or session) has accurate context about recent work, decisions, and discoveries.\n\n'
+  output += 'For detailed guidance, run: `/docent:act capture-work-guidance`\n\n'
 
   // Tips
   output += '## Tips\n\n'
