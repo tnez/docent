@@ -1,7 +1,7 @@
 import {expect} from 'chai'
 import * as path from 'path'
 import {ResourceHandler} from '../../../../src/mcp/resources/handler'
-import {createContext} from '../../../../src/lib/context'
+import {createContext} from '../../../../src/core/context'
 
 describe('ResourceHandler', () => {
   describe('URI parsing and security', () => {
@@ -107,7 +107,7 @@ describe('ResourceHandler', () => {
       const expectedTemplates = [
         'docent://template/adr',
         'docent://template/rfc',
-        'docent://template/spec',
+        'docent://template/prd',
       ]
 
       for (const expected of expectedTemplates) {
@@ -123,8 +123,8 @@ describe('ResourceHandler', () => {
 
       expect(content.uri).to.equal('docent://template/adr')
       expect(content.mimeType).to.equal('text/markdown')
-      expect(content.text).to.include('ADR-NNNN')
-      expect(content.text).to.include('Context')
+      expect(content.text).to.include('Architecture Decision Record')
+      expect(content.text).to.include('name: adr')
     })
   })
 

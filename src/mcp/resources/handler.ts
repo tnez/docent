@@ -193,10 +193,10 @@ export class ResourceHandler {
 
     try {
       const files = await fs.readdir(templatesDir)
-      const templateFiles = files.filter((f) => f.endsWith('-template.md'))
+      const templateFiles = files.filter((f) => f.endsWith('.md'))
 
       for (const file of templateFiles) {
-        const type = file.replace('-template.md', '')
+        const type = file.replace('.md', '')
         resources.push({
           uri: `docent://template/${type}`,
           name: `${this.capitalize(type)} Template`,
@@ -493,7 +493,7 @@ Run \`bootstrap\` now to get started!
    * Read template resource
    */
   private async readTemplate(identifier: string): Promise<ResourceContent> {
-    const filePath = path.join(this.ctx.packagePath!, 'templates', `${identifier}-template.md`)
+    const filePath = path.join(this.ctx.packagePath!, 'templates', `${identifier}.md`)
     const content = await fs.readFile(filePath, 'utf-8')
 
     return {

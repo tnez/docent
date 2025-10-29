@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { existsSync, mkdirSync, writeFileSync, rmSync } from 'fs'
 import { join } from 'path'
-import { loadConfig } from '../src/lib/config'
+import { loadConfig } from '../src/core/config'
 
 describe('Config Loader', () => {
   const testDir = join(__dirname, '.test-config')
@@ -23,7 +23,7 @@ describe('Config Loader', () => {
   describe('loadConfig', () => {
     it('should return default config when no config file exists', () => {
       const config = loadConfig(testDir)
-      expect(config.root).to.equal('docs')
+      expect(config.root).to.equal('.docent')
     })
 
     it('should load JSON config from .docentrc', () => {
@@ -99,7 +99,7 @@ root: documentation
       writeFileSync(configPath, JSON.stringify({}))
 
       const config = loadConfig(testDir)
-      expect(config.root).to.equal('docs')
+      expect(config.root).to.equal('.docent')
     })
 
     it('should load custom sessionThresholdMinutes from JSON', () => {
@@ -136,7 +136,7 @@ root: documentation
   describe('computed paths', () => {
     it('should compute absolute path to docs root', () => {
       const config = loadConfig(testDir)
-      expect(config.docsRoot).to.equal(join(testDir, 'docs'))
+      expect(config.docsRoot).to.equal(join(testDir, '.docent'))
     })
 
     it('should compute custom root from config', () => {
@@ -151,7 +151,7 @@ root: documentation
 
     it('should compute journal path inside docs root', () => {
       const config = loadConfig(testDir)
-      expect(config.journalRoot).to.equal(join(testDir, 'docs', '.journal'))
+      expect(config.journalRoot).to.equal(join(testDir, '.docent', 'journals'))
     })
 
     it('should respect custom root for journal path', () => {
@@ -161,7 +161,7 @@ root: documentation
       )
 
       const config = loadConfig(testDir)
-      expect(config.journalRoot).to.equal(join(testDir, 'documentation', '.journal'))
+      expect(config.journalRoot).to.equal(join(testDir, 'documentation', 'journals'))
     })
   })
 })

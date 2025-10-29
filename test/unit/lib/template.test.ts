@@ -1,5 +1,5 @@
 import {expect} from 'chai'
-import {parseTemplateUrl} from '../../../src/lib/template'
+import {parseTemplateUrl} from '../../../src/core/template'
 
 describe('Template Module', () => {
   describe('parseTemplateUrl', () => {
