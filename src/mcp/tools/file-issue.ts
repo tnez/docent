@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises'
 import * as path from 'path'
-import {gatherIssueContext} from '../../lib/issue-context.js'
-import {createIssue} from '../../lib/github-cli.js'
+import {gatherIssueContext} from '../../core/issue-context.js'
+import {createIssue} from '../../core/github-cli.js'
 
 export const fileIssueToolDefinition = {
   name: 'file-issue',

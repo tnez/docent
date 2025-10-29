@@ -1,9 +1,9 @@
 import * as path from 'path'
 import * as fs from 'fs/promises'
-import {analyzeProject} from '../../lib/detector'
+import {analyzeProject} from '../../core/detector'
 import {ResourceHandler} from '../resources/handler'
 import {WorkflowContextGatherer} from '../workflows/context-gatherer'
-import {createContext, type Context} from '../../lib/context'
+import {createContext, type Context} from '../../core/context'
 import type {PromptMessage} from './types'
 import {PROMPTS} from './definitions'
 

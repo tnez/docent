@@ -1,6 +1,6 @@
 import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
-import {loadConfig} from '../../lib/config.js'
-import {createRegistry} from '../../lib/resource-registry.js'
+import {loadConfig} from '../../core/config.js'
+import {createRegistry} from '../../core/resource-registry.js'
 import {execSync} from 'child_process'
 import {existsSync} from 'fs'
 import {join, relative} from 'path'

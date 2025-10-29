@@ -3,9 +3,9 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 import {glob} from 'glob'
 import {execSync} from 'child_process'
-import {analyzeProject} from '../../lib/detector.js'
-import {prepareAgentAuditContext} from '../../lib/agent-audit.js'
-import {buildAuditPrompt} from '../../lib/prompt-builder.js'
+import {analyzeProject} from '../../core/detector.js'
+import {prepareAgentAuditContext} from '../../core/agent-audit.js'
+import {buildAuditPrompt} from '../../core/prompt-builder.js'
 
 export const doctorToolDefinition: Tool = {
   name: 'doctor',

@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises'
-import {SessionManager} from '../../lib/journal/session-manager.js'
-import {createContext} from '../../lib/context.js'
+import {SessionManager} from '../../core/journal/session-manager.js'
+import {createContext} from '../../core/context.js'
 
 export const captureWorkToolDefinition = {
   name: 'capture-work',

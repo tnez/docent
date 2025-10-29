@@ -1,6 +1,6 @@
-import {analyzeProject} from '../../lib/detector.js'
-import {prepareAgentAuditContext} from '../../lib/agent-audit.js'
-import {buildAuditPrompt} from '../../lib/prompt-builder.js'
+import {analyzeProject} from '../../core/detector.js'
+import {prepareAgentAuditContext} from '../../core/agent-audit.js'
+import {buildAuditPrompt} from '../../core/prompt-builder.js'
 
 export const auditToolDefinition = {
   name: 'audit',

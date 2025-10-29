@@ -1,9 +1,9 @@
 import * as fs from 'fs/promises'
 import {execSync} from 'child_process'
-import {analyzeProject} from '../../lib/detector'
+import {analyzeProject} from '../../core/detector'
 import {ResourceHandler} from '../resources/handler'
-import {SessionManager} from '../../lib/journal/session-manager'
-import {createContext, type Context} from '../../lib/context'
+import {SessionManager} from '../../core/journal/session-manager'
+import {createContext, type Context} from '../../core/context'
 
 /**
  * Context gatherer for workflow tools and prompts

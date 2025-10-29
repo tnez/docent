@@ -1,7 +1,7 @@
 import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
 import * as fs from 'fs/promises'
 import * as path from 'path'
-import {analyzeProject} from '../../lib/detector.js'
+import {analyzeProject} from '../../core/detector.js'
 import {
   parseTemplateUrl,
   cloneTemplate,
@@ -11,7 +11,7 @@ import {
   cleanupTempDir,
   copyTemplateDocs,
   backupExistingDocs,
-} from '../../lib/template.js'
+} from '../../core/template.js'
 
 export const bootstrapToolDefinition: Tool = {
   name: 'bootstrap',

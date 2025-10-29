@@ -1,4 +1,4 @@
-import {analyzeProject} from '../../lib/detector.js'
+import {analyzeProject} from '../../core/detector.js'
 
 export const analyzeToolDefinition = {
   name: 'analyze',

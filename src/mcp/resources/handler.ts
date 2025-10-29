@@ -2,7 +2,7 @@ import * as fs from 'fs/promises'
 import * as fsSync from 'fs'
 import * as path from 'path'
 import type {ParsedUri, Resource, ResourceContent, ResourceType} from './types.js'
-import type {Context} from '../../lib/context.js'
+import type {Context} from '../../core/context.js'
 
 export class ResourceHandler {
   private ctx: Context
