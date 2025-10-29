@@ -11,6 +11,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js'
 
 // Import tool definitions and handlers
+import {startToolDefinition, handleStartTool} from './tools/start.js'
 import {analyzeToolDefinition, handleAnalyzeTool} from './tools/analyze.js'
 import {auditToolDefinition, handleAuditTool} from './tools/audit.js'
 import {doctorToolDefinition, handleDoctorTool} from './tools/doctor.js'
@@ -59,6 +60,7 @@ const promptBuilder = new PromptBuilder()
 
 // Register all available tools
 const tools = [
+  startToolDefinition, // NEW: docent 2.0 session initialization
   bootstrapToolDefinition,
   analyzeToolDefinition,
   auditToolDefinition,
@@ -84,6 +86,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   try {
     switch (name) {
+      case 'start':
+        return await handleStartTool(args as {path?: string})
       case 'bootstrap':
         return await handleBootstrapTool(args as {path?: string; force?: boolean})
       case 'init-project': {
