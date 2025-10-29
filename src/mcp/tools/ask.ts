@@ -1,5 +1,5 @@
 import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
-import {loadConfig} from '../../lib/config.js'
+import {loadConfig} from '../../core/config.js'
 import {execSync} from 'child_process'
 import {existsSync} from 'fs'
 import {join, relative} from 'path'
@@ -150,10 +150,8 @@ async function searchDocumentation(
   const results: SearchResult[] = []
 
   // Filter to paths that exist
-  const existingPaths = searchPaths.filter(p => {
-    const fullPath = join(projectPath, p)
-    return existsSync(fullPath)
-  })
+  // Note: searchPaths from config are already absolute paths
+  const existingPaths = searchPaths.filter(p => existsSync(p))
 
   if (existingPaths.length === 0) {
     return []
@@ -167,7 +165,7 @@ async function searchDocumentation(
   // -n: show line numbers
   // --type md: only markdown files
   // -C 2: show 2 lines of context before and after
-  const paths = existingPaths.map(p => join(projectPath, p)).join(' ')
+  const paths = existingPaths.join(' ')
 
   try {
     const output = execSync(`rg -i -n --type md -C 2 '${pattern}' ${paths} 2>/dev/null || true`, {
@@ -233,11 +231,13 @@ function buildNoResultsResponse(query: string, searchPaths: string[], projectPat
   output += `No documentation matched the query: "${query}"\n\n`
 
   // Show what paths were searched
+  // Note: searchPaths are already absolute from config
   output += `## Searched Paths\n\n`
   for (const searchPath of searchPaths) {
-    const fullPath = join(projectPath, searchPath)
-    const exists = existsSync(fullPath)
-    output += `- ${searchPath} ${exists ? '✓' : '(not found)'}\n`
+    const exists = existsSync(searchPath)
+    // Show relative path for readability
+    const displayPath = relative(projectPath, searchPath)
+    output += `- ${displayPath} ${exists ? '✓' : '(not found)'}\n`
   }
   output += `\n`
 
