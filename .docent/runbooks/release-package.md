@@ -178,8 +178,10 @@ echo "New version: $NEW_VERSION"
 **Validation:**
 
 - `package.json` shows new version number
-- File is modified but not committed yet
+- `package-lock.json` also updated with new version (2 places)
+- Files are modified but not committed yet
 - Verify: `npm pkg get version`
+- Verify: `git status` shows both package.json and package-lock.json modified
 
 **If step fails:**
 
@@ -379,8 +381,8 @@ git status --short
 VERSION=$(npm pkg get version | tr -d '"')
 echo "Preparing release v$VERSION"
 
-# Stage release changes
-git add package.json CHANGELOG.md
+# Stage release changes (IMPORTANT: include package-lock.json)
+git add package.json package-lock.json CHANGELOG.md
 # Add any documentation updates if made
 # git add README.md docs/
 
@@ -398,10 +400,11 @@ git show "v${VERSION}" --stat
 **Validation:**
 
 - Commit message follows format: `chore: release vX.Y.Z`
-- Only intended files are in commit
+- Commit includes: package.json, package-lock.json, CHANGELOG.md (and any docs)
 - Tag is created with format `vX.Y.Z` (lowercase v)
 - Tag points to release commit
 - Commit and tag are local only (not pushed yet)
+- Verify files in commit: `git show --stat`
 
 **If step fails:**
 
@@ -833,7 +836,7 @@ npm deprecate @tnezdev/docent@X.Y.Z "Breaking changes - use X+1.0.0 instead"
 # Create proper major version
 npm version major --no-git-tag-version
 # Update CHANGELOG to reflect proper versioning
-git add package.json CHANGELOG.md
+git add package.json package-lock.json CHANGELOG.md
 git commit -m "chore: release vX+1.0.0 (correcting semver violation)"
 # Restart from Step 8
 ```
@@ -863,7 +866,7 @@ npm run build && npm test
 git checkout main
 git merge hotfix/vX.Y.Z+1
 npm version patch --no-git-tag-version
-git add package.json CHANGELOG.md
+git add package.json package-lock.json CHANGELOG.md
 git commit -m "chore: hotfix vX.Y.Z+1"
 git tag -a "vX.Y.Z+1" -m "Hotfix vX.Y.Z+1"
 git push origin main --follow-tags
@@ -945,7 +948,7 @@ npm pack --dry-run
 
 # Commit and tag
 VERSION=$(npm pkg get version | tr -d '"')
-git add package.json CHANGELOG.md
+git add package.json package-lock.json CHANGELOG.md
 git commit -m "chore: release v${VERSION}"
 git tag -a "v${VERSION}" -m "Release v${VERSION}"
 
