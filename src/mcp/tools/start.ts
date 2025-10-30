@@ -2,6 +2,20 @@ import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
 import {loadConfig} from '../../core/config.js'
 import {createRegistry} from '../../core/resource-registry.js'
 import {join} from 'path'
+import {readFileSync} from 'fs'
+
+// Read version from package.json
+function getVersion(): string {
+  try {
+    // In compiled code, this will be lib/mcp/tools/start.js
+    // So package.json is at ../../../package.json
+    const packageJsonPath = join(__dirname, '../../../package.json')
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'))
+    return packageJson.version
+  } catch {
+    return 'unknown'
+  }
+}
 
 export const startToolDefinition: Tool = {
   name: 'start',
@@ -63,7 +77,9 @@ export async function handleStartTool(args: StartArgs): Promise<{content: TextCo
 }
 
 function buildStartOutput(templates: any[], runbooks: any[], config: any): string {
-  let output = '# Docent Session Initialized\n\n'
+  const version = getVersion()
+  let output = `# Docent Session Initialized\n\n`
+  output += `**Version:** ${version}\n\n`
 
   // Overview
   output += '## Available Commands\n\n'
@@ -140,7 +156,7 @@ function buildStartOutput(templates: any[], runbooks: any[], config: any): strin
   output += '- Edit `.docent/config.yaml` to customize search paths and projects\n\n'
 
   output += '---\n\n'
-  output += '_Docent 2.0 - Documentation Intelligence for AI Agents_\n'
+  output += `_Docent ${version} - Documentation Intelligence for AI Agents_\n`
 
   return output
 }

@@ -160,6 +160,131 @@ Agent: "Documented: Completed JWT-based authentication
        with refresh tokens and role-based access."
 ```
 
+## Creating Custom Templates
+
+Docent's `/tell` tool uses intelligent template classification to organize your knowledge. You can extend this with custom templates for project-specific documentation types.
+
+### Adding a Custom Template
+
+1. **Create template file** in `.docent/templates/` (overrides bundled templates with same name)
+2. **Add frontmatter** with classification guidance
+3. **Use naturally** - agent will classify your statements to the right template
+
+### Template Structure
+
+```markdown
+---
+name: incident-report
+description: Post-mortem documentation for production incidents
+directory: incidents
+filename_prefix: incident
+use_when: |
+  Use this template when the user mentions:
+  - Production incidents, outages, or downtime
+  - Post-mortems or incident reviews
+  - System failures or service disruptions
+  - Root cause analysis
+examples:
+  - "We had a database outage this morning"
+  - "Document the API timeout incident"
+  - "Create post-mortem for the deployment failure"
+---
+
+# Incident Report: {{incident_name}}
+
+**Date:** {{date}}
+**Duration:** {{duration}}
+**Severity:** {{severity}}
+
+## Summary
+
+[Brief description of what happened]
+
+## Timeline
+
+[Chronological events]
+
+## Root Cause
+
+[What caused the incident]
+
+## Resolution
+
+[How it was fixed]
+
+## Prevention
+
+[Steps to prevent recurrence]
+```
+
+### Template Frontmatter Fields
+
+- **`name`** - Unique identifier (must match filename without `.md`)
+- **`description`** - One-line explanation shown to users
+- **`directory`** - Target subdirectory under `.docent/` (e.g., `incidents`, `specs`, `guides`)
+- **`filename_prefix`** - Prefix for generated files (e.g., `incident-2025-10-29.md`)
+- **`use_when`** - Semantic guidance for when this template applies (natural language)
+- **`examples`** - Sample statements that should match this template
+
+### How Classification Works
+
+When you use `/tell`:
+
+1. Agent receives all templates with their `use_when` guidance
+2. Agent analyzes your statement semantically
+3. Agent selects best matching template
+4. File is created in correct directory with appropriate naming
+
+### Examples
+
+**Release notes template:**
+
+```yaml
+---
+name: release-notes
+description: Version release documentation
+directory: releases
+filename_prefix: release
+use_when: |
+  Use when documenting:
+  - Version releases or deployments
+  - Release notes or changelogs
+  - Version-specific changes
+examples:
+  - "Document v2.0 release"
+  - "We shipped the new dashboard today"
+---
+```
+
+**Team meeting notes:**
+
+```yaml
+---
+name: meeting-notes
+description: Team meeting documentation
+directory: meetings
+filename_prefix: meeting
+use_when: |
+  Use when capturing:
+  - Team meetings or standups
+  - Meeting notes or minutes
+  - Discussion outcomes or decisions from meetings
+examples:
+  - "Notes from today's planning meeting"
+  - "Document sprint review discussion"
+---
+```
+
+### Override Bundled Templates
+
+To customize bundled templates, create a file with the same name in `.docent/templates/`:
+
+- `.docent/templates/adr.md` - Override architecture decisions
+- `.docent/templates/rfc.md` - Override request for comments
+- `.docent/templates/runbook.md` - Override operational procedures
+
+Your version takes precedence and includes your custom classification guidance.
+
 ## Target Audience
 
 Solo developers using AI agents as part of their development workflow.

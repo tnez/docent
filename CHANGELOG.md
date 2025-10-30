@@ -7,6 +7,90 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2025-10-29
+
+### Added
+
+- **Ask/Act/Tell Architecture**: Complete overhaul of agent interaction paradigm
+  - `start` tool - Session initialization and resource discovery (now displays docent version)
+  - `ask` tool - Natural language documentation search with relevance scoring
+  - `act` tool - Execute runbooks and create files from templates by name
+  - `tell` tool - Agent-driven template classification for knowledge capture
+- **Template Classification System**: Intelligent template selection based on semantic analysis
+  - Templates self-describe with `use_when` guidance and examples
+  - Agent classifies user statements to appropriate templates
+  - Extensible - users can add custom templates in `.docent/templates/`
+  - See "Creating Custom Templates" in README for documentation
+- **Resource Registry**: Centralized system for bundled templates and runbooks
+  - Automatic discovery of bundled resources
+  - User templates override bundled ones with same name
+  - Template metadata exposed to agents for classification
+- **New Bundled Runbooks**: 7 operational procedures included with package
+  - `bootstrap` - Initialize `.docent/` directory structure
+  - `git-commit` - Professional git commits with conventional format
+  - `health-check` - Comprehensive project health validation
+  - `code-review` - Thorough code review procedures
+  - `file-issue` - GitHub issue filing workflow
+  - `process-journals` - Extract knowledge from journal entries
+  - `process-sessions` - Process ephemeral session notes
+  - `capture-work-guidance` - Proactive documentation guidance for agents
+- **Documentation in `.docent/` Directory**: Consolidated structure
+  - `adr/` - Architecture Decision Records (4 ADRs)
+  - `architecture/` - System architecture overview
+  - `guides/` - 8 user guides (MCP setup, testing, contributing, etc.)
+  - `journals/` - Daily work logs
+  - `sessions/` - AI session notes
+  - `notes/` - Topic-specific notes
+  - `runbooks/` - Project-specific operational procedures
+
+### Changed
+
+- **Default Documentation Root**: `docs` → `.docent`
+  - Configuration default updated to `.docent/` for cleaner project structure
+  - Matches industry convention for tool-specific directories
+  - Old `docs/` directory structure migrated to `.docent/`
+- **Template Naming Convention**: Removed `-template` suffix
+  - `adr-template.md` → `adr.md`
+  - `rfc-template.md` → `rfc.md`
+  - `runbook-template.md` → `runbook.md`
+  - Cleaner filenames, consistent with user expectations
+- **Module Organization**: Restructured codebase
+  - `src/lib/*` → `src/core/*` for better semantic clarity
+  - Core functionality (config, context, template system) centralized
+  - MCP-specific code remains in `src/mcp/`
+- **Simplified Template Library**: Focus on essential templates
+  - Removed verbose templates (patterns, standards, writing-software, testing, troubleshooting)
+  - Added concise, actionable templates (domain, journal-entry, meeting-notes, todo-list)
+  - 10 total templates optimized for agent use
+
+### Deprecated
+
+- Legacy documentation structure in `docs/` directory (removed, migrated to `.docent/`)
+- Duplicate runbooks in `.docent/runbooks/` that now ship with package
+
+### Removed
+
+- **37 obsolete files from `docs/` directory**:
+  - 11 RFCs - Historical architectural proposals (either implemented or abandoned)
+  - 5 research documents - Brainstorming and investigation notes
+  - 11 old journal entries - Superseded by `.docent/journals/`
+  - 4 CLI specs - Obsolete after MCP-only architecture (ADR-0004)
+  - 5 obsolete templates - Verbose templates replaced by concise versions
+  - 1 PRD - Early vision document
+- **Deprecated runbooks**:
+  - `prepare-release.md` - Superseded by unified `release-package.md`
+  - `publish-package.md` - Superseded by unified `release-package.md`
+- **Default `docs` search path** - Removed from configuration defaults
+
+### Technical
+
+- Added `TemplateClassifier` class for semantic template matching
+- Added `ResourceRegistry` for centralized resource management
+- Enhanced configuration system with `.docent/` as default root
+- Updated 5 test files to match new structure and defaults
+- Improved MCP tool integration with resource registry
+- Better separation between bundled and user resources
+
 ## [0.8.0] - 2025-10-21
 
 ### Added
