@@ -5,6 +5,23 @@ type: single-file
 author: docent
 version: 1.0.0
 tags: [architecture, decision, documentation, adr]
+directory: decisions
+filename_prefix: adr
+
+
+use_when: |
+  Use this template when documenting significant technical or architectural decisions:
+  - Uses decision language (decided, chose, selected, going with, adopting)
+  - Explains tradeoffs between alternatives
+  - Documents why one approach was chosen over others
+  - Has lasting impact on system architecture or design
+  - Needs to be referenced in the future to understand "why we built it this way"
+
+examples:
+  - "Decided to use Postgres over MongoDB because we need ACID transactions"
+  - "Chose microservices architecture to enable independent team scaling"
+  - "Selected React over Vue due to team expertise and ecosystem maturity"
+  - "Adopted event sourcing for audit trail and temporal query requirements"
 
 variables:
   - name: number

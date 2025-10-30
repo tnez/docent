@@ -5,6 +5,23 @@ type: single-file
 author: docent
 version: 1.0.0
 tags: [prd, product, planning, requirements]
+directory: prds
+filename_prefix: prd
+
+
+use_when: |
+  Use this template when planning new features or products:
+  - Defines user-facing features and requirements
+  - Includes user stories, success criteria, and acceptance criteria
+  - Focuses on "what" needs to be built, not "how"
+  - Documents product goals, metrics, and business value
+  - Uses planning language (should, must, will enable, allows users to)
+
+examples:
+  - "PRD for user authentication and profile management"
+  - "Product requirements for real-time collaboration features"
+  - "Planning document for mobile app onboarding flow"
+  - "Feature requirements for advanced search and filtering"
 
 variables:
   - name: number

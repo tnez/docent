@@ -66,7 +66,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'ask':
         return await handleAskTool(args as {query: string; path?: string; limit?: number})
       case 'tell':
-        return await handleTellTool(args as {statement: string; path?: string})
+        return await handleTellTool(args as {statement: string; path?: string}, server)
       default:
         throw new Error(`Unknown tool: ${name}`)
     }

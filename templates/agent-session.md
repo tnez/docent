@@ -5,6 +5,24 @@ type: single-file
 author: docent
 version: 1.0.0
 tags: [agent, session, ai, tracking, collaboration]
+directory: sessions
+filename_prefix: session
+
+use_when: |
+  Use this template when documenting work completed in a bounded session:
+  - Debugging, troubleshooting, or investigation work
+  - Feature implementation with specific outcomes
+  - Bug fixes with clear resolution
+  - Contains action verbs (fixed, implemented, debugged, resolved, investigated)
+  - References specific commits, PRs, or dates
+  - Describes objective → work done → results flow
+  - Session-based work that took place over a specific time period
+
+examples:
+  - "Fixed CI/CD failures by updating import paths and test expectations"
+  - "Investigated authentication bug - root cause was expired JWT tokens"
+  - "Implemented user profile feature, all tests passing, committed as abc123"
+  - "Debugged memory leak in background worker - reduced memory usage by 40%"
 
 variables:
   - name: timestamp

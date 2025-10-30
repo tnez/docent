@@ -5,6 +5,24 @@ type: single-file
 author: docent
 version: 1.0.0
 tags: [rfc, proposal, architecture, planning]
+directory: rfcs
+filename_prefix: rfc
+
+
+use_when: |
+  Use this template when proposing significant changes that need review:
+  - Architectural changes requiring team input
+  - New features or major refactoring proposals
+  - Technical approaches that need validation
+  - Proposals that will be discussed and refined
+  - Uses proposal language (proposing, suggesting, considering)
+  - Includes alternatives and seeks feedback
+
+examples:
+  - "Proposing a migration from REST to GraphQL for our API"
+  - "Suggesting we adopt microservices for better scalability"
+  - "RFC for implementing real-time notifications using WebSockets"
+  - "Proposal to refactor authentication layer to support SSO"
 
 variables:
   - name: number

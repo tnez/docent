@@ -1,6 +1,7 @@
 import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
+import type {Server} from '@modelcontextprotocol/sdk/server/index.js'
 import {loadConfig} from '../../core/config.js'
-import {createRegistry} from '../../core/resource-registry.js'
+import {loadAllTemplates, type TemplateMetadata} from '../../core/template-classifier.js'
 import {execSync} from 'child_process'
 import {existsSync} from 'fs'
 import {join, relative} from 'path'
@@ -38,27 +39,24 @@ interface DocumentationLocation {
   createNew: boolean
 }
 
-export async function handleTellTool(args: TellArgs): Promise<{content: TextContent[]}> {
+export async function handleTellTool(
+  args: TellArgs,
+  server: Server,
+): Promise<{content: TextContent[]}> {
   const projectPath = args.path || process.cwd()
 
   try {
     // Load configuration
     const config = loadConfig(projectPath)
 
-    // Create and load resource registry (for template awareness)
+    // Load all available templates (bundled + user-defined)
+    const packagePath = join(__dirname, '..', '..', '..')
+    const bundledTemplatesPath = join(packagePath, 'templates')
     const userTemplatesPath = join(config.docsRoot, 'templates')
-    const userRunbooksPath = join(config.docsRoot, 'runbooks')
-    const registry = createRegistry(userTemplatesPath, userRunbooksPath)
-    await registry.load()
+    const templates = await loadAllTemplates(bundledTemplatesPath, userTemplatesPath)
 
-    // Analyze the statement to understand intent
-    const intent = analyzeIntent(args.statement)
-
-    // Find appropriate documentation location
-    const location = await findDocumentationLocation(intent, config, projectPath, registry)
-
-    // Build response with edit instructions
-    const output = buildTellResponse(args.statement, intent, location, config, projectPath)
+    // Build response that asks agent to classify and document
+    const output = buildAgentClassificationResponse(args.statement, templates, config, projectPath)
 
     return {
       content: [
@@ -138,76 +136,35 @@ function analyzeIntent(statement: string): Intent {
 }
 
 /**
- * Find the most appropriate location to document this information
+ * Find the most appropriate location to document this information based on template
  */
 async function findDocumentationLocation(
-  intent: Intent,
+  template: TemplateMetadata,
   config: any,
   projectPath: string,
-  registry: any,
 ): Promise<DocumentationLocation> {
-  const docsRoot = join(projectPath, config.docsRoot)
+  // Map template names to directory locations
+  const templateLocationMap: Record<string, {dir: string; prefix: string}> = {
+    'agent-session': {dir: 'journals', prefix: 'session'},
+    'journal-entry': {dir: 'journals', prefix: 'journal'},
+    adr: {dir: 'decisions', prefix: 'adr'},
+    rfc: {dir: 'rfcs', prefix: 'rfc'},
+    prd: {dir: 'prds', prefix: 'prd'},
+    runbook: {dir: 'runbooks', prefix: 'runbook'},
+    'meeting-notes': {dir: 'meetings', prefix: 'meeting'},
+    'todo-list': {dir: 'todos', prefix: 'todo'},
+    domain: {dir: 'domains', prefix: 'domain'},
+  }
 
-  // Based on intent type, suggest location
-  switch (intent.type) {
-    case 'session':
-      return {
-        file: join(config.docsRoot, 'sessions', `session-${getTimestamp()}.md`),
-        reason: 'Session notes belong in .docent/sessions/',
-        createNew: true,
-      }
+  const locationInfo = templateLocationMap[template.name] || {dir: 'notes', prefix: 'note'}
+  const timestamp = getTimestamp()
+  const filename = `${timestamp}-${locationInfo.prefix}-001.md`
+  const filePath = join(config.docsRoot, locationInfo.dir, filename)
 
-    case 'decision':
-      return {
-        file: join(config.docsRoot, 'decisions', `adr-${getTimestamp()}.md`),
-        reason: 'Architecture decisions should be documented as ADRs in .docent/decisions/',
-        createNew: true,
-      }
-
-    case 'project':
-      // Look for existing project tracking docs
-      const projectFiles = await findMatchingFiles('project', config.docsRoot, projectPath)
-      if (projectFiles.length > 0) {
-        return {
-          file: projectFiles[0],
-          reason: 'Found existing project documentation',
-          createNew: false,
-        }
-      }
-      return {
-        file: join(config.docsRoot, 'projects', 'current.md'),
-        reason: 'Project tracking notes belong in .docent/projects/',
-        createNew: true,
-      }
-
-    case 'note':
-      // Temporary notes go in notes/
-      return {
-        file: join(config.docsRoot, 'notes', `note-${getTimestamp()}.md`),
-        reason: 'Quick notes and learnings belong in .docent/notes/',
-        createNew: true,
-      }
-
-    case 'general':
-    default:
-      // Search for related existing documentation
-      const matches = await searchRelatedDocumentation(intent.keywords, config.searchPaths, projectPath)
-
-      if (matches.length > 0) {
-        return {
-          file: matches[0].file,
-          section: matches[0].section,
-          reason: `Found related documentation discussing: ${matches[0].matchedTerms.join(', ')}`,
-          createNew: false,
-        }
-      }
-
-      // No match found, suggest creating in notes
-      return {
-        file: join(config.docsRoot, 'notes', `general-${getTimestamp()}.md`),
-        reason: 'No existing documentation found. Creating new note in .docent/notes/',
-        createNew: true,
-      }
+  return {
+    file: filePath,
+    reason: `Using ${template.name} template - ${template.description}`,
+    createNew: true,
   }
 }
 
@@ -314,103 +271,94 @@ function getTimestamp(): string {
 }
 
 /**
- * Build declarative response with edit instructions for agent
+ * Build response that asks agent to classify statement and create documentation
  */
-function buildTellResponse(
+function buildAgentClassificationResponse(
   statement: string,
-  intent: Intent,
-  location: DocumentationLocation,
+  templates: TemplateMetadata[],
   config: any,
   projectPath: string,
 ): string {
-  let output = `# Documentation Write Instructions\n\n`
-  output += `**Statement:** "${statement}"\n`
-  output += `**Intent:** ${intent.type} documentation\n`
-  output += `**Action:** ${location.createNew ? 'Create new file' : 'Update existing file'}\n\n`
+  // Filter templates that have use_when guidance
+  const classifiableTemplates = templates.filter((t) => t.use_when && t.examples)
 
+  let output = `# Documentation Classification and Creation\n\n`
+  output += `**Statement to document:** "${statement}"\n\n`
   output += `---\n\n`
 
-  // Add execution guidance
-  output += `## Edit Instructions\n\n`
+  output += `## Step 1: Classify the Statement\n\n`
+  output += `Analyze the statement and determine which template best fits.\n\n`
 
-  if (location.createNew) {
-    output += `### Create New File\n\n`
-    output += `**File Path:** \`${location.file}\`\n`
-    output += `**Reason:** ${location.reason}\n\n`
+  output += `### Available Templates:\n\n`
 
-    output += `**Steps to execute:**\n\n`
-    output += `1. **Create the file** at the specified path\n`
-    output += `2. **Add appropriate content** based on the statement\n`
+  for (const template of classifiableTemplates) {
+    const directory = template.directory || 'notes'
+    const prefix = template.filename_prefix || template.name
+    const examples = Array.isArray(template.examples) ? template.examples : []
 
-    if (intent.suggestedTemplate) {
-      output += `3. **Consider using template:** ${intent.suggestedTemplate}\n`
-      output += `   - You can access template content via resource registry if needed\n`
-    } else {
-      output += `3. **Structure the content** appropriately (use markdown headers, sections)\n`
+    output += `#### **${template.name}**\n\n`
+    output += `- **Description:** ${template.description}\n`
+    output += `- **Location:** \`.docent/${directory}/\`\n`
+    output += `- **When to use:**\n`
+    if (template.use_when) {
+      const lines = template.use_when.trim().split('\n')
+      for (const line of lines) {
+        output += `  ${line}\n`
+      }
     }
-
-    output += `4. **Include the information** from the statement\n`
-    output += `5. **Add metadata** if appropriate (date, author, tags)\n\n`
-
-    if (intent.suggestedTemplate) {
-      output += `**Suggested Format:** Use the **${intent.suggestedTemplate}** template structure\n\n`
-    } else {
-      output += `**Suggested Format:**\n\n`
-      output += '```markdown\n'
-      output += `# ${intent.type.charAt(0).toUpperCase() + intent.type.slice(1)}\n\n`
-      output += `**Date:** ${new Date().toISOString().split('T')[0]}\n\n`
-      output += `${statement}\n\n`
-      output += `## Details\n\n`
-      output += `[Add relevant details here]\n`
-      output += '```\n\n'
+    if (examples.length > 0) {
+      output += `- **Examples:**\n`
+      for (const example of examples.slice(0, 3)) {
+        output += `  - ${example}\n`
+      }
     }
-  } else {
-    output += `### Update Existing File\n\n`
-    output += `**File Path:** \`${location.file}\`\n`
-    output += `**Reason:** ${location.reason}\n\n`
-
-    if (location.section) {
-      output += `**Suggested Section:** ${location.section}\n\n`
-    }
-
-    output += `**Steps to execute:**\n\n`
-    output += `1. **Read the existing file** to understand its structure\n`
-    output += `2. **Find the appropriate section** to add this information\n`
-
-    if (location.section) {
-      output += `   - Look for section: "${location.section}"\n`
-    } else {
-      output += `   - Or create a new section if needed\n`
-    }
-
-    output += `3. **Add the information** in a way that fits the existing format\n`
-    output += `4. **Maintain consistency** with the file's style and structure\n`
-    output += `5. **Update any dates** or metadata if present\n\n`
-
-    output += `**Integration Approach:**\n`
-    output += `- Read the file first to understand context\n`
-    output += `- Add information where it fits best\n`
-    output += `- Use existing section structure\n`
-    output += `- Preserve existing formatting style\n\n`
+    output += `\n`
   }
 
   output += `---\n\n`
 
-  output += `## Execution Responsibility\n\n`
-  output += `You are responsible for:\n\n`
-  output += `- **Creating or editing the file** using your available tools (Write, Edit)\n`
-  output += `- **Structuring the content** appropriately\n`
-  output += `- **Including all relevant information** from the statement\n`
-  output += `- **Verifying the file was created/updated** successfully\n`
-  output += `- **Reporting completion** to the user\n\n`
+  output += `## Step 2: Create the Documentation\n\n`
+  output += `Once you've determined the best template:\n\n`
 
-  output += `**Available Tools:**\n`
-  output += `- Use **Write** tool to create new files\n`
-  output += `- Use **Edit** tool to update existing files\n`
-  output += `- Use **Read** tool to examine existing content first\n\n`
+  output += `1. **Access the template:**\n`
+  output += `   - Use MCP resource: \`docent://template/<template-name>\`\n`
+  output += `   - Example: \`docent://template/agent-session\`\n\n`
+
+  output += `2. **Determine the file path:**\n`
+  output += `   - Use the directory mapping above\n`
+  output += `   - Create filename: \`YYYY-MM-DD-<prefix>-001.md\`\n`
+  output += `   - Example: \`.docent/sessions/2025-10-29-session-001.md\`\n\n`
+
+  output += `3. **Create the file:**\n`
+  output += `   - Fill in the template with information from the statement\n`
+  output += `   - Adapt content to match the specific context\n`
+  output += `   - Include all relevant details from the statement\n\n`
+
+  output += `4. **Verify:**\n`
+  output += `   - Ensure file was created successfully\n`
+  output += `   - Confirm content accurately captures the statement\n\n`
 
   output += `---\n\n`
-  output += `_You now have the edit instructions. Please proceed with creating/updating the documentation._\n`
+
+  output += `## Your Task\n\n`
+  output += `1. Read the statement carefully\n`
+  output += `2. Review all available templates and their criteria\n`
+  output += `3. Choose the best matching template based on:\n`
+  output += `   - Language used (action verbs, decision words, learning words)\n`
+  output += `   - Structure and intent\n`
+  output += `   - Time-bound vs timeless information\n`
+  output += `4. Retrieve the template via MCP resource\n`
+  output += `5. Create the documentation file at the appropriate location\n`
+  output += `6. Report completion with the chosen template and file path\n\n`
+
+  output += `**Available Tools:**\n`
+  output += `- MCP Resource access for templates\n`
+  output += `- Write tool to create files\n`
+  output += `- Read tool if needed\n\n`
+
+  output += `---\n\n`
+  output += `_Proceed with classification and documentation creation._\n`
 
   return output
 }
+
