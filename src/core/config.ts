@@ -40,7 +40,7 @@ export interface DocentConfig {
 const DEFAULT_RAW_CONFIG: RawConfig = {
   root: '.docent',
   sessionThresholdMinutes: 30,
-  search_paths: ['.docent', 'docs'],
+  search_paths: ['.docent'],
   projects: {},
 }
 

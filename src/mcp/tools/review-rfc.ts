@@ -9,7 +9,7 @@ export const reviewRfcToolDefinition = {
     properties: {
       rfc_path: {
         type: 'string' as const,
-        description: 'Path to RFC file (e.g., docs/rfcs/rfc-0005-enhanced-mcp-architecture.md)',
+        description: 'Path to RFC file (e.g., .docent/rfcs/rfc-0005-enhanced-mcp-architecture.md)',
       },
       perspective: {
         type: 'string' as const,

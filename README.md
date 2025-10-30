@@ -168,9 +168,9 @@ If you're using Claude, ChatGPT, or other AI coding assistants, docent helps the
 
 ## Documentation
 
-- [MCP Setup Guide](docs/guides/mcp-setup.md) - Detailed configuration
-- [Architecture Overview](docs/architecture/overview.md) - System design
-- [RFCs](docs/rfcs/) - Proposed features
+- [MCP Setup Guide](.docent/guides/mcp-setup.md) - Detailed configuration
+- [Architecture Overview](.docent/architecture/overview.md) - System design
+- [ADRs](.docent/adr/) - Architecture decisions
 
 ## Development
 

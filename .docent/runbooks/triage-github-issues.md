@@ -369,7 +369,7 @@ Would you like to draft the RFC, or should a maintainer take this on?"
 # For ready implementation
 gh issue comment <ISSUE_NUMBER> --body "This looks straightforward to implement. Marking as ready for implementation.
 
-If you're interested in contributing, see our [contributing guide](docs/guides/contributing.md)!"
+If you're interested in contributing, see our [contributing guide](.docent/guides/contributing.md)!"
 
 # For discussion
 gh issue comment <ISSUE_NUMBER> --body "This is an interesting idea that needs broader discussion. Adding to the agenda for the next maintainer sync.
@@ -521,7 +521,7 @@ gh issue edit <ISSUE_NUMBER> --add-label "needs-info"
 **Resolution:**
 
 ```bash
-gh issue comment <ISSUE_NUMBER> --body "This suggestion conflicts with [ADR-NNNN](docs/adr/adr-NNNN.md) where we decided [decision].
+gh issue comment <ISSUE_NUMBER> --body "This suggestion conflicts with [ADR-NNNN](.docent/adr/adr-NNNN.md) where we decided [decision].
 
 The trade-offs were:
 - [Trade-off 1]
@@ -614,13 +614,12 @@ After triaging a batch of issues:
 
 **Related Procedures:**
 
-- [RFC Process](../rfcs/rfc-0010-github-issue-filing-mcp-tool.md) - Creating RFCs
 - [Contributing Guide](../guides/contributing.md) - For pointing contributors to guidelines
 - [CI/CD Health Check](ci-cd-health-check.md) - When issues relate to builds
 
 **Integration with RFC-0010:**
 
-This runbook complements [RFC-0010 (GitHub Issue Filing MCP Tool)](../rfcs/rfc-0010-github-issue-filing-mcp-tool.md). Issues filed via the `file-issue` tool will:
+Issues filed via the `file-issue` tool will:
 
 - Include rich context (version, OS, etc.) automatically
 - Follow templates for better structure

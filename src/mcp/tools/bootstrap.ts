@@ -167,8 +167,8 @@ Project analysis:
   Build Tools: ${analysis.buildTools.join(', ') || 'Unknown'}
 
 Next steps:
-1. Review docs/README.md for documentation guidelines
-2. Edit docs/guides/getting-started.md with project specifics
+1. Review .docent/guides/ for documentation guidelines
+2. Edit .docent/guides/getting-started.md with project specifics
 3. Use templates to create ADRs, RFCs, or runbooks as needed
 4. Run 'docent doctor' to check project health and documentation quality
 
@@ -274,12 +274,12 @@ mcp.readResource('docent://template/adr')
 **Creating an ADR:**
 1. Get template: \`readResource('docent://template/adr')\`
 2. Fill in decision details
-3. Save to \`docs/adr/adr-NNNN-title.md\`
+3. Save to \`.docent/adr/adr-NNNN-title.md\`
 
 **Creating a Runbook:**
 1. Get template: \`readResource('docent://template/runbook')\`
 2. Document operational procedure
-3. Save to \`docs/runbooks/procedure-name.md\`
+3. Save to \`.docent/runbooks/procedure-name.md\`
 
 ## Documentation Guidelines
 

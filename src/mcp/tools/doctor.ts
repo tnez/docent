@@ -506,7 +506,7 @@ async function detectDocumentationGaps(
           category: 'Documentation Gaps',
           message: 'Complex project without Architecture Decision Records (ADRs)',
           location: docsPath,
-          fix: 'Consider creating docs/adr/ directory to document architectural decisions',
+          fix: 'Consider creating .docent/adr/ directory to document architectural decisions',
         })
       }
     }

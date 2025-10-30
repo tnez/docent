@@ -16,7 +16,7 @@ export const PROMPTS: Record<string, Prompt> = {
     arguments: [
       {
         name: 'rfc_path',
-        description: 'Path to RFC file (e.g., docs/rfcs/rfc-0005-enhanced-mcp-architecture.md)',
+        description: 'Path to RFC file (e.g., .docent/rfcs/rfc-0005-enhanced-mcp-architecture.md)',
         required: true,
       },
       {
