@@ -288,6 +288,56 @@ If working on the MCP server:
 
 See [MCP Setup Guide](mcp-setup.md) for more details.
 
+## Best Practices
+
+### Documentation Maintenance
+
+When making architectural changes, documentation drift occurs quickly. Key lessons:
+
+1. **Plan for comprehensive review** - Architecture changes require dedicated time for documentation updates across all files
+2. **Rewrite when appropriate** - Complete rewrites are often clearer than surgical edits when concepts fundamentally change
+3. **Anticipate surface area** - Multiple docs (README, guides, API reference, architecture docs) need updates
+4. **Use pre-commit hooks** - Markdown linting catches formatting issues and maintains quality
+
+See [Documentation Maintenance Learnings](../notes/documentation-maintenance-learnings.md) for detailed lessons from past documentation updates.
+
+### Architectural Reorganizations
+
+When refactoring directory structures or module organization:
+
+1. **Update all import paths** - Check both source and test files
+   - Use global search to find all imports of moved modules
+   - Update relative imports that may have changed depth
+   - Run TypeScript compiler to catch missed imports
+
+2. **Update test expectations** - Tests often encode assumptions about defaults
+   - Check for hardcoded paths or configuration values
+   - Update assertions to match new conventions
+   - Verify test fixtures reflect new structure
+
+3. **Synchronize related systems** - Components that reference files/modules need updates
+   - Resource handlers (template loaders, etc.)
+   - Configuration parsers
+   - Documentation references
+   - Naming convention changes across all consumers
+
+4. **Run full test suite locally** - Catch integration issues before CI/CD
+   - `npm test` - Run all tests
+   - `npm run build` - Verify TypeScript compilation
+   - Check for warnings, not just errors
+
+5. **Consider preventive measures**
+   - Add linting rules to detect cross-boundary imports
+   - Create scripts to validate file structure conventions
+   - Update CI/CD to catch common reorganization issues
+
+**Common pitfalls:**
+
+- Forgetting test files when updating imports
+- Missing references in resource loaders or handlers
+- Test expectations hardcoded to old defaults
+- Not checking examples or documentation
+
 ## Getting Help
 
 - Check existing [documentation](../README.md)
