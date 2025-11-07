@@ -30,12 +30,23 @@ export interface Resource {
 }
 
 /**
+ * Information about a resource that failed to load
+ */
+export interface LoadFailure {
+  filePath: string
+  reason: 'missing-frontmatter' | 'missing-fields'
+  resourceType: 'template' | 'runbook'
+  source: 'bundled' | 'user'
+}
+
+/**
  * Resource registry that loads templates and runbooks from bundled and user paths
  * User resources override bundled resources by name
  */
 export class ResourceRegistry {
   private templates: Map<string, Resource> = new Map()
   private runbooks: Map<string, Resource> = new Map()
+  private loadFailures: LoadFailure[] = []
 
   constructor(
     private bundledTemplatesPath: string,
@@ -91,6 +102,13 @@ export class ResourceRegistry {
   }
 
   /**
+   * Get list of resources that failed to load
+   */
+  getLoadFailures(): LoadFailure[] {
+    return this.loadFailures
+  }
+
+  /**
    * Load templates from a directory
    */
   private async loadTemplatesFrom(dirPath: string, source: 'bundled' | 'user'): Promise<void> {
@@ -103,9 +121,11 @@ export class ResourceRegistry {
     for (const file of files) {
       const filePath = join(dirPath, file)
       try {
-        const resource = this.parseResource(filePath, source, 'template')
-        if (resource) {
-          this.templates.set(resource.metadata.name, resource)
+        const result = this.parseResource(filePath, source, 'template')
+        if (result.success) {
+          this.templates.set(result.resource.metadata.name, result.resource)
+        } else {
+          this.loadFailures.push(result.failure)
         }
       } catch (error) {
         console.warn(`Failed to load template ${file}:`, error)
@@ -126,9 +146,11 @@ export class ResourceRegistry {
     for (const file of files) {
       const filePath = join(dirPath, file)
       try {
-        const resource = this.parseResource(filePath, source, 'runbook')
-        if (resource) {
-          this.runbooks.set(resource.metadata.name, resource)
+        const result = this.parseResource(filePath, source, 'runbook')
+        if (result.success) {
+          this.runbooks.set(result.resource.metadata.name, result.resource)
+        } else {
+          this.loadFailures.push(result.failure)
         }
       } catch (error) {
         console.warn(`Failed to load runbook ${file}:`, error)
@@ -138,24 +160,28 @@ export class ResourceRegistry {
 
   /**
    * Parse a markdown resource file with YAML frontmatter
+   * Returns either success with resource or failure with details
    */
-  private parseResource(filePath: string, source: 'bundled' | 'user', inferredType?: string): Resource | null {
+  private parseResource(
+    filePath: string,
+    source: 'bundled' | 'user',
+    inferredType?: string,
+  ): {success: true; resource: Resource} | {success: false; failure: LoadFailure} {
     const content = readFileSync(filePath, 'utf-8')
 
     // Extract frontmatter and body
     const frontmatterMatch = content.match(/^---\n([\s\S]+?)\n---\n([\s\S]*)$/)
 
     if (!frontmatterMatch) {
-      console.warn(`\nResource not loaded: ${filePath}`)
-      console.warn('Missing YAML frontmatter. Custom resources require frontmatter with name and description fields.')
-      console.warn('\nExample:')
-      console.warn('---')
-      console.warn('name: your-resource-name')
-      console.warn('description: Brief description of what this does')
-      console.warn(`type: ${inferredType || 'template'}`)
-      console.warn('---\n')
-      console.warn('See .docent/guides/contributing.md for full documentation.\n')
-      return null
+      return {
+        success: false,
+        failure: {
+          filePath,
+          reason: 'missing-frontmatter',
+          resourceType: (inferredType || 'template') as 'template' | 'runbook',
+          source,
+        },
+      }
     }
 
     const [, frontmatterStr, body] = frontmatterMatch
@@ -169,22 +195,25 @@ export class ResourceRegistry {
     }
 
     if (!metadata.name || !metadata.description) {
-      console.warn(`\nResource not loaded: ${filePath}`)
-      console.warn('Missing required frontmatter fields: name and/or description')
-      console.warn('\nYour frontmatter should include:')
-      console.warn('---')
-      console.warn('name: your-resource-name')
-      console.warn('description: Brief description')
-      console.warn('---\n')
-      console.warn('See .docent/guides/contributing.md for full documentation.\n')
-      return null
+      return {
+        success: false,
+        failure: {
+          filePath,
+          reason: 'missing-fields',
+          resourceType: (inferredType || metadata.type || 'template') as 'template' | 'runbook',
+          source,
+        },
+      }
     }
 
     return {
-      metadata,
-      content: body.trim(),
-      filePath,
-      source,
+      success: true,
+      resource: {
+        metadata,
+        content: body.trim(),
+        filePath,
+        source,
+      },
     }
   }
 

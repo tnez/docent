@@ -1,7 +1,7 @@
 import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
 import {loadConfig} from '../../core/config.js'
-import {createRegistry} from '../../core/resource-registry.js'
-import {join} from 'path'
+import {createRegistry, type LoadFailure} from '../../core/resource-registry.js'
+import {join, basename} from 'path'
 import {readFileSync} from 'fs'
 
 // Read version from package.json
@@ -52,9 +52,10 @@ export async function handleStartTool(args: StartArgs): Promise<{content: TextCo
     // Get resources
     const templates = registry.getTemplates()
     const runbooks = registry.getRunbooks()
+    const failures = registry.getLoadFailures()
 
     // Build output
-    const output = buildStartOutput(templates, runbooks, config)
+    const output = buildStartOutput(templates, runbooks, config, failures)
 
     return {
       content: [
@@ -76,7 +77,7 @@ export async function handleStartTool(args: StartArgs): Promise<{content: TextCo
   }
 }
 
-function buildStartOutput(templates: any[], runbooks: any[], config: any): string {
+function buildStartOutput(templates: any[], runbooks: any[], config: any, failures: LoadFailure[]): string {
   const version = getVersion()
   let output = `# Docent Session Initialized\n\n`
   output += `**Version:** ${version}\n\n`
@@ -154,6 +155,50 @@ function buildStartOutput(templates: any[], runbooks: any[], config: any): strin
   output += '- `/docent:ask` searches ALL documentation in configured search paths\n'
   output += '- Custom templates and runbooks in `.docent/` override bundled ones\n'
   output += '- Edit `.docent/config.yaml` to customize search paths and projects\n\n'
+
+  // Warnings for load failures (only show user resources)
+  const userFailures = failures.filter(f => f.source === 'user')
+  if (userFailures.length > 0) {
+    output += '---\n\n'
+    output += '## ⚠️ Action Required: Fix Custom Resources\n\n'
+    output += `**${userFailures.length} custom ${userFailures.length === 1 ? 'resource' : 'resources'} failed to load** due to missing or incomplete frontmatter.\n\n`
+
+    // Group by reason
+    const missingFrontmatter = userFailures.filter(f => f.reason === 'missing-frontmatter')
+    const missingFields = userFailures.filter(f => f.reason === 'missing-fields')
+
+    if (missingFrontmatter.length > 0) {
+      output += '### Missing Frontmatter\n\n'
+      output += 'These files need YAML frontmatter added:\n\n'
+      for (const failure of missingFrontmatter) {
+        const fileName = basename(failure.filePath)
+        output += `- \`${fileName}\` - Add frontmatter with \`name\` and \`description\` fields\n`
+      }
+      output += '\n'
+    }
+
+    if (missingFields.length > 0) {
+      output += '### Missing Required Fields\n\n'
+      output += 'These files have frontmatter but are missing \`name\` or \`description\`:\n\n'
+      for (const failure of missingFields) {
+        const fileName = basename(failure.filePath)
+        output += `- \`${fileName}\` - Ensure frontmatter includes both \`name\` and \`description\`\n`
+      }
+      output += '\n'
+    }
+
+    output += '**How to fix:**\n\n'
+    output += '1. Add YAML frontmatter to each file:\n'
+    output += '   ```yaml\n'
+    output += '   ---\n'
+    output += '   name: your-resource-name\n'
+    output += '   description: Brief description of what this does\n'
+    output += '   type: runbook  # or "template"\n'
+    output += '   ---\n'
+    output += '   ```\n\n'
+    output += '2. See `.docent/guides/contributing.md` for complete documentation and examples\n\n'
+    output += '3. Re-run `/docent:start` after fixing to verify\n\n'
+  }
 
   output += '---\n\n'
   output += `_Docent ${version} - Documentation Intelligence for AI Agents_\n`
