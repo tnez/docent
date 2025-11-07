@@ -340,32 +340,62 @@ When adding new features, update the manifest to track progress from specificati
 
 ## MCP Development
 
-If working on the MCP server:
+When developing docent itself (not just using it), you're modifying the MCP server code that AI agents interact with.
 
-1. Build after changes:
+### Critical: The Rebuild + Restart Cycle
+
+**The MCP server runs compiled JavaScript from `lib/`, not TypeScript source from `src/`.** This means changes to source code are not visible until you rebuild AND restart the host application.
+
+**After ANY change to `src/`:**
+
+1. **Rebuild** the project:
 
    ```bash
    npm run build
    ```
 
-2. Test manually:
+2. **Restart** the host application (Claude Code, Claude Desktop, etc.)
+   - MCP servers are loaded once at startup
+   - Changes in `lib/` won't be picked up until restart
 
-   ```bash
-   node ./test-mcp.js
-   ```
+3. **Verify** your changes took effect:
+   - Run `/docent:start` to check for expected output
+   - Test the specific feature you modified
+   - Check for warnings or errors that should appear
 
-3. Update Claude Desktop config to use your local build:
+**Common mistake:** Forgetting to restart after rebuild, then wondering why changes don't appear.
 
-   ```json
-   {
-     "mcpServers": {
-       "docent": {
-         "command": "node",
-         "args": ["/absolute/path/to/docent/lib/mcp/server.js"]
-       }
-     }
-   }
-   ```
+### Manual Testing
+
+Test MCP tools directly without a host:
+
+```bash
+# Test the MCP server directly
+node ./test-mcp.js
+```
+
+### Configuring Host Applications
+
+**Claude Desktop:**
+
+```json
+{
+  "mcpServers": {
+    "docent": {
+      "command": "node",
+      "args": ["/absolute/path/to/docent/lib/mcp/server.js"]
+    }
+  }
+}
+```
+
+**Claude Code:**
+
+Uses npm global installation by default. For local development:
+
+1. Uninstall global: `npm uninstall -g @tnezdev/docent`
+2. Use `npx` in MCP config: `"command": "npx", "args": ["-y", "/absolute/path/to/docent"]`
+3. Or: `npm link` in project root, then use global command
 
 See [MCP Setup Guide](mcp-setup.md) for more details.
 
