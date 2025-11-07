@@ -214,6 +214,87 @@ docent/
 └── package.json      # Node.js dependencies and scripts
 ```
 
+### Custom Templates and Runbooks
+
+Projects can extend docent by creating custom templates and runbooks in their `.docent/` directory. Both require YAML frontmatter to be discovered by docent.
+
+#### Required Frontmatter Structure
+
+All custom templates and runbooks must include YAML frontmatter with these required fields:
+
+```yaml
+---
+name: your-resource-name
+description: Brief description of what this does
+type: template  # or "runbook"
+author: "@your-username"
+version: 1.0.0
+tags: [tag1, tag2, tag3]
+---
+```
+
+**Required fields:**
+
+- `name` - Unique identifier used with `/docent:act` (e.g., "rebase-on-main")
+- `description` - One-line summary shown in resource listings
+- `type` - Either "template" or "runbook" (can be omitted if file is in correct directory)
+
+**Optional fields:**
+
+- `author` - GitHub username or maintainer name
+- `version` - Semantic version for tracking changes
+- `tags` - Array of keywords for categorization
+
+**Example custom runbook:**
+
+```yaml
+---
+name: rebase-on-main
+description: Rebase feature branch on main with conflict resolution guidance
+type: runbook
+author: "@tnez"
+version: 1.0.0
+tags: [git, rebase, workflow]
+---
+
+# Runbook: Rebase on Main
+
+[Your runbook content here...]
+```
+
+**Example custom template:**
+
+```yaml
+---
+name: tech-spec
+description: Technical specification for implementation planning
+type: template
+author: "@tnez"
+version: 1.0.0
+tags: [planning, architecture, implementation]
+variables:
+  - name: component
+    description: The component or module being specified
+    required: true
+  - name: author
+    description: Technical lead for this spec
+    default: "@tnez"
+---
+
+# Technical Specification: {{component}}
+
+[Your template content here...]
+```
+
+**Common mistakes:**
+
+- Missing frontmatter entirely (file won't be discovered)
+- Missing `name` or `description` fields (file won't be loaded)
+- Incorrect YAML syntax (file won't parse)
+- Not using `---` delimiters around frontmatter
+
+If your custom resource isn't appearing in `/docent:start`, check for these issues first.
+
 ### Scripts Directory
 
 The `scripts/` directory contains utility scripts for development and maintenance:

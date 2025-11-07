@@ -1,3 +1,12 @@
+---
+name: triage-github-issues
+description: Systematically triage incoming GitHub issues for the docent project
+type: runbook
+author: "@tnez"
+version: 1.0.0
+tags: [github, issues, triage, maintenance]
+---
+
 # Runbook: Triage GitHub Issues
 
 **Purpose:** Systematically triage incoming GitHub issues for the docent project

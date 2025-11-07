@@ -146,7 +146,15 @@ export class ResourceRegistry {
     const frontmatterMatch = content.match(/^---\n([\s\S]+?)\n---\n([\s\S]*)$/)
 
     if (!frontmatterMatch) {
-      console.warn(`Resource ${filePath} missing frontmatter`)
+      console.warn(`\nResource not loaded: ${filePath}`)
+      console.warn('Missing YAML frontmatter. Custom resources require frontmatter with name and description fields.')
+      console.warn('\nExample:')
+      console.warn('---')
+      console.warn('name: your-resource-name')
+      console.warn('description: Brief description of what this does')
+      console.warn(`type: ${inferredType || 'template'}`)
+      console.warn('---\n')
+      console.warn('See .docent/guides/contributing.md for full documentation.\n')
       return null
     }
 
@@ -161,7 +169,14 @@ export class ResourceRegistry {
     }
 
     if (!metadata.name || !metadata.description) {
-      console.warn(`Resource ${filePath} missing required frontmatter fields (name, description)`)
+      console.warn(`\nResource not loaded: ${filePath}`)
+      console.warn('Missing required frontmatter fields: name and/or description')
+      console.warn('\nYour frontmatter should include:')
+      console.warn('---')
+      console.warn('name: your-resource-name')
+      console.warn('description: Brief description')
+      console.warn('---\n')
+      console.warn('See .docent/guides/contributing.md for full documentation.\n')
       return null
     }
 
