@@ -72,7 +72,7 @@ Additional type-specific variables:
 ```yaml
 projects:
   docent:
-    repo: anthropics/docent
+    repo: tnez/docent
   my-app:
     repo: user/my-app
 ```
@@ -131,7 +131,7 @@ gh repo view <owner/repo> --json name
 
 ---
 
-Filed via [docent](https://github.com/anthropics/docent)
+Filed via [docent](https://github.com/tnez/docent)
 ```
 
 #### Feature Request Format
@@ -151,7 +151,7 @@ Filed via [docent](https://github.com/anthropics/docent)
 
 ---
 
-Filed via [docent](https://github.com/anthropics/docent)
+Filed via [docent](https://github.com/tnez/docent)
 ```
 
 #### Question Format
@@ -163,7 +163,7 @@ Filed via [docent](https://github.com/anthropics/docent)
 
 ---
 
-Filed via [docent](https://github.com/anthropics/docent)
+Filed via [docent](https://github.com/tnez/docent)
 ```
 
 #### Documentation Issue Format
@@ -183,7 +183,7 @@ Filed via [docent](https://github.com/anthropics/docent)
 
 ---
 
-Filed via [docent](https://github.com/anthropics/docent)
+Filed via [docent](https://github.com/tnez/docent)
 ```
 
 ---
@@ -229,7 +229,7 @@ gh issue create \
 
 # Example for bug:
 gh issue create \
-  --repo anthropics/docent \
+  --repo tnez/docent \
   --title "Bootstrap fails with permission error" \
   --body "$(cat issue-body.md)" \
   --label "bug"
@@ -288,7 +288,7 @@ You can view and track the issue at the URL above.
 
 **Generated issue:**
 
-- Repo: anthropics/docent
+- Repo: tnez/docent
 - Title: "Bootstrap fails on Windows with permission error"
 - Labels: bug
 - Body: Formatted bug report
@@ -334,7 +334,7 @@ You can view and track the issue at the URL above.
 
 **Generated issue:**
 
-- Repo: anthropics/docent
+- Repo: tnez/docent
 - Title: "Getting started guide is outdated"
 - Labels: documentation
 - Body: Formatted documentation issue
@@ -403,7 +403,7 @@ Add projects to `.docent/config.yaml`:
 ```yaml
 projects:
   docent:
-    repo: anthropics/docent
+    repo: tnez/docent
     default_labels:
       - via-docent
 
