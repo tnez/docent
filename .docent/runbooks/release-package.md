@@ -1,3 +1,12 @@
+---
+name: release-package
+description: Create and publish a new version of docent to npm registry
+type: runbook
+author: "@tnez"
+version: 1.0.0
+tags: [release, npm, publishing, version]
+---
+
 # Runbook: Release Package
 
 **Purpose:** Create and publish a new version of docent to npm registry

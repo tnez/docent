@@ -1,3 +1,12 @@
+---
+name: fix-markdown-lint
+description: Fix markdown linting errors in documentation files
+type: runbook
+author: "@tnez"
+version: 1.0.0
+tags: [markdown, linting, quality, documentation]
+---
+
 # Runbook: Fix Markdown Linting
 
 **Purpose:** Fix markdown linting errors in documentation files

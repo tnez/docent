@@ -1,3 +1,12 @@
+---
+name: upgrade-dependencies
+description: Periodically upgrade npm dependencies and GitHub Actions to keep project current and secure
+type: runbook
+author: "@tnez"
+version: 1.0.0
+tags: [dependencies, maintenance, security, npm]
+---
+
 # Runbook: Upgrade Dependencies
 
 **Purpose:** Periodically upgrade npm dependencies and GitHub Actions to keep project current and secure

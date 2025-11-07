@@ -1,3 +1,12 @@
+---
+name: install-git-hooks
+description: Install pre-commit hooks to automatically lint markdown files before commits
+type: runbook
+author: "@tnez"
+version: 1.0.0
+tags: [git, hooks, automation, linting]
+---
+
 # Runbook: Install Git Hooks
 
 **Purpose:** Install pre-commit hooks to automatically lint markdown files before commits
