@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2025-11-07
+
+### Added
+
+- Frontmatter warnings in `docent:start` for custom resources missing required metadata
+
+### Fixed
+
+- Custom runbook frontmatter requirements now properly documented with improved error messages
+- Updated file-issue runbook to reference correct repository (tnez/docent)
+
+### Changed
+
+- Upgraded production dependencies (@modelcontextprotocol/sdk 1.20.0 → 1.21.1)
+- Upgraded development dependencies (@types/node, markdownlint-cli2)
+- Upgraded GitHub Actions (checkout v4 → v5, setup-node v4 → v6, markdownlint-cli2-action v16 → v20)
+
+### Technical
+
+- Improved MCP development documentation with rebuild/restart workflow
+- Extracted knowledge from journals to permanent documentation
+- Updated release runbook to include package-lock.json
+
 ## [0.9.0] - 2025-10-29
 
 ### Added

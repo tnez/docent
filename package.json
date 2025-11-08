@@ -1,6 +1,6 @@
 {
   "name": "@tnezdev/docent",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Documentation intelligence for AI agents - Your guide through the codebase",
   "author": "Travis Nesland <travis@tnez.dev>",
   "license": "MIT",
