@@ -296,19 +296,35 @@ function buildSearchResponse(
 
   output += `---\n\n`
 
-  // Include applicable skills first
+  // Include applicable skills first (metadata only, not full content)
   if (skillMatches.length > 0) {
     output += `## Applicable Skills\n\n`
-    output += `These skills may help with your query:\n\n`
+    output += `These skills may help with your query. **Read the skill file** to see full instructions.\n\n`
 
     for (const match of skillMatches) {
       const skill = match.skill
       output += `### ${skill.metadata.name}\n\n`
+      output += `**Group:** ${skill.metadata.group}\n\n`
       output += `**Description:** ${skill.metadata.description}\n\n`
-      output += `**Relevance score:** ${match.score}\n\n`
-      output += `**Content:**\n\n`
-      output += `\`\`\`markdown\n${skill.content}\n\`\`\`\n\n`
+      output += `**Path:** \`${skill.path}\`\n\n`
+      output += `**Relevance:** ${match.score}/10\n\n`
+      if (skill.metadata.keywords && skill.metadata.keywords.length > 0) {
+        output += `**Keywords:** ${skill.metadata.keywords.join(', ')}\n\n`
+      }
     }
+
+    output += `### How to Use Skills\n\n`
+    output += `Skills provide step-by-step procedural guidance. To execute a skill:\n\n`
+    output += `1. **Read the skill file** using the path provided above\n`
+    output += `2. **Follow the instructions** in the skill content\n`
+    output += `3. **Consider using a subagent** (Task tool) for complex skills with multiple steps\n\n`
+    output += `**Example:**\n\n`
+    output += `\`\`\`\n`
+    output += `# Read the skill file to see full instructions\n`
+    output += `Read: <skill-path>\n\n`
+    output += `# For complex multi-step skills, consider using a subagent\n`
+    output += `Task(subagent_type="general-purpose", prompt="Follow the git-commit skill to create a professional commit")\n`
+    output += `\`\`\`\n\n`
 
     output += `---\n\n`
   }
