@@ -121,8 +121,8 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
   }
 
   try {
-    // Discover bundled skills
-    const bundledSkillsPath = path.join(__dirname, '..', 'skills')
+    // Discover bundled skills (at package root)
+    const bundledSkillsPath = path.join(__dirname, '..', '..', 'skills')
     discoverSkills(bundledSkillsPath)
 
     // Discover local (custom) skills
@@ -149,7 +149,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   // Try local (custom) skills first, then bundled skills
   const config = ctx.config
   const localSkillFile = path.join(config.docsRoot, 'skills', skillPath, 'SKILL.md')
-  const bundledSkillFile = path.join(__dirname, '..', 'skills', skillPath, 'SKILL.md')
+  const bundledSkillFile = path.join(__dirname, '..', '..', 'skills', skillPath, 'SKILL.md')
 
   let skillFile: string
   if (fs.existsSync(localSkillFile)) {
