@@ -10,12 +10,13 @@ Docent makes your agent better at understanding and improving documentation. No 
 
 Docent provides your agent with:
 
+- **Skill discovery** - Semantic search finds relevant procedural skills
 - **Project analysis** - Understand languages, frameworks, structure
 - **Quality assessment** - Semantic evaluation, not pattern matching
 - **Template library** - ADRs, RFCs, specs, guides
 - **Context gathering** - Structured data for agent reasoning
-- **Resource discovery** - Runbooks, templates, standards via URI
-- **Workflow prompts** - Pre-defined procedures (RFC review, session recovery)
+- **Resource discovery** - Skills, templates, standards via natural language
+- **Workflow guidance** - Pre-defined procedures for git, GitHub, documentation
 
 ## Quick Start
 
@@ -80,12 +81,45 @@ Docent works behind the scenes through natural conversation.
 
 Docent gives your AI agent four capabilities:
 
-1. **Ask** - Search documentation to answer questions
-2. **Act** - Execute runbooks and create from templates
+1. **Ask** - Search documentation and discover relevant skills
+2. **Act** - Execute runbooks and create from templates (deprecated)
 3. **Tell** - Capture knowledge in natural language
 4. **Start** - Initialize sessions and discover resources
 
 The agent translates your natural language requests into appropriate tool calls. You never invoke docent directly—it just makes your agent smarter about documentation.
+
+### Skills-Based Architecture
+
+Docent uses a **skills-based architecture** to provide procedural guidance to AI agents. Skills are organized by domain and discovered semantically through natural language queries.
+
+**Bundled skill groups:**
+
+- `git/*` - Git workflow skills (commits, branching, merging)
+- `github/*` - GitHub operations (filing issues, creating PRs)
+- `project/*` - Project management (bootstrap, health checks)
+- `docent/*` - Documentation workflows (capturing work, processing sessions)
+
+**How it works:**
+
+1. Configure which skills to enable in `.docent/config.yaml`
+2. Agent queries: "how do I commit my changes?"
+3. Docent discovers the `git-commit` skill and returns full instructions
+4. Agent follows the skill's guidance autonomously
+
+**Example config:**
+
+```yaml
+version: "1.0.0"
+root: .docent
+
+skills:
+  - docent/*      # Enable all docent skills
+  - git/*         # Enable all git skills
+  - github/*      # Enable GitHub skills
+  - !github/fork  # Exclude specific skill
+```
+
+Skills are just markdown files with frontmatter—you can override bundled skills or add custom ones in `.docent/skills/`.
 
 ## MCP Tools
 
