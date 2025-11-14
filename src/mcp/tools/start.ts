@@ -59,7 +59,7 @@ export async function handleStartTool(args: StartArgs): Promise<{content: TextCo
     // Load skills if patterns configured
     let skillRegistry: ReturnType<typeof createSkillRegistry> | null = null
     if (config.skills.length > 0) {
-      const bundledSkillsPath = join(__dirname, '../../../skills')
+      const bundledSkillsPath = join(__dirname, '../../../src/skills')
       const localSkillsPath = join(config.docsRoot, 'skills')
       skillRegistry = createSkillRegistry(bundledSkillsPath, localSkillsPath)
       skillRegistry.load(config.skills)

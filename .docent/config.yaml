@@ -1,0 +1,17 @@
+# docent configuration
+version: 1.0.0
+root: .docent
+
+# Paths to search when using /docent:ask
+search_paths:
+  - .docent
+  - docs
+
+# Enable all bundled skills
+skills:
+  - "**/*"
+
+# Projects for issue filing
+projects:
+  docent:
+    repo: tnez/docent

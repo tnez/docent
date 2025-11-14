@@ -63,7 +63,7 @@ export async function handleAskTool(args: AskArgs): Promise<{content: TextConten
     // Discover applicable skills
     let skillMatches: Array<{skill: any; score: number}> = []
     if (config.skills.length > 0) {
-      const bundledSkillsPath = join(__dirname, '../../../skills')
+      const bundledSkillsPath = join(__dirname, '../../../src/skills')
       const localSkillsPath = join(config.docsRoot, 'skills')
       const skillRegistry = createSkillRegistry(bundledSkillsPath, localSkillsPath)
       skillRegistry.load(config.skills)
