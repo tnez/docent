@@ -76,6 +76,7 @@ lerna-debug.log*
 
 # Build output
 /lib/
+/skills/
 dist/
 *.tsbuildinfo
 

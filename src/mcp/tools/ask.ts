@@ -304,10 +304,12 @@ function buildSearchResponse(
     for (const match of skillMatches) {
       const skill = match.skill
       const group = skill.path.split('/')[0] || 'general'
+      const resourceUri = `docent://skills/${skill.path}`
+
       output += `### ${skill.metadata.name}\n\n`
       output += `**Group:** ${group}\n\n`
       output += `**Description:** ${skill.metadata.description}\n\n`
-      output += `**File Path:** \`${skill.filePath}\`\n\n`
+      output += `**Resource URI:** \`${resourceUri}\`\n\n`
       output += `**Source:** ${skill.source}\n\n`
       output += `**Relevance:** ${match.score}/10\n\n`
       if (skill.metadata.keywords && skill.metadata.keywords.length > 0) {
@@ -317,13 +319,14 @@ function buildSearchResponse(
 
     output += `### How to Use Skills\n\n`
     output += `Skills provide step-by-step procedural guidance. To execute a skill:\n\n`
-    output += `1. **Read the skill file** using the path provided above\n`
+    output += `1. **Read the skill** using the Resource URI provided above\n`
     output += `2. **Follow the instructions** in the skill content\n`
     output += `3. **Consider using a subagent** (Task tool) for complex skills with multiple steps\n\n`
     output += `**Example:**\n\n`
     output += `\`\`\`\n`
-    output += `# Read the skill file to see full instructions\n`
-    output += `Read: <skill-path>\n\n`
+    output += `# Read the skill resource to see full instructions\n`
+    output += `# Claude Code will automatically fetch MCP resources\n`
+    output += `Read resource: docent://skills/git/git-commit\n\n`
     output += `# For complex multi-step skills, consider using a subagent\n`
     output += `Task(subagent_type="general-purpose", prompt="Follow the git-commit skill to create a professional commit")\n`
     output += `\`\`\`\n\n`

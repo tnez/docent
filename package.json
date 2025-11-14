@@ -25,6 +25,7 @@
   "files": [
     "/bin",
     "/lib",
+    "/skills",
     "/templates",
     "/runbooks",
     "CHANGELOG.md"
@@ -33,7 +34,8 @@
     "./mcp": "./lib/mcp/server.js"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && npm run copy-skills",
+    "copy-skills": "rm -rf skills && cp -r src/skills skills",
     "prepare": "npm run build",
     "lint": "echo 'Linting skipped - TypeScript compiler handles type checking'",
     "lint:md": "markdownlint-cli2 '**/*.md' '!node_modules' '!lib' '!docs/.journal'",
