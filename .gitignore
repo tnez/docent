@@ -84,3 +84,6 @@ dist/
 
 # Docent journals - ephemeral agent state per worktree
 docs/.journal/
+
+# Docent sessions - agent session notes (excluded from commits)
+.docent/sessions/

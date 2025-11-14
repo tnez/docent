@@ -5,6 +5,7 @@ import { resolve, join } from 'path'
  * Raw configuration from .docentrc file (legacy) or .docent/config.yaml (new)
  */
 export interface RawConfig {
+  version?: string
   root: string
   sessionThresholdMinutes: number
   search_paths?: string[]
@@ -23,6 +24,8 @@ export interface ProjectConfig {
  * Resolved configuration with computed absolute paths
  */
 export interface DocentConfig {
+  /** Schema version for tracking breaking changes (e.g., "1.0.0") */
+  version?: string
   /** Raw root directory from config (e.g., "docs", "documentation", ".docent") */
   root: string
   /** Absolute path to docs root directory */
@@ -37,7 +40,14 @@ export interface DocentConfig {
   projects: Record<string, ProjectConfig>
 }
 
+/**
+ * Current docent config schema version
+ * Bump this on breaking changes to config structure
+ */
+export const CURRENT_VERSION = '1.0.0'
+
 const DEFAULT_RAW_CONFIG: RawConfig = {
+  version: CURRENT_VERSION,
   root: '.docent',
   sessionThresholdMinutes: 30,
   search_paths: ['.docent'],
@@ -80,6 +90,7 @@ export function loadConfig(projectPath: string): DocentConfig {
 
         // Merge with defaults
         rawConfig = {
+          version: parsed.version || DEFAULT_RAW_CONFIG.version,
           root: parsed.root || DEFAULT_RAW_CONFIG.root,
           sessionThresholdMinutes: parsed.sessionThresholdMinutes || DEFAULT_RAW_CONFIG.sessionThresholdMinutes,
           search_paths: parsed.search_paths || DEFAULT_RAW_CONFIG.search_paths,
@@ -107,6 +118,7 @@ export function loadConfig(projectPath: string): DocentConfig {
   )
 
   return {
+    version: rawConfig.version,
     root: rawConfig.root,
     docsRoot,
     journalRoot,
@@ -161,7 +173,9 @@ function parseYaml(content: string): Partial<RawConfig> {
         inProjects = false
         currentProject = null
 
-        if (key === 'root') {
+        if (key === 'version') {
+          config.version = value.replace(/^["']|["']$/g, '')
+        } else if (key === 'root') {
           config.root = value.replace(/^["']|["']$/g, '')
         } else if (key === 'sessionThresholdMinutes') {
           config.sessionThresholdMinutes = parseInt(value, 10)

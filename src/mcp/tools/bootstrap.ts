@@ -2,6 +2,7 @@ import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 import {analyzeProject} from '../../core/detector.js'
+import {CURRENT_VERSION} from '../../core/config.js'
 import {
   parseTemplateUrl,
   cloneTemplate,
@@ -114,6 +115,9 @@ export async function handleBootstrapTool(args: BootstrapArgs): Promise<{content
       await createDirectoryStructure(docsPath)
     }
 
+    // Create config file
+    await createConfigFile(projectPath)
+
     // Analyze project for context
     const analysis = await analyzeProject(projectPath)
 
@@ -222,6 +226,50 @@ async function createDirectoryStructure(docsPath: string): Promise<void> {
 .journal/
 `
   await fs.writeFile(gitignorePath, gitignoreContent, 'utf-8')
+}
+
+async function createConfigFile(projectPath: string): Promise<void> {
+  const docentPath = path.join(projectPath, '.docent')
+  const configPath = path.join(docentPath, 'config.yaml')
+
+  // Check if config already exists
+  const configExists = await fs
+    .access(configPath)
+    .then(() => true)
+    .catch(() => false)
+
+  if (configExists) {
+    return // Don't overwrite existing config
+  }
+
+  // Create .docent directory if it doesn't exist
+  await fs.mkdir(docentPath, {recursive: true})
+
+  // Check if docs/ directory exists to include in search paths
+  const docsPath = path.join(projectPath, 'docs')
+  const docsExists = await fs
+    .access(docsPath)
+    .then(() => true)
+    .catch(() => false)
+
+  const searchPaths = docsExists ? ['  - .docent', '  - docs'] : ['  - .docent']
+
+  const configContent = `# docent configuration
+version: "${CURRENT_VERSION}"
+root: .docent
+
+# Paths to search when using /docent:ask
+search_paths:
+${searchPaths.join('\n')}
+
+# Projects for issue filing (optional)
+projects:
+  # Example:
+  # my-project:
+  #   repo: user/my-project
+`
+
+  await fs.writeFile(configPath, configContent, 'utf-8')
 }
 
 function generateReadme(analysis: {languages: string[]; frameworks: string[]; buildTools: string[]}): string {

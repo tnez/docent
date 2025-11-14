@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { existsSync, mkdirSync, writeFileSync, rmSync } from 'fs'
 import { join } from 'path'
-import { loadConfig } from '../src/core/config'
+import { loadConfig, CURRENT_VERSION } from '../src/core/config'
 
 describe('Config Loader', () => {
   const testDir = join(__dirname, '.test-config')
@@ -130,6 +130,31 @@ root: documentation
 
       const config = loadConfig(testDir)
       expect(config.sessionThresholdMinutes).to.equal(30)
+    })
+
+    it('should load version from YAML config', () => {
+      const configPath = join(testDir, '.docent/config.yaml')
+      mkdirSync(join(testDir, '.docent'), { recursive: true })
+      writeFileSync(configPath, 'version: "1.0.0"\nroot: .docent')
+
+      const config = loadConfig(testDir)
+      expect(config.version).to.equal('1.0.0')
+    })
+
+    it('should use default version if not specified', () => {
+      const configPath = join(testDir, '.docentrc')
+      writeFileSync(configPath, JSON.stringify({ root: 'docs' }))
+
+      const config = loadConfig(testDir)
+      expect(config.version).to.equal(CURRENT_VERSION)
+    })
+
+    it('should load version from JSON config', () => {
+      const configPath = join(testDir, '.docentrc')
+      writeFileSync(configPath, JSON.stringify({ version: '0.9.0', root: 'docs' }))
+
+      const config = loadConfig(testDir)
+      expect(config.version).to.equal('0.9.0')
     })
   })
 
