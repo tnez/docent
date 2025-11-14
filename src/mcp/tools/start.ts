@@ -1,6 +1,8 @@
 import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
 import {loadConfig} from '../../core/config.js'
 import {createRegistry, type LoadFailure} from '../../core/resource-registry.js'
+import {createSkillRegistry} from '../../core/skill-registry'
+import type {Skill} from '../../core/skill'
 import {join, basename} from 'path'
 import {readFileSync} from 'fs'
 
@@ -54,8 +56,17 @@ export async function handleStartTool(args: StartArgs): Promise<{content: TextCo
     const runbooks = registry.getRunbooks()
     const failures = registry.getLoadFailures()
 
+    // Load skills if patterns configured
+    let skillRegistry: ReturnType<typeof createSkillRegistry> | null = null
+    if (config.skills.length > 0) {
+      const bundledSkillsPath = join(__dirname, '../../../skills')
+      const localSkillsPath = join(config.docsRoot, 'skills')
+      skillRegistry = createSkillRegistry(bundledSkillsPath, localSkillsPath)
+      skillRegistry.load(config.skills)
+    }
+
     // Build output
-    const output = buildStartOutput(templates, runbooks, config, failures)
+    const output = buildStartOutput(templates, runbooks, config, failures, skillRegistry)
 
     return {
       content: [
@@ -77,7 +88,13 @@ export async function handleStartTool(args: StartArgs): Promise<{content: TextCo
   }
 }
 
-function buildStartOutput(templates: any[], runbooks: any[], config: any, failures: LoadFailure[]): string {
+function buildStartOutput(
+  templates: any[],
+  runbooks: any[],
+  config: any,
+  failures: LoadFailure[],
+  skillRegistry: ReturnType<typeof createSkillRegistry> | null,
+): string {
   const version = getVersion()
   let output = `# Docent Session Initialized\n\n`
   output += `**Version:** ${version}\n\n`
@@ -113,6 +130,28 @@ function buildStartOutput(templates: any[], runbooks: any[], config: any, failur
       output += `- **${runbook.metadata.name}**${source}: ${runbook.metadata.description}\n`
     }
     output += '\n'
+  }
+
+  // Skills (if enabled)
+  if (skillRegistry) {
+    const groups = skillRegistry.getGroups()
+    output += '## Available Skills\n\n'
+
+    if (groups.length === 0) {
+      output += '_No skills loaded. Check your skills patterns in config.yaml_\n\n'
+    } else {
+      output += 'Use `/docent:ask [query]` to discover skills by description:\n\n'
+
+      for (const group of groups) {
+        const skills = skillRegistry.getByGroup(group)
+        output += `### ${group}\n\n`
+        for (const skill of skills) {
+          const source = skill.source === 'local' ? ' (custom)' : ''
+          output += `- **${skill.metadata.name}**${source}: ${skill.metadata.description}\n`
+        }
+        output += '\n'
+      }
+    }
   }
 
   // Configuration

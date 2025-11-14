@@ -156,6 +156,27 @@ root: documentation
       const config = loadConfig(testDir)
       expect(config.version).to.equal('0.9.0')
     })
+
+    it('should load skills from YAML config', () => {
+      const configPath = join(testDir, '.docent/config.yaml')
+      mkdirSync(join(testDir, '.docent'), { recursive: true })
+      writeFileSync(configPath, `root: .docent
+skills:
+  - git/*
+  - github/*
+  - !github/pull-request`)
+
+      const config = loadConfig(testDir)
+      expect(config.skills).to.deep.equal(['git/*', 'github/*', '!github/pull-request'])
+    })
+
+    it('should use empty array if skills not specified', () => {
+      const configPath = join(testDir, '.docentrc')
+      writeFileSync(configPath, JSON.stringify({ root: 'docs' }))
+
+      const config = loadConfig(testDir)
+      expect(config.skills).to.deep.equal([])
+    })
   })
 
   describe('computed paths', () => {

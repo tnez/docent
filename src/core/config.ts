@@ -9,6 +9,7 @@ export interface RawConfig {
   root: string
   sessionThresholdMinutes: number
   search_paths?: string[]
+  skills?: string[]
   projects?: Record<string, ProjectConfig>
 }
 
@@ -36,6 +37,8 @@ export interface DocentConfig {
   sessionThresholdMinutes: number
   /** Paths to search when using /docent:ask (absolute paths) */
   searchPaths: string[]
+  /** Glob patterns for enabled skills (e.g., ["git/*", "!git/push"]) */
+  skills: string[]
   /** Project configurations for issue filing */
   projects: Record<string, ProjectConfig>
 }
@@ -51,6 +54,7 @@ const DEFAULT_RAW_CONFIG: RawConfig = {
   root: '.docent',
   sessionThresholdMinutes: 30,
   search_paths: ['.docent'],
+  skills: [],
   projects: {},
 }
 
@@ -94,6 +98,7 @@ export function loadConfig(projectPath: string): DocentConfig {
           root: parsed.root || DEFAULT_RAW_CONFIG.root,
           sessionThresholdMinutes: parsed.sessionThresholdMinutes || DEFAULT_RAW_CONFIG.sessionThresholdMinutes,
           search_paths: parsed.search_paths || DEFAULT_RAW_CONFIG.search_paths,
+          skills: parsed.skills || DEFAULT_RAW_CONFIG.skills,
           projects: parsed.projects || DEFAULT_RAW_CONFIG.projects,
         }
         break
@@ -124,6 +129,7 @@ export function loadConfig(projectPath: string): DocentConfig {
     journalRoot,
     sessionThresholdMinutes: rawConfig.sessionThresholdMinutes,
     searchPaths,
+    skills: rawConfig.skills || [],
     projects: rawConfig.projects || {},
   }
 }
@@ -141,6 +147,7 @@ function parseYaml(content: string): Partial<RawConfig> {
   let currentKey: string | null = null
   let currentProject: string | null = null
   let inSearchPaths = false
+  let inSkills = false
   let inProjects = false
 
   for (const line of lines) {
@@ -152,11 +159,14 @@ function parseYaml(content: string): Partial<RawConfig> {
       continue
     }
 
-    // Handle array items (search_paths)
+    // Handle array items (search_paths, skills)
     if (trimmed.startsWith('- ')) {
       if (inSearchPaths) {
         if (!config.search_paths) config.search_paths = []
         config.search_paths.push(trimmed.substring(2).trim().replace(/^["']|["']$/g, ''))
+      } else if (inSkills) {
+        if (!config.skills) config.skills = []
+        config.skills.push(trimmed.substring(2).trim().replace(/^["']|["']$/g, ''))
       }
       continue
     }
@@ -170,6 +180,7 @@ function parseYaml(content: string): Partial<RawConfig> {
       if (indent === 0) {
         currentKey = key
         inSearchPaths = false
+        inSkills = false
         inProjects = false
         currentProject = null
 
@@ -182,6 +193,9 @@ function parseYaml(content: string): Partial<RawConfig> {
         } else if (key === 'search_paths') {
           inSearchPaths = true
           config.search_paths = []
+        } else if (key === 'skills') {
+          inSkills = true
+          config.skills = []
         } else if (key === 'projects') {
           inProjects = true
           config.projects = {}
