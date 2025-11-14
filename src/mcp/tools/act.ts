@@ -6,7 +6,7 @@ import {join} from 'path'
 export const actToolDefinition: Tool = {
   name: 'act',
   description:
-    'Execute a runbook by returning its content and execution guidance. Takes the exact runbook name (e.g., "bootstrap", "health-check"). The agent is responsible for mapping user intent to runbook names using the list from /docent:start.',
+    '[DEPRECATED - Use /docent:ask for skill discovery] Execute a runbook by returning its content and execution guidance. Takes the exact runbook name (e.g., "bootstrap", "health-check"). The agent is responsible for mapping user intent to runbook names using the list from /docent:start.',
   inputSchema: {
     type: 'object',
     properties: {
