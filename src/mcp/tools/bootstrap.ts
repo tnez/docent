@@ -254,6 +254,20 @@ async function createConfigFile(projectPath: string): Promise<void> {
 
   const searchPaths = docsExists ? ['  - .docent', '  - docs'] : ['  - .docent']
 
+  // Detect git repository to recommend git/github skills
+  const gitPath = path.join(projectPath, '.git')
+  const isGitRepo = await fs
+    .access(gitPath)
+    .then(() => true)
+    .catch(() => false)
+
+  // Recommend skills based on project detection
+  const recommendedSkills = ['  - docent/*', '  - project/*']
+  if (isGitRepo) {
+    recommendedSkills.push('  - git/*')
+    recommendedSkills.push('  - github/*')
+  }
+
   const configContent = `# docent configuration
 version: "${CURRENT_VERSION}"
 root: .docent
@@ -261,6 +275,11 @@ root: .docent
 # Paths to search when using /docent:ask
 search_paths:
 ${searchPaths.join('\n')}
+
+# Enable bundled skills for this project
+# Use glob patterns to include/exclude skills
+skills:
+${recommendedSkills.join('\n')}
 
 # Projects for issue filing (optional)
 projects:
