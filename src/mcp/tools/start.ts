@@ -154,6 +154,23 @@ function buildStartOutput(
     }
   }
 
+  // Proactive Skill Execution (for agents)
+  if (skillRegistry && skillRegistry.getGroups().length > 0) {
+    output += '## Proactive Skill Execution: Use Tested Procedures\n\n'
+    output += '**IMPORTANT for AI agents:** When a task matches a skill description, READ and FOLLOW that skill. Don\'t improvise when tested guidance exists.\n\n'
+    output += '**How to use skills:**\n\n'
+    output += '1. **Discover:** Use `/docent:ask [query]` to find relevant skills (e.g., "how do I commit changes?")\n'
+    output += '2. **Read:** Access via MCP resources: `ReadMcpResourceTool(server="docent", uri="docent://skills/{group}/{name}")`\n'
+    output += '3. **Follow:** Execute the skill\'s procedure step-by-step\n\n'
+    output += '**When to use skills:**\n\n'
+    output += '- ✅ **Before committing** - Use `git/git-commit` skill for professional commits\n'
+    output += '- ✅ **Before code review** - Use `development/code-review` skill for thorough reviews\n'
+    output += '- ✅ **When CI fails** - Use `devops/ci-health-check` skill to troubleshoot\n'
+    output += '- ✅ **Filing issues** - Use `github/file-issue` skill for well-structured issues\n'
+    output += '- ✅ **Project setup** - Use `docent/bootstrap` skill to initialize .docent/\n\n'
+    output += '**Why this matters:** Skills encode best practices and prevent common mistakes. Following them ensures consistency and quality.\n\n'
+  }
+
   // Configuration
   output += '## Configuration\n\n'
   output += `- **Root:** ${config.root}\n`
