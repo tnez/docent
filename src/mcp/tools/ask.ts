@@ -1,5 +1,6 @@
 import type {Tool, TextContent} from '@modelcontextprotocol/sdk/types.js'
 import {loadConfig} from '../../core/config.js'
+import {createSkillRegistry} from '../../core/skill-registry'
 import {execSync} from 'child_process'
 import {existsSync} from 'fs'
 import {join, relative} from 'path'
@@ -59,7 +60,17 @@ export async function handleAskTool(args: AskArgs): Promise<{content: TextConten
     // Take top N results (simple limit, let agent synthesize)
     const topResults = results.slice(0, limit)
 
-    if (topResults.length === 0) {
+    // Discover applicable skills
+    let skillMatches: Array<{skill: any; score: number}> = []
+    if (config.skills.length > 0) {
+      const bundledSkillsPath = join(__dirname, '../../../skills')
+      const localSkillsPath = join(config.docsRoot, 'skills')
+      const skillRegistry = createSkillRegistry(bundledSkillsPath, localSkillsPath)
+      skillRegistry.load(config.skills)
+      skillMatches = skillRegistry.discover(args.query).slice(0, 5) // Top 5 skills
+    }
+
+    if (topResults.length === 0 && skillMatches.length === 0) {
       return {
         content: [
           {
@@ -70,8 +81,8 @@ export async function handleAskTool(args: AskArgs): Promise<{content: TextConten
       }
     }
 
-    // Build response with documentation chunks
-    const output = buildSearchResponse(args.query, topResults, config.searchPaths, projectPath)
+    // Build response with documentation chunks and skills
+    const output = buildSearchResponse(args.query, topResults, skillMatches, config.searchPaths, projectPath)
 
     return {
       content: [
@@ -256,27 +267,51 @@ function buildNoResultsResponse(query: string, searchPaths: string[], projectPat
 function buildSearchResponse(
   query: string,
   results: SearchResult[],
+  skillMatches: Array<{skill: any; score: number}>,
   searchPaths: string[],
   projectPath: string,
 ): string {
   let output = `# Documentation Search Results\n\n`
   output += `**Query:** "${query}"\n`
-  output += `**Results:** ${results.length} matches found\n\n`
+  output += `**Results:** ${results.length} documentation matches`
+  if (skillMatches.length > 0) {
+    output += `, ${skillMatches.length} applicable skills`
+  }
+  output += `\n\n`
 
   output += `---\n\n`
 
   // Add synthesis guidance for the AGENT
   output += `## Instructions for Agent\n\n`
-  output += `You are being provided with documentation search results. Your responsibilities:\n\n`
+  output += `You are being provided with documentation search results and applicable skills. Your responsibilities:\n\n`
   output += `1. **Read through all excerpts** to understand the available information\n`
-  output += `2. **Synthesize a coherent answer** to the user's question based on the documentation\n`
-  output += `3. **Cite source files** when providing information (e.g., "According to docs/guide.md...")\n`
-  output += `4. **Note gaps** if the documentation doesn't fully answer the question\n`
-  output += `5. **Organize the information** in a clear, helpful way for the user\n\n`
+  output += `2. **Review applicable skills** to see if they provide relevant guidance\n`
+  output += `3. **Synthesize a coherent answer** to the user's question based on the documentation and skills\n`
+  output += `4. **Cite source files** when providing information (e.g., "According to docs/guide.md...")\n`
+  output += `5. **Reference skills** when they're relevant (e.g., "The git-commit skill can help with...")\n`
+  output += `6. **Note gaps** if the documentation doesn't fully answer the question\n`
+  output += `7. **Organize the information** in a clear, helpful way for the user\n\n`
 
-  output += `**Important:** Docent does NOT synthesize answers. You synthesize them. Docent only provides the raw search results.\n\n`
+  output += `**Important:** Docent does NOT synthesize answers or execute skills. You synthesize answers and can execute skill instructions.\n\n`
 
   output += `---\n\n`
+
+  // Include applicable skills first
+  if (skillMatches.length > 0) {
+    output += `## Applicable Skills\n\n`
+    output += `These skills may help with your query:\n\n`
+
+    for (const match of skillMatches) {
+      const skill = match.skill
+      output += `### ${skill.metadata.name}\n\n`
+      output += `**Description:** ${skill.metadata.description}\n\n`
+      output += `**Relevance score:** ${match.score}\n\n`
+      output += `**Content:**\n\n`
+      output += `\`\`\`markdown\n${skill.content}\n\`\`\`\n\n`
+    }
+
+    output += `---\n\n`
+  }
 
   // Include search results (raw, no ranking)
   output += `## Documentation Excerpts\n\n`
