@@ -88,3 +88,6 @@ docs/.journal/
 
 # Docent sessions - agent session notes (excluded from commits)
 .docent/sessions/
+
+# Docent migration backups
+.docent/.backup-*/
