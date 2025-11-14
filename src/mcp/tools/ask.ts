@@ -303,10 +303,12 @@ function buildSearchResponse(
 
     for (const match of skillMatches) {
       const skill = match.skill
+      const group = skill.path.split('/')[0] || 'general'
       output += `### ${skill.metadata.name}\n\n`
-      output += `**Group:** ${skill.metadata.group}\n\n`
+      output += `**Group:** ${group}\n\n`
       output += `**Description:** ${skill.metadata.description}\n\n`
-      output += `**Path:** \`${skill.path}\`\n\n`
+      output += `**File Path:** \`${skill.filePath}\`\n\n`
+      output += `**Source:** ${skill.source}\n\n`
       output += `**Relevance:** ${match.score}/10\n\n`
       if (skill.metadata.keywords && skill.metadata.keywords.length > 0) {
         output += `**Keywords:** ${skill.metadata.keywords.join(', ')}\n\n`
